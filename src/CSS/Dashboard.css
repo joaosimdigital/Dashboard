@@ -1,0 +1,248 @@
+@font-face {
+    font-family: 'Bold'; 
+    src: url('..//Fontes/Poppins-Bold.ttf') format('opentype');
+  }
+
+  @font-face {
+    font-family: 'Normal'; 
+    src: url('../Fontes//Poppins-Regular.ttf') format('opentype'); 
+  }
+
+
+
+.body-principal{
+    background-color: #B3B3B3;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+   
+}
+
+
+.row-div-numeros-churn{
+    display: flex;
+    height: 90px;
+    margin-bottom: 20px;
+    align-items: center;
+    margin-top: 30px;
+    justify-content: space-between;
+}
+
+
+.div-numeros-churn{
+    background-color: #474747;
+    width: 682px;
+    height: 275px;
+    border-radius: 10px;
+    padding: 10px 10px;
+    margin-top: 10px;
+    margin-left: 30px;
+}
+
+.div-numeros-churn2{
+    background-color: rgb(23, 229, 50);
+    width: 682px;
+    justify-content: space-between;
+    height: 85px;
+    display: flex;
+    align-items: center;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    margin-left: 30px;
+    margin-top: -40px;
+    padding: 0px 10px;
+}
+
+.h1-numeros-churn{
+    font-size: 130px;
+    color: white;
+    font-weight: bold;
+    font-family: 'Bold';
+   
+}
+
+
+
+.h2-numeros-churn{
+    font-size: 60px;
+    color: white;
+    font-family: 'Bold';
+}
+
+
+.row-div-numeros-churn1{
+    display: flex;
+    height: 100px;
+    margin-bottom: 20px;
+    align-items: center;
+    margin-top: 10px;
+    justify-content: space-between;
+}
+
+
+.h2-mes{
+    color: white;
+    font-family: 'Normal';
+}
+
+
+.div-numero-solicitacao{
+    background-color: #474747;
+    width: 682px;
+    height: 150px;
+    border-radius: 10px;
+    padding: 0px 10px;
+    margin-top: 10px;
+    margin-left: 30px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.h1-pedidos-solicitacao{
+    font-size: 70px;
+    color: white;
+    font-family: 'bold';
+    margin-bottom:10px;
+    margin-top: 0px;
+}
+
+.h2-pedidos-solicitacao{
+    font-size: 14px;
+    font-family: 'Normal';
+    color: white;
+    margin-top: 0px;
+}
+
+.div-pedidos-solicitacao{
+    display: flex;
+    align-items: center;
+    justify-content:center ;
+    flex-direction: column;
+
+}
+
+
+.div-texto-status{
+    background-color: #474747;
+    width: 682px;
+    height: 130px;
+    border-radius: 10px;
+    padding: 0px 10px;
+    margin-top: 10px;
+    margin-left: 30px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.h2-texto-status{
+    color:  rgb(23, 229, 50);
+    font-family: 'Bold';
+    font-size: 70px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.h1-texto-status{
+    font-size: 15px;
+    color: white;
+    font-family: 'Normal';
+    margin-bottom: 0px;
+    margin-top:20px;
+}
+
+.tabela-churn-cidade{
+    background-color: #474747;
+    width: 682px;
+    height: 210px;
+    padding: 10px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0px;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+
+.h1-tabela-churn-cidade{
+    width: 100%;
+    text-align: center;
+    margin-top: 0px;
+    font-size: 25px;
+    color: white;
+    font-weight: bold;
+    font-family: 'Bold';
+    margin-bottom:20px;
+}
+
+.titulo-tabela-churn-cidade{
+    width: 200px;
+    color: white;
+    text-align: start;
+   
+    font-size: 22px;
+    margin-bottom: 20px;
+    font-family: 'Normal';
+
+}
+
+.grafico{
+    background-color: #474747;
+    width: 682px;
+    height: 370px;
+    padding: 10px 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+    display: flex;
+    margin-right: 20px;
+    margin-top: 10px;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+.row-body-principal{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.div-titulo-dash{
+    bottom: 0px;
+    position: absolute;
+    width: 100%;
+    height: 80px;
+    background-color: rgb(36, 36, 36);
+    margin-top: 20px;
+   align-items:center ;
+   display: flex;
+   justify-content: space-between;
+}
+
+
+.h1-titulo-dash{
+    color: white;
+    font-size: 38px;
+    text-align: center;
+    font-family: 'Bold';
+}
+
+.h2-titulo-dash{
+    color: rgb(36, 36, 36);
+    font-size: 35px;
+    text-align: center;
+    font-family: 'Bold';
+}
+
+.div-segunda-dados-tabelas{
+    width: 50%;
+    height: 100%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
