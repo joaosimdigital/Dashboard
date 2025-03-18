@@ -1,9 +1,21 @@
+@font-face {
+    font-family: 'Bold'; 
+    src: url('..//Fontes/Poppins-Bold.ttf') format('opentype');
+  }
+
+  @font-face {
+    font-family: 'Normal'; 
+    src: url('../Fontes//Poppins-Regular.ttf') format('opentype'); 
+  }
+
+
 
 
 .row-div-instalacao-manutencao{
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-around;
+    margin-top: 10px;
     align-items: center;
 
 }
@@ -11,6 +23,82 @@
 
 .div-card-dados-principais{
     background-color: #949393;
+    border-radius: 10px;
+    height: 300px;
+    width: 49%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.h1-titulo-card-dados-principais{
+    width: 100%;
+    text-align: center;
+    margin-top: 0px;
+    color: white;
+    font-family: 'Bold';
+    font-size: 30px;
+    margin-top: 5px;
+}
+
+.row-div-card-dados-principais{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+
+.div-card-dados-principais-dados{
+    height: 150px;
+    align-items: center;
+    width: 49%;
+    background-color: #666666;
+    display: flex;
+    border-radius: 10px;
     height: 200px;
-    width: 70px;
+    justify-content: space-around;
+ 
+}
+
+
+.card-dados-principais-dados{
+    width:49%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+.h1-card-dados-principais-dados{
+    font-size: 20px;
+    font-family: 'Normal';
+    color: white;
+    margin-bottom: 20px;
+
+
+}
+
+.h2-card-dados-principais-dados{
+    font-size: 80px;
+    margin-top: -20px;
+    font-family: 'Bold';
+    color: white;
+    margin-bottom: 0px;
+    
+}
+
+.h1-div-card-dados-principais-dados-diaria{
+    width: 100%;
+    text-align: center;
+
+}
+
+
+.h2-div-card-dados-principais-dados-diaria{
+    width: 100%;
+    text-align: center;
+
 }
