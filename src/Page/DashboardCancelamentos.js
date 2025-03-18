@@ -211,7 +211,7 @@ export default function DashboardCancelamentos() {
       <div className='div-numeros-churn2'>
         <h1 className='h2-numeros-churn'>369</h1>
         <h1 className='h2-mes'>Limite</h1>
-        <h1 className='h2-numeros-churn'>0,73%</h1>
+        <h1 className='h2-numeros-churn'>1.50%</h1>
 
       </div>
 
