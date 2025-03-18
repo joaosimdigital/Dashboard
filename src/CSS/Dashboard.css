@@ -23,6 +23,7 @@
 .row-div-numeros-churn{
     display: flex;
     height: 90px;
+    width: 100%;
     margin-bottom: 20px;
     align-items: center;
     margin-top: 30px;
@@ -33,7 +34,10 @@
 .div-numeros-churn{
     background-color: #474747;
     width: 580px;
-    height: 220px;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     border-radius: 10px;
     padding: 10px 10px;
     margin-top: 5px;
@@ -74,9 +78,10 @@
 .row-div-numeros-churn1{
     display: flex;
     height: 50px;
+    width: 100%;
     margin-bottom: 20px;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 20px;
     justify-content: space-between;
 }
 
@@ -90,7 +95,7 @@
 .div-numero-solicitacao{
     background-color: #474747;
     width: 580px;
-    height: 120px;
+    height: 150px;
     border-radius: 10px;
     padding: 0px 10px;
     margin-top: 10px;
@@ -126,7 +131,7 @@
 .div-texto-status{
     background-color: #474747;
     width: 580px;
-    height: 130px;
+    height: 140px;
     border-radius: 10px;
     padding: 0px 10px;
     margin-top: 10px;
@@ -140,8 +145,8 @@
 .h2-texto-status{
     color:  rgb(23, 229, 50);
     font-family: 'Bold';
-    font-size: 70px;
-    margin-top: 0px;
+    font-size: 80px;
+    margin-top: -10px;
     margin-bottom: 0px;
 }
 
@@ -156,7 +161,7 @@
 .tabela-churn-cidade{
     background-color: #474747;
     width: 580px;
-    height: 210px;
+    height: 230px;
     padding: 10px 10px;
     display: flex;
     flex-direction: column;
@@ -192,7 +197,7 @@
 .grafico{
     background-color: #474747;
     width: 580px;
-    height: 280px;
+    height: 330px;
     padding: 10px 10px;
     margin-top: 10px;
     border-radius: 10px;

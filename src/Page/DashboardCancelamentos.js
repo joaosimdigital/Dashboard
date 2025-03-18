@@ -270,7 +270,7 @@ export default function DashboardCancelamentos() {
                 <h1 className='h1-tabela-churn-cidade'>Churn dos Últimos Meses</h1>
 
                 {churnUltimosMeses.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={220}>
+                    <ResponsiveContainer width="100%" height={270}>
                         <BarChart data={churnUltimosMeses}>
                             <CartesianGrid strokeDasharray="2 2" />
                             <XAxis dataKey="mes" tick={{ fill: '#fff' }} fontWeight='bold' />
