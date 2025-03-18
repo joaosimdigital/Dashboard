@@ -2,6 +2,9 @@ import React from 'react'
 
 import '../CSS/DashboardOperaciona.css'
 
+
+import logobranca from '../Images/logobrnaca.png'
+
 export default function DashboardOperacional() {
   return (
     <div>
@@ -120,11 +123,34 @@ export default function DashboardOperacional() {
 
                     </div>
 
+                <div className='row-div-instalacao-grafico' >
+                    <div className='body1-agenda-operacao'>
+                        <div  className='div-agenda-operacao'>
+                                <h1  className='titulo-agenda-operacao'>Instalações por Trimestre</h1>
+                        </div>
+                        <div className='div-agenda2-operacao'>
+                        <h1 className='titulo-agenda-operacao'>Agenda</h1>
+                        <h1 className='titulo1-agenda-operacao'>Prazo de instalação</h1>
+                        </div>
+                    </div>
+                    <div className='body2-agenda-operacao'>
+                            <div className='div3-agenda-operacao'>
+                                <h1  className='titulo-agenda-operacao'>Tipo de Manutenção</h1>
+                            </div>
+                            <div className='div3-agenda-operacao'>
+                                <h1  className='titulo-agenda-operacao'>OS Dia</h1>
+                            </div>
 
+                    </div>
+                </div>
 
             </div>
 
-
+            <div className='div-titulo-dash'>
+            <h1 className='h2-titulo-dash'>CHURN TV</h1>
+            <h1 className='h1-titulo-dash'>CHURN TV</h1>
+            <img src={logobranca}/>
+        </div>
 
     </div>
   )
