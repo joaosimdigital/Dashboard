@@ -16,14 +16,20 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
+
+    
    
 }
 
+.div-row-primeiro-card{
+    width: 40%;
+}
 
 .row-primeiro-card{
     background-color: #474747;
     height: 180px;
-    width: 654px;
+    width: 95%;
+    margin-left: 10px;
     margin-top: 10px;
     border-radius: 10px;
     display: flex;
@@ -53,7 +59,7 @@
 
 
 .h2-numeros-vendas-mes{
-    font-size: 30px;
+    font-size: 22px;
     color: white;
     margin-top: 40px;
     font-family: 'Normal';
@@ -61,10 +67,11 @@
 }
 
 .card-meta-mes{
-    width: 654px;
+    width: 95%;
     height: 45px;
     display: flex;
     align-items: center;
+    margin-left: 10px;
     justify-content: space-between;
     background-color: red;
     margin-top: 10px;
@@ -72,7 +79,7 @@
 }
 
 .card-vendas-dia{
-    width: 320px;
+    width: 45%;
     background-color: #474747;
     border-radius: 10px;
     margin-top: 10px;
@@ -85,6 +92,8 @@
 
 .h1-card-vendas-dia{
     color: white;
+    width: 100%;
+    text-align: center;
     font-size: 25px;
     margin-bottom: 0px;
     font-family: 'Normal';
@@ -92,24 +101,25 @@
 
 .h2-card-vendas-dia{
     color: white;
-    font-size: 40px;
+    font-size: 50px;
     font-family: 'Bold';
-    margin-top: 0px;
+    margin-top: -10px;
     margin-bottom: 0px;
 }
 
 
 .div-dados-vendas{
-    width: 654px;
-    height: 230px;
+    width: 95%;
+    height: 240px;
     display: flex;
+    margin-left: 10px;
     flex-direction: row;
     justify-content: space-between;
 }
 
 
 .card-upgrade{
-    width: 300px;
+    width: 100%;
     display: flex;
     align-items: center;
     margin-bottom: 30px;
@@ -138,6 +148,7 @@
 .div-card-upgrade{
     height: 230px;
     margin-top: 10px;
+    width: 50%;
 }
 
 
@@ -154,10 +165,12 @@
 
 .div-row-principal{
     display: flex;
+    width: 100%;
+    justify-content: space-around;
 }
 
 .body-card-vendas-mes{
-    width: 290px;
+    width: 20%;
     margin-top: 10px;
     background-color: #474747;
     border-radius: 10px;
@@ -170,7 +183,7 @@
 
 
 .h1-card-vendas-mes-painel{
-    width: 100%;
+    width: 95%;
     font-size: 15px;
     color: white;
     text-align: center;
@@ -179,8 +192,8 @@
 }
 
 .h2-card-vendas-mes-painel{
-    width: 100%;
-    font-size: 40px;
+    width: 95%;
+    font-size: 50px;
     color: white;
     text-align: center;
     font-family: 'Bold';
@@ -201,7 +214,7 @@
 }
 
 .body-grafica-vendas{
-    width: 530px;
+    width: 40%;
 }
 
 .div-row-principal{
@@ -249,13 +262,16 @@
     margin-bottom: 10px;
     justify-content: space-between;
     display: flex;
-    height: 130px;
+    width: 95%;
     align-items: center;
+    display: flex;
+    height: 130px;
+  margin-left: 10px;
 }
 
 
 .titulo-tabela-grafico-vendas{
-    width: 300px;
+    width: 290px;
     color: white;
     text-align: start;
     font-size: 15px;
@@ -265,7 +281,7 @@
 }
 
 .subtitulo-tabela-grafico-vendas{
-    width: 100px;
+    width: 90px;
     color: white;
     text-align: start;
    
@@ -289,7 +305,7 @@
 
 
 .h2-header-card-grafico-vendas{
-    font-size: 10px;
+    font-size: 8px;
     color: white;
     margin-top: 0px;
     width: 100%;
@@ -302,8 +318,9 @@
 .grafico-comercial{
     background-color: #474747;
     width: 95%;
+    margin-left: 10px;
     height: 200px;
-    padding: 10px 10px;
+    padding: 10px 0px;
     margin-top: 10px;
     border-radius: 10px;
     display: flex;
@@ -321,7 +338,8 @@
     margin-bottom: 10px;
     justify-content: space-between;
     display: flex;
-    height: 130px;
+    height: 110px;
+    margin-left: 10px;
     align-items: center;
 }
 
@@ -330,7 +348,7 @@
     background-color: #474747;
     border-radius: 5px;
     width: 50%;
-    height: 130px;
+    height: 110px;
 }
 
 
@@ -338,7 +356,7 @@
     color: white;
     font-family: 'Normal';
     width: 100%;
-    font-size: 19px;
+    font-size: 17px;
     margin-bottom: 0px;
     text-align: center;
 }
@@ -347,8 +365,8 @@
     color: white;
     font-family: 'Normal';
     width: 100%;
-    font-size: 50px;
-    margin-top: 0px;
+    font-size: 60px;
+    margin-top: -10px;
     margin-bottom: 0px;
     text-align: center;
 }
@@ -357,7 +375,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 20px;
+    margin-top: 10px;
+    width: 95%;
+    margin-left: 10px;
 }
 
 
@@ -386,7 +406,7 @@
 
 .div-row-card-meta{
     height: 50px;
-    width: 320px;
+    width: 45%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -397,7 +417,7 @@
 
 .div-row-card-meta-text{
     height: 50px;
-    width: 300px;
+    width: 50%;
     display: flex;
     border-radius: 5px;
     justify-content: space-between;
@@ -411,18 +431,16 @@
     align-items: center;
     justify-content: center;
     display: flex;
-
-    width: 63%;
-    margin-top: -80px;
-    border-radius: 10px;
     margin-left: 10px;
-    height: 80px;
+    width: 59%;
+    margin-top: -70px;
+    border-radius: 10px;
+    height: 70px;
 }
 
 
 .h1-para-bater-meta{
     color: white;
-    font-size: 40px;
+    font-size: 35px;
     font-family: 'Bold';
-
 }

@@ -141,7 +141,7 @@ export default function DashboardComercial() {
 
       <div className='div-row-principal'>
 
-      <div>
+      <div className='div-row-primeiro-card'>
       <div className='row-primeiro-card'>
         <div className='card-primeiro-metricas-mes'>
           <h1 className='h2-numeros-vendas-mes'>Vendas Mês SC</h1>
@@ -240,7 +240,7 @@ export default function DashboardComercial() {
             </div>
 
 
-              <table>
+              <table style={{marginLeft: '20px'}}>
           <thead>
             <tr>
               <th className='titulo-tabela-grafico-vendas'>Plano</th>
@@ -309,7 +309,7 @@ export default function DashboardComercial() {
                       <h1 className='h1-tabela-churn-cidade'>Vendas por trimestre</h1>
       
                       {churnUltimosMeses.length > 0 ? (
-                          <ResponsiveContainer width="95%" height={150}>
+                          <ResponsiveContainer width="95%" height={160} style={{marginTop: '-10px'}}>
                               <BarChart data={churnUltimosMeses}>
                                   <CartesianGrid strokeDasharray="2 2" />
                                   <XAxis dataKey="mes" tick={{ fill: '#fff' }} fontWeight='bold' />
