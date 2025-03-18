@@ -1,0 +1,16 @@
+
+
+.row-div-instalacao-manutencao{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+}
+
+
+.div-card-dados-principais{
+    background-color: #949393;
+    height: 200px;
+    width: 70px;
+}
