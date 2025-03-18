@@ -404,3 +404,25 @@
     align-items: center;
     background-color: #FA0F0F;
 }
+
+
+.div-para-bater-meta{
+    background-color: #474747;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+
+    width: 63%;
+    margin-top: -80px;
+    border-radius: 10px;
+    margin-left: 10px;
+    height: 80px;
+}
+
+
+.h1-para-bater-meta{
+    color: white;
+    font-size: 40px;
+    font-family: 'Bold';
+
+}

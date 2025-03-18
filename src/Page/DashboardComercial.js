@@ -128,6 +128,14 @@ export default function DashboardComercial() {
     return () => clearInterval(intervalId);
   }, []);
 
+
+    const getDaysRemaining = () => {
+      const today = new Date();
+      const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      return lastDayOfMonth.getDate() - today.getDate();
+    };
+  
+
   return (
     <div className='body-principal'>
 
@@ -196,7 +204,7 @@ export default function DashboardComercial() {
       {/* Novos cards para exibir dados de PF e PJ no RS */}
       <div className='card-vendas-mes-azul'>
         <h1 className='h1-card-vendas-mes-painel'>PF</h1>
-        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosRSPF}</h1>
+        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosSCPF}</h1>
       </div>
 
       <div className='card-vendas-mes-azul'>
@@ -210,7 +218,7 @@ export default function DashboardComercial() {
 
       <div  className='card-vendas-mes-azul'>
         <h1 className='h1-card-vendas-mes-painel'>PF</h1>
-        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosSCPF}</h1>
+        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosRSPF}</h1>
       </div>
 
       <div  className='card-vendas-mes-azul'>
@@ -326,8 +334,8 @@ export default function DashboardComercial() {
 
       </div>
 
-      <div>
-        <h1>Faltam 20 dias para batermos a meta!</h1>
+      <div className='div-para-bater-meta'>
+        <h1 className='h1-para-bater-meta'>  Faltam {getDaysRemaining()} dias para batermos a meta!</h1>
       </div>
 
 
