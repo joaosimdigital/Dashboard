@@ -1,4 +1,6 @@
 import React from 'react'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList} from 'recharts';
+
 
 import '../CSS/DashboardOperaciona.css'
 
@@ -10,6 +12,15 @@ import schedule from '../Images/schedule.png'
 import person from '../Images/person.png'
 
 export default function DashboardOperacional() {
+
+
+    const data = [
+        { month: 'Janeiro', instalacoes: 200 },
+        { month: 'Fevereiro', instalacoes: 300 },
+        { month: 'Março', instalacoes: 400 },
+      ];
+      
+
   return (
     <div>
 
@@ -129,8 +140,25 @@ export default function DashboardOperacional() {
 
                 <div className='row-div-instalacao-grafico' >
                     <div className='body1-agenda-operacao'>
+                        
                         <div  className='div-agenda-operacao'>
-                                <h1  className='titulo-agenda-operacao'>Instalações por Trimestre</h1>
+                        <h1 className='h1-tabela-agenda-dia'>Instalações pro trimestre</h1>
+                        <ResponsiveContainer width='100%' height={250}>
+                        <BarChart data={data} margin={{ top:30, right: 30, left: 20, bottom: 20 }}>
+                            <CartesianGrid strokeDasharray='3 3' />
+                            <XAxis 
+                            dataKey='month' 
+                         tick={{ fill: '#fff', fontSize: 10}} fontWeight='bold'
+                            />
+                           
+                            <Tooltip />
+                           
+                            <Bar dataKey='instalacoes' fill='#F45742' barSize={50}>
+                            <LabelList dataKey="instalacoes" position="center" fill="white" />
+                            </Bar>
+                        </BarChart>
+                        </ResponsiveContainer>
+
                         </div>
                         <div className='div-agenda2-operacao'>
                         <h1 className='titulo-agenda-operacao'>Agenda</h1>

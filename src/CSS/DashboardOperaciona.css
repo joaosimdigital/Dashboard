@@ -180,6 +180,10 @@ margin-bottom:18px;
 .div-agenda-operacao{
     width: 60%;
     height: 270px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     margin-top: 0px;
     margin-bottom: 0px;
     border-radius: 10px;
@@ -267,4 +271,17 @@ margin-bottom:18px;
     justify-content: center;
     width: 100%;
     height: 220px;
+}
+
+
+
+.h1-tabela-agenda-dia{
+    width: 100%;
+    text-align: center;
+    margin-top:20px;
+    font-size: 18px;
+    color: white;
+    font-weight: bold;
+    font-family: 'Bold';
+    margin-bottom:0px;
 }

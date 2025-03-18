@@ -267,7 +267,7 @@ export default function DashboardCancelamentos() {
     </div>
 
     <div className='grafico'>
-                <h1 className='h1-tabela-churn-cidade'>Churn dos Últimos Meses</h1>
+                <h1 className='h1-tabela-agenda-dia'>Churn dos Últimos Meses</h1>
 
                 {churnUltimosMeses.length > 0 ? (
                     <ResponsiveContainer width="100%" height={270}>
@@ -275,7 +275,7 @@ export default function DashboardCancelamentos() {
                             <CartesianGrid strokeDasharray="2 2" />
                             <XAxis dataKey="mes" tick={{ fill: '#fff' }} fontWeight='bold' />
                             <YAxis  tick={{ fill: '#fff' }} />
-                            <Tooltip />
+                            <Tooltip  />
                            
                             <Bar dataKey="churn" stackId="a" fill="#F45742">
                                 {/* Exibindo os valores dentro das barras */}
@@ -295,7 +295,7 @@ export default function DashboardCancelamentos() {
 
         <div className='div-titulo-dash'>
             <h1 className='h2-titulo-dash'>CHURN TV</h1>
-            <h1 className='h1-titulo-dash'>OPERAÇÃO TV</h1>
+            <h1 className='h1-titulo-dash'>CHURN TV</h1>
             <img src={logobranca}/>
         </div>
 
