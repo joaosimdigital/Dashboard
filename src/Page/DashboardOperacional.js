@@ -148,7 +148,7 @@ export default function DashboardOperacional() {
 
             <div className='div-titulo-dash'>
             <h1 className='h2-titulo-dash'>CHURN TV</h1>
-            <h1 className='h1-titulo-dash'>CHURN TV</h1>
+            <h1 className='h1-titulo-dash'>OPERACIONAL TV</h1>
             <img src={logobranca}/>
         </div>
 
