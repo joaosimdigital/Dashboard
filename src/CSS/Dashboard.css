@@ -32,7 +32,7 @@
 
 .div-numeros-churn{
     background-color: #474747;
-    width: 682px;
+    width: 580px;
     height: 275px;
     border-radius: 10px;
     padding: 10px 10px;
@@ -42,7 +42,7 @@
 
 .div-numeros-churn2{
     background-color: rgb(23, 229, 50);
-    width: 682px;
+    width: 580px;
     justify-content: space-between;
     height: 85px;
     display: flex;
@@ -55,7 +55,7 @@
 }
 
 .h1-numeros-churn{
-    font-size: 130px;
+    font-size: 100px;
     color: white;
     font-weight: bold;
     font-family: 'Bold';
@@ -65,7 +65,7 @@
 
 
 .h2-numeros-churn{
-    font-size: 60px;
+    font-size: 50px;
     color: white;
     font-family: 'Bold';
 }
@@ -89,7 +89,7 @@
 
 .div-numero-solicitacao{
     background-color: #474747;
-    width: 682px;
+    width: 580px;
     height: 150px;
     border-radius: 10px;
     padding: 0px 10px;
@@ -125,7 +125,7 @@
 
 .div-texto-status{
     background-color: #474747;
-    width: 682px;
+    width: 580px;
     height: 130px;
     border-radius: 10px;
     padding: 0px 10px;
@@ -155,7 +155,7 @@
 
 .tabela-churn-cidade{
     background-color: #474747;
-    width: 682px;
+    width: 580px;
     height: 210px;
     padding: 10px 10px;
     display: flex;
@@ -191,7 +191,7 @@
 
 .grafico{
     background-color: #474747;
-    width: 682px;
+    width: 580px;
     height: 370px;
     padding: 10px 10px;
     margin-top: 10px;
