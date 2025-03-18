@@ -4,6 +4,10 @@ import '../CSS/DashboardOperaciona.css'
 
 
 import logobranca from '../Images/logobrnaca.png'
+import check_box from '../Images/check_box.png'
+import poste from '../Images/poste 1.png'
+import schedule from '../Images/schedule.png'
+import person from '../Images/person.png'
 
 export default function DashboardOperacional() {
   return (
@@ -134,11 +138,44 @@ export default function DashboardOperacional() {
                         </div>
                     </div>
                     <div className='body2-agenda-operacao'>
-                            <div className='div3-agenda-operacao'>
+                        
+
+                    <div className='div3-agenda-operacao'>
                                 <h1  className='titulo-agenda-operacao'>Tipo de Manutenção</h1>
+
+                                <div className='agenda-os-dia'>
+                                <div className='row-div3-agenda-operacao'>
+                                    <img style={{width: '13px'}} src={poste}/>
+                                    <h1 className='titulo-agenda1-operacao'>55</h1>
+                                    </div>
+
+                                    
+                                <div className='row-div3-agenda-operacao'>
+                                    <img  style={{width: '30px'}} src={person}/>
+                                    <h1 className='titulo-agenda1-operacao'>55</h1>
+                                    </div>
+
+                                    </div>
+
                             </div>
+
                             <div className='div3-agenda-operacao'>
                                 <h1  className='titulo-agenda-operacao'>OS Dia</h1>
+
+                                <div className='agenda-os-dia'>
+                                <div className='row-div3-agenda-operacao'>
+                                    <img style={{width: '30px'}} src={schedule}/>
+                                    <h1 className='titulo-agenda1-operacao'>55</h1>
+                                    </div>
+
+                                    
+                                <div className='row-div3-agenda-operacao'>
+                                    <img  style={{width: '30px'}} src={check_box}/>
+                                    <h1 className='titulo-agenda1-operacao'>55</h1>
+                                    </div>
+
+                                    </div>
+
                             </div>
 
                     </div>
