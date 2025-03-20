@@ -22,6 +22,8 @@ export default function DashboardOperacional() {
      const [totalOrdemServiconaPessoa, setTotalOrdemServiconaPessoa] = useState(0);
      const [totalOrdemServicoPendente, setTotalOrdemServicoPendente] = useState(0);
      const [totalOrdemServicoConcluido, setTotalOrdemServicoConcluido] = useState(0);
+     const [totalIRR, setTotalIRR] = useState(0);
+     const [totalIQR, setTotalIQR] = useState(0);
      const [graficoData, setGraficoData] = useState([]);
         const total1 = 810;
         const total2 = 1200;
@@ -53,6 +55,14 @@ export default function DashboardOperacional() {
     // Função para buscar os dados
     const fetchData = async () => {
       try {
+
+        const responseiqr = await fetch('http://38.224.145.3:3003/total-clientes-retrabalho-instalacao');
+        const dataiqr = await responseiqr.json();
+        setTotalIQR(dataiqr.total_repeticoes_clientes_retrabalho); // Armazenando o total de cadastros de SC
+
+        const responseirr = await fetch('http://38.224.145.3:3003/clientes-repetidos-30-dias');
+        const datairr = await responseirr.json();
+        setTotalIRR(datairr.total_clientes_repetidos); // Armazenando o total de cadastros de SC
      
         const responsehojehabilitados = await fetch('http://38.224.145.3:3003/total-clientes-habilitados-hoje');
         const datahabilitadoshoje = await responsehojehabilitados.json();
@@ -310,6 +320,28 @@ export default function DashboardOperacional() {
                                 <div className='row-div3-agenda-operacao'>
                                     <img  style={{width: '30px'}} src={check_box}/>
                                     <h1 className='titulo-agenda1-operacao'>{totalOrdemServicoConcluido}</h1>
+                                    </div>
+
+                                    </div>
+
+                            </div>
+
+                            <div className='div3-agenda-operacao'>
+                                <h1  className='titulo-agenda-operacao'>Metricas</h1>
+
+
+
+                                <div className='agenda-os-dia'>
+                                <h1 className='h1-card-dados-principais-dados1'>IRR</h1>
+                                <div className='row-div3-agenda-operacao'>
+                                 
+                                    <h1 className='titulo-agenda1-operacao'>{totalIRR}</h1>
+                                    </div>
+
+                                    <h1 className='h1-card-dados-principais-dados1'>IQR</h1>
+                                <div className='row-div3-agenda-operacao'>
+                                 
+                                    <h1 className='titulo-agenda1-operacao'>{totalIQR}</h1>
                                     </div>
 
                                     </div>

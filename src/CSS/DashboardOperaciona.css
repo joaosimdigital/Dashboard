@@ -67,6 +67,17 @@
 }
 
 
+.h1-card-dados-principais-dados1{
+    font-size: 20px;
+    font-family: 'Normal';
+    color: white;
+    margin-bottom: -5px;
+    margin-top: 0px;
+
+
+}
+
+
 
 .h1-card-dados-principais-dados{
     font-size: 20px;
@@ -209,7 +220,7 @@ margin-bottom:18px;
 }
 
 .div3-agenda-operacao{
-    width: 48%;
+    width: 30%;
     height: 270px;
     display: flex;
     flex-direction: column;
@@ -285,3 +296,4 @@ margin-bottom:18px;
     font-family: 'Bold';
     margin-bottom:0px;
 }
+
