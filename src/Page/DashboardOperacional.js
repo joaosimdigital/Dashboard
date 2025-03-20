@@ -98,7 +98,7 @@ export default function DashboardOperacional() {
         const dataordensservicoconcluido = await responsemordensservicoconcluido.json();
         setTotalOrdemServicoConcluido(dataordensservicoconcluido.total_pendentes); // Armazenando o total de cadastros de SC
 
-        const response = await fetch('http://localhost:3003/total-clientes-habilitados-ultimos-3-meses');
+        const response = await fetch('http://38.224.145.3:3003/total-clientes-habilitados-ultimos-3-meses');
         const data = await response.json();
 
         // Criando dados formatados para o gráfico
