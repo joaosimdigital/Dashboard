@@ -127,6 +127,9 @@
 
 .card-div2-header-clientes5{
     width: 400px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
     height: 290px;
     border-radius: 5px;
     background-color: #252423;
@@ -159,7 +162,8 @@
 .row5-header-clientes{
     display: flex;
     justify-content: space-around;
-    margin-top: 30px
+    margin-top: 30px;
+    align-items: center;
 }
 
 
@@ -192,4 +196,26 @@
     font-size: 14px;
     margin-bottom: 0px;
     font-family: 'Normal';
+}
+
+.titulo-tabela-churn-cidade1{
+    width: 100px;
+    color: white;
+    text-align: start;
+   
+    font-size: 22px;
+    margin-bottom: 20px;
+    font-family: 'Normal';
+
+}
+
+.titulo-tabela-churn-cidade3{
+    width: 500px;
+    height: 45px;
+    color: white;
+    text-align: start;
+    font-size: 22px;
+    margin-bottom: 20px;
+    font-family: 'Normal';
+
 }

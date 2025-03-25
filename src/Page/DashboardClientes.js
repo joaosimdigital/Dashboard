@@ -16,6 +16,11 @@ function DashboardClientes() {
     const [totalclientespf, setTotalClientesPF] = useState("")
     const [totalticketmedio, setTotalTicketMedio] = useState("")
     const [totalltv, setTotalLTV] = useState("")
+    const [dadosCidades, setDadosCidades] = useState([]);
+    const [topplanos, setTopPlanos] = useState([]);
+    const [topticket, setTopTicket] = useState([]);
+    const [topbairros, setTopBairros] = useState([]);
+
 
 
       useEffect(() => {
@@ -65,8 +70,48 @@ function DashboardClientes() {
             const responseltv = await fetch('http://38.224.145.3:3004/ltv');
             const dataltv = await responseltv.json();
             setTotalLTV(dataltv.tempo_medio_na_base_meses); // Armazenando o total de cadastros de SC
+
+            
+            const responsetop4cidades = await fetch('http://38.224.145.3:3004/clientes-top4-cidades');
+            const dattop4cidades = await responsetop4cidades.json();
+            const formattedData = dattop4cidades.top4_cidades.map(data => ({
+                cidade_nome: data.cidade_nome, // Manter o nome correto
+                qtd: parseInt(data.total_clientes, 10) // Converter para número
+            }));
+
+            setDadosCidades(formattedData);
+
+
+            const responsetopplanos = await fetch('http://38.224.145.3:3004/planos-mais-vendidos');
+            const dattopplanos = await responsetopplanos.json();
+            const formattedtopplanos = dattopplanos.planos_mais_vendidos.map(data => ({
+                plano: data.plano, // Manter o nome correto
+                total_vendas: parseInt(data.total_vendas, 10) // Converter para número
+            }));
+
+            setTopPlanos(formattedtopplanos);
+
+
+            const responsetopticket = await fetch('http://38.224.145.3:3004/maiores-tickets');
+            const dattopticket = await responsetopticket.json();
+            const formattedtopticket = dattopticket.maiores_tickets.map(data => ({
+                nome: data.nome_cliente, // Manter o nome correto
+                valor: parseInt(data.valor_pago, 10) // Converter para número
+            }));
+
+            setTopTicket(formattedtopticket);
+
+
+            const responsetopbairro = await fetch('http://38.224.145.3:3004/clientes-top10-bairros');
+            const dattopbairro = await responsetopbairro.json();
+            const formattedtopbairro = dattopbairro.top10_bairros.map(data => ({
+                nome: data.bairro, // Manter o nome correto
+                valor: parseInt(data.total_clientes, 10) // Converter para número
+            }));
+
+            setTopBairros(formattedtopbairro);
     
-    
+           
     
           } catch (error) {
             console.error('Erro ao buscar dados:', error);
@@ -82,6 +127,8 @@ function DashboardClientes() {
         // Limpeza do intervalo quando o componente for desmontado
         return () => clearInterval(intervalId);
       }, []);
+
+      
 
   return (
     <div className='body-clientes'>
@@ -165,16 +212,93 @@ function DashboardClientes() {
 
                             <div className='card-div2-header-clientes5'>
                                 <h1 className='titulodiv-header-clientes-bairros'>TOP CIDADES</h1>
+
+                                <table style={{justifyContent: 'center', display: 'flex', flexDirection: 'column', marginTop: 20 }}>
+                                    <thead>
+                                        <tr>
+                                            <th className='titulo-tabela-churn-cidade'>Cidade</th>
+                                            <th className='titulo-tabela-churn-cidade1'>QTD</th>
+                                        
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {dadosCidades.length > 0 ? (
+                                            dadosCidades.map((data, index) => (
+                                                <tr key={index}>
+                                                    <th className='titulo-tabela-churn-cidade'>{data.cidade_nome}</th>
+                                                    <th className='titulo-tabela-churn-cidade1'>{data.qtd}</th>
+                                             
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="3">Sem dados disponíveis</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
                            
                             </div>
 
                             <div className='card-div2-header-clientes5'>
                                 <h1 className='titulodiv-header-clientes-bairros'>TOP PLANOS</h1>
-                              
+
+                                <table style={{justifyContent: 'center', display: 'flex', flexDirection: 'column', marginTop: 20 }}>
+                                    <thead>
+                                        <tr>
+                                            <th className='titulo-tabela-churn-cidade'>Planos</th>
+                                            <th className='titulo-tabela-churn-cidade1'>QTD</th>
+                                        
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {topplanos.length > 0 ? (
+                                            topplanos.map((data, index) => (
+                                                <tr key={index}>
+                                                    <th className='titulo-tabela-churn-cidade'> {data.plano.length > 15 ? data.plano.slice(0, 15) + "..." : data.plano}</th>
+                                                    <th className='titulo-tabela-churn-cidade1'>{data.total_vendas}</th>
+                                             
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="3">Sem dados disponíveis</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                           
                             </div>
+             
 
                             <div className='card-div2-header-clientes5'>
                                 <h1 className='titulodiv-header-clientes-bairros'>TOP TICKET'S</h1>
+
+
+                                <table style={{justifyContent: 'center', display: 'flex', flexDirection: 'column', marginTop: 20 }}>
+                                    <thead>
+                                        <tr>
+                                            <th className='titulo-tabela-churn-cidade'>Planos</th>
+                                            <th className='titulo-tabela-churn-cidade1'>QTD</th>
+                                        
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {topticket.length > 0 ? (
+                                            topticket.map((data, index) => (
+                                                <tr key={index}>
+                                                    <th className='titulo-tabela-churn-cidade'> {data.nome.length > 12 ? data.nome.slice(0, 12) + "..." : data.nome}</th>
+                                                    <th className='titulo-tabela-churn-cidade1'>{data.valor}</th>
+                                             
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="3">Sem dados disponíveis</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
                               
                             </div>
 
@@ -185,6 +309,35 @@ function DashboardClientes() {
                     <div className='div3-header-clientes'>
                             <div className='div-header-clientes-bairros'>
                                 <h1 className='titulodiv-header-clientes-bairros'>TOP BAIRROS</h1>
+
+                                <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                                <table style={{justifyContent: 'center', display: 'flex', flexDirection: 'column', marginTop:10, width: '90%'}}>
+                                    <thead>
+                                        <tr>
+                                            <th className='titulo-tabela-churn-cidade3'>Planos</th>
+                                            <th className='titulo-tabela-churn-cidade1'>QTD</th>
+                                        
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {topbairros.length > 0 ? (
+                                            topbairros.map((data, index) => (
+                                                <tr key={index}>
+                                                    <th className='titulo-tabela-churn-cidade3'> {data.nome.length > 20 ? data.nome.slice(0, 20) + "..." : data.nome}</th>
+                                                    <th className='titulo-tabela-churn-cidade1'>{data.valor}</th>
+                                             
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="3">Sem dados disponíveis</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                                </div>
+
+
                             </div>
                     </div>
                 </div>
