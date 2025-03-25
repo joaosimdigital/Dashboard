@@ -9,11 +9,20 @@
   }
 
 
+.body-header-clientes{
+    width: 100%;
+}
+
+.body-clientes{
+    width: 100%;
+}
+
 
 
 .row-header-clientes{
     display: flex;
     width: 100%;
+    align-items: center;
     justify-content: space-around;
 }
 
@@ -110,7 +119,7 @@
 
 .card-div2-header-clientes{
     width: 400px;
-    height: 140px;
+    height: 160px;
     border-radius: 5px;
     background-color: #747474;
 }
@@ -126,7 +135,7 @@
 
 .card-div2-header-clientes3{
     width: 400px;
-    height: 140px;
+    height: 160px;
     background-color: #252423;
     border-radius: 5px;
 }
@@ -142,7 +151,7 @@
 .row4-header-clientes{
     display: flex;
     justify-content: space-around;
-    margin-top: 40px;
+    margin-top: 20px;
     
 }
 
@@ -169,6 +178,18 @@
     text-align: center;
     color: white;
     margin-top: 10px;
-    font-size: 20px;
+    font-size: 25px;
+    margin-bottom: 0px;
+    font-family: 'Normal';
+}
+
+
+.titulodiv1-header-clientes-bairros{
+    width: 100%;
+    text-align: center;
+    color: white;
+    margin-top: -30px;
+    font-size: 14px;
+    margin-bottom: 0px;
     font-family: 'Normal';
 }
