@@ -26,6 +26,7 @@ export default function DashboardComercial() {
   const [totalAguardando, setTotalAguardando] = useState(null);
   const [mediaDiaria, setMediaDiaria] = useState(0);
   const [metaTotal, setMetaTotal] = useState(0);
+  const [porcentagemMeta, setPorcentagemMeta] = useState(0);
 
   
   useEffect(() => {
@@ -46,6 +47,7 @@ export default function DashboardComercial() {
   useEffect(() => {
     const total = Number(totalVendasDiaSC) + Number(totalVendasDiaRS);
     setMetaTotal(total);
+
     
     const fetchData = async () => {
       try {
