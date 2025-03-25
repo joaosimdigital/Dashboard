@@ -39,7 +39,7 @@
 }
 
 
-.card-header-clientes2{
+.card-header-clientes2 {
     width: 400px;
     background-color: #05A039;
     height: 150px;
@@ -48,6 +48,7 @@
     justify-content: center;
     display: flex;
     flex-direction: column;
+    filter: brightness(1.1); /* Aumenta o brilho em 50% */
 }
 
 
@@ -60,6 +61,7 @@
     justify-content: center;
     display: flex;
     flex-direction: column;
+    filter: brightness(1.1); /* Aumenta o brilho em 50% */
 }
 
 
@@ -73,6 +75,7 @@
     justify-content: center;
     display: flex;
     flex-direction: column;
+    filter: brightness(1.1); /* Aumenta o brilho em 50% */
 }
 
 
@@ -92,7 +95,19 @@
     font-family: 'Bold';
     margin-bottom: 0px;
     text-align: center;
-    font-size: 90px;
+    font-size: 80px;
+
+}
+
+.h2-card-header2-clientes{
+    color: white;
+    width: 100%;
+    margin-top: 0px;
+    font-family: 'Bold';
+    margin-bottom: 0px;
+    text-align: start;
+    font-size: 60px;
+    margin-left: 10px;
 }
 
 
@@ -119,7 +134,61 @@
 
 .card-div2-header-clientes{
     width: 400px;
-    height: 160px;
+    display: flex;
+    flex-direction: column;
+    height: 150px;
+    justify-content: start;
+    border-radius: 5px;
+    background-color: #747474;
+}
+
+.card-div2-header1-clientes{
+    background-image: url('../Images//image\ 7.png');
+    background-position: bottom; /* Alinha a imagem no final da div */
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    height: 150px;
+    justify-content: start;
+    border-radius: 5px;
+    background-color: #747474;
+}
+
+
+.card-div2-header2-clientes{
+    background-image: url('../Images/image\ 8.png');
+    background-position: bottom; /* Alinha a imagem no final da div */
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    height: 150px;
+    justify-content: start;
+    border-radius: 5px;
+    background-color: #747474;
+}
+
+
+.card-div2-header3-clientes{
+    background-image: url('../Images/image\ 10.png');
+    background-position: bottom; /* Alinha a imagem no final da div */
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    height: 150px;
+    justify-content: start;
+    border-radius: 5px;
+    background-color: #747474;
+}
+
+
+.card-div2-header4-clientes{
+    background-image: url('../Images/image\ 9.png');
+    background-position: bottom; /* Alinha a imagem no final da div */
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    height: 150px;
+    justify-content: start;
     border-radius: 5px;
     background-color: #747474;
 }
@@ -138,7 +207,7 @@
 
 .card-div2-header-clientes3{
     width: 400px;
-    height: 160px;
+    height: 150px;
     background-color: #252423;
     border-radius: 5px;
 }
@@ -187,6 +256,20 @@
     font-family: 'Normal';
 }
 
+
+
+
+
+.titulodiv-header1-clientes-bairros{
+    width: 90%;
+    text-align: start;
+    color: white;
+    margin-left: 10px;
+    margin-top: 10px;
+    font-size: 25px;
+    margin-bottom: 0px;
+    font-family: 'Normal';
+}
 
 .titulodiv1-header-clientes-bairros{
     width: 100%;

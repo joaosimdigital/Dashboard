@@ -169,14 +169,14 @@ function DashboardClientes() {
 
                         <div className='row3-header-clientes'>
 
-                        <div className='card-div2-header-clientes'>
-                            <h1 className='titulodiv-header-clientes-bairros'>RS</h1>
-                            <h1 className='h2-card-header-clientes'>{totalclienters}</h1>
+                        <div className='card-div2-header1-clientes'>
+                            <h1 className='titulodiv-header1-clientes-bairros'>RS</h1>
+                            <h1 className='h2-card-header2-clientes'>{totalclienters}</h1>
                         </div>
 
-                        <div className='card-div2-header-clientes'>
-                            <h1 className='titulodiv-header-clientes-bairros'>PJ</h1>
-                            <h1 className='h2-card-header-clientes'>{totalclientespj}</h1>
+                        <div className='card-div2-header4-clientes'>
+                            <h1 className='titulodiv-header1-clientes-bairros'>PJ</h1>
+                            <h1 className='h2-card-header2-clientes'>{totalclientespj}</h1>
                         </div>
 
                         <div className='card-div2-header-clientes3'>
@@ -190,14 +190,14 @@ function DashboardClientes() {
 
                         <div className='row4-header-clientes'>
 
-                        <div className='card-div2-header-clientes'>
-                            <h1 className='titulodiv-header-clientes-bairros'>SC</h1>
-                            <h1 className='h2-card-header-clientes'>{totalclientesc}</h1>
+                        <div className='card-div2-header2-clientes'>
+                            <h1 className='titulodiv-header1-clientes-bairros'>SC</h1>
+                            <h1 className='h2-card-header2-clientes'>{totalclientesc}</h1>
                         </div>
 
-                        <div className='card-div2-header-clientes'>
-                            <h1 className='titulodiv-header-clientes-bairros'>PF</h1>
-                            <h1 className='h2-card-header-clientes'>{totalclientespf}</h1>
+                        <div className='card-div2-header3-clientes'>
+                            <h1 className='titulodiv-header1-clientes-bairros'>PF</h1>
+                            <h1 className='h2-card-header2-clientes'>{totalclientespf}</h1>
                         </div>
 
                         <div className='card-div2-header-clientes3'>
