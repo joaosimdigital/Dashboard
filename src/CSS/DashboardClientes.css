@@ -11,6 +11,7 @@
 
 .body-header-clientes{
     width: 100%;
+    display: flex;
 }
 
 .body-clientes{
@@ -88,6 +89,15 @@
     margin-bottom: 0px;
 }
 
+.h4-card-header-clientes{
+    color: white;
+    width: 100%;
+    text-align: center;
+    font-size: 30px;
+    font-family: 'Normal';
+    margin-bottom:20px;
+}
+
 .h2-card-header-clientes{
     color: white;
     width: 100%;
@@ -95,7 +105,7 @@
     font-family: 'Bold';
     margin-bottom: 0px;
     text-align: center;
-    font-size: 80px;
+    font-size: 110px;
 
 }
 
@@ -301,4 +311,45 @@
     margin-bottom: 20px;
     font-family: 'Normal';
 
+}
+
+
+.div2-header-clientes{
+    width: 33%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+
+.div1-header-clientes{
+    width: 33%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.card2-header-clientes{
+    width: 90%;
+    background-color: #252423;
+    height: 625px;
+    margin-top: 50px;
+    border-radius: 5px;
+    
+    display: flex;
+    flex-direction: column;
+}
+
+
+.card1-header-clientes{
+    width: 90%;
+    background-color: #252423;
+    height: 175px;
+    margin-top: 50px;
+    border-radius: 5px;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
 }

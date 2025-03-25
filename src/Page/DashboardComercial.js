@@ -24,10 +24,29 @@ export default function DashboardComercial() {
   const [churnUltimosMeses, setChurnUltimosMeses] = useState([]);
   const [totalAtendimentos, setTotalAtendimentos] = useState(null);
   const [totalAguardando, setTotalAguardando] = useState(null);
+  const [mediaDiaria, setMediaDiaria] = useState(0);
+  const [metaTotal, setMetaTotal] = useState(0);
 
+  
+  useEffect(() => {
+    const metaTotal = 1035;
+    const hoje = new Date();
+    const anoAtual = hoje.getFullYear();
+    const mesAtual = hoje.getMonth();
+    const diasNoMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
+    
+    // Gerar todos os dias do mês
+    const diasUteis = Array.from({ length: diasNoMes }, (_, i) => new Date(anoAtual, mesAtual, i + 1))
+      .filter(dia => dia.getDay() !== 0); // Remove domingos
+    
+    // Calcula a média diária
+    setMediaDiaria((metaTotal / diasUteis.length).toFixed(0));
+  }, []);
 
   useEffect(() => {
-    // Função para buscar os dados
+    const total = Number(totalVendasDiaSC) + Number(totalVendasDiaRS);
+    setMetaTotal(total);
+    
     const fetchData = async () => {
       try {
         // Buscar dados de SC
@@ -156,7 +175,7 @@ export default function DashboardComercial() {
 
         <div className='card-meta-mes'>
           <h1 className='h1-card-meta-mes'>Meta Mês</h1>
-          <h1 className='h2-card-meta-mes'>0</h1>
+          <h1 className='h2-card-meta-mes'>1035</h1>
           
           </div>
 
@@ -175,8 +194,8 @@ export default function DashboardComercial() {
                 <h1  className='h2-card-upgrade'>{totalAtendimentos}</h1>
             </div>
             <div className='card-upgrade'>
-                <h1  className='h1-card-upgrade'>Media / média</h1>
-                <h1  className='h2-card-upgrade'>10</h1>
+                <h1  className='h1-card-upgrade'>Media / Dia</h1>
+                <h1  className='h2-card-upgrade'>{metaTotal}</h1>
             </div>
         </div>
 
@@ -186,7 +205,7 @@ export default function DashboardComercial() {
 
         <div className='div-row-card-meta'>
           <h1 className='h1-div-row-card-meta'>Meta dia</h1>
-          <h1  className='h2-div-row-card-meta'>0</h1>
+          <h1  className='h2-div-row-card-meta'>{mediaDiaria}</h1>
         </div>
 
         <div className='div-row-card-meta-text'>

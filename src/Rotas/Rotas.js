@@ -7,6 +7,7 @@ import DashboardCancelamentos from '../Page/DashboardCancelamentos';
 import DashboardComercial from '../Page/DashboardComercial';
 import DashboardOperacional from '../Page/DashboardOperacional';
 import DashboardClientes from '../Page/DashboardClientes';
+import DashboardClientesTV from '../Page/DashboardClientesTV';
 
 const Rotas = () => {
   return (
@@ -15,7 +16,8 @@ const Rotas = () => {
         <Route path='/cancelamentotv' element={<DashboardCancelamentos />} />
         <Route path='/comercialtv' element={<DashboardComercial />} />
         <Route path='/operacionaltv' element={<DashboardOperacional />} />
-        <Route path='/clientestv' element={<DashboardClientes />} />
+        <Route path='/clientestv' element={<DashboardClientesTV />} />
+        <Route path='/clientestv1' element={<DashboardClientes />} />
         
       </Routes>
     </Router>
