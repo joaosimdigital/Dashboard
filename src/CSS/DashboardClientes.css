@@ -16,6 +16,9 @@
 
 .body-clientes{
     width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 
 
@@ -324,7 +327,7 @@
 
 
 .div1-header-clientes{
-    width: 33%;
+    width: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -345,11 +348,24 @@
 
 .card1-header-clientes{
     width: 90%;
-    background-color: #252423;
+    background-color: #474747;
     height: 175px;
-    margin-top: 50px;
+    margin-top:10px;
     border-radius: 5px;
     justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.card3-header-clientes{
+    width: 95%;
+    background-color: #474747;
+    height: 175px;
+    margin-top: 10px;
+    border-radius: 5px;
+    justify-content: center;
+    margin-bottom: 40px;
     display: flex;
     flex-direction: column;
 }

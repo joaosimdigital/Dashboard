@@ -154,6 +154,12 @@ function DashboardClientesTV() {
   return (
     <div className='body-clientes'>
 
+
+            <div className='card3-header-clientes'>
+                            <h1 className='h1-card-header-clientes'>TOTAL DE CLIENTES</h1>
+                            <h1 className='h2-card-header-clientes'>{totalclientes}</h1>
+                            </div>
+
             <div className='body-header-clientes'>
 
                 <div className='div1-header-clientes'>
@@ -197,7 +203,7 @@ function DashboardClientesTV() {
 
                         </div>
 
-              
+                {/*
                     <div className='div2-header-clientes'>
 
                     <div className='card2-header-clientes'>
@@ -219,6 +225,8 @@ function DashboardClientesTV() {
 
                     </div>
                
+                */}
+
             </div>
 
 
