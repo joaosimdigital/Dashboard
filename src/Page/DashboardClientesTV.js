@@ -157,7 +157,7 @@ function DashboardClientesTV() {
 
             <div className='card3-header-clientes'>
                             <h1 className='h1-card-header-clientes'>TOTAL DE CLIENTES</h1>
-                            <h1 className='h2-card-header-clientes'>{totalclientes}</h1>
+                            <h1 className='h3-card-header-clientes'>{totalclientes}</h1>
                             </div>
 
             <div className='body-header-clientes'>

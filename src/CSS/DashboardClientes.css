@@ -108,7 +108,7 @@
     font-family: 'Bold';
     margin-bottom: 0px;
     text-align: center;
-    font-size: 110px;
+    font-size: 90px;
 
 }
 
@@ -349,7 +349,7 @@
 .card1-header-clientes{
     width: 90%;
     background-color: #474747;
-    height: 175px;
+    height: 155px;
     margin-top:10px;
     border-radius: 5px;
     justify-content: center;
@@ -365,7 +365,20 @@
     margin-top: 10px;
     border-radius: 5px;
     justify-content: center;
-    margin-bottom: 40px;
+    margin-bottom: 10px;
     display: flex;
     flex-direction: column;
+}
+
+
+
+.h3-card-header-clientes{
+    color: white;
+    width: 100%;
+    margin-top: -20px;
+    font-family: 'Bold';
+    margin-bottom: 0px;
+    text-align: center;
+    font-size: 110px;
+
 }
