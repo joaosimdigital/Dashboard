@@ -361,24 +361,34 @@
 .card3-header-clientes{
     width: 95%;
     background-color: #474747;
-    height: 175px;
-    margin-top: 10px;
-    border-radius: 5px;
-    justify-content: center;
-    margin-bottom: 10px;
+    height: 145px;
     display: flex;
-    flex-direction: column;
+    margin-top: 10px;
+    align-items: center;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    justify-content: center;
+    flex-direction: row;
 }
 
 
 
 .h3-card-header-clientes{
     color: white;
-    width: 100%;
-    margin-top: -20px;
     font-family: 'Bold';
     margin-bottom: 0px;
+    margin-left: 40px;
+    margin-top: 0px;
     text-align: center;
-    font-size: 110px;
+    font-size: 120px;
 
+}
+
+
+.h1-card-header-clientes1{
+    color: white;
+    text-align: center;
+    font-size: 17px;
+    font-family: 'Normal';
+    margin-bottom: 0px;
 }
