@@ -190,14 +190,14 @@ function DashboardClientesTV() {
                             </div>
 
                             <div className='card1-header-clientes'>
-                            <h1 className='h1-card-header-clientes'>CLIENTES RS PJzl</h1>
+                            <h1 className='h1-card-header-clientes'>CLIENTES RS PJ</h1>
                             <h1 className='h2-card-header-clientes'>{totalclienterspj}</h1>
                             </div>
 
 
                         </div>
 
-
+              
                     <div className='div2-header-clientes'>
 
                     <div className='card2-header-clientes'>

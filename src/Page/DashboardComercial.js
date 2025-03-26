@@ -25,7 +25,7 @@ export default function DashboardComercial() {
   const [totalAtendimentos, setTotalAtendimentos] = useState(null);
   const [totalAguardando, setTotalAguardando] = useState(null);
   const [mediaDiaria, setMediaDiaria] = useState(0);
-  const [metaTotal, setMetaTotal] = useState(0);
+  const [metaTotal, setMetaTotal] = useState("");
   const [porcentagemMeta, setPorcentagemMeta] = useState(0);
 
   
@@ -44,11 +44,13 @@ export default function DashboardComercial() {
     setMediaDiaria((metaTotal / diasUteis.length).toFixed(0));
   }, []);
 
+
   useEffect(() => {
     const total = Number(totalVendasDiaSC) + Number(totalVendasDiaRS);
     setMetaTotal(total);
+  }, [totalVendasDiaSC, totalVendasDiaRS]);
 
-    
+  useEffect(() => { 
     const fetchData = async () => {
       try {
         // Buscar dados de SC
