@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList, PieChart, Pie, Cell } from 'recharts';
+
 
 //CSS
 import '../CSS/DashboardComercial.css'
@@ -27,6 +28,14 @@ export default function DashboardComercial() {
   const [mediaDiaria, setMediaDiaria] = useState(0);
   const [metaTotal, setMetaTotal] = useState("");
   const [porcentagemMeta, setPorcentagemMeta] = useState(0);
+  
+const data = [
+  { name: 'Grupo A', value: 400 },
+  { name: 'Grupo B', value: 300 }
+
+]
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
   
   useEffect(() => {
@@ -45,9 +54,15 @@ export default function DashboardComercial() {
   }, []);
 
 
+
   useEffect(() => {
     const total = Number(totalVendasDiaSC) + Number(totalVendasDiaRS);
     setMetaTotal(total);
+
+
+    const totalMeses = Number(totalCadastrosSC) + Number(totalCadastrosRS) / metaTotal
+    console.log(totalMeses)
+
   }, [totalVendasDiaSC, totalVendasDiaRS]);
 
   useEffect(() => { 
@@ -321,8 +336,29 @@ export default function DashboardComercial() {
                   <h1 className='h2-card-grafico-aguardando'>{totalAguardando}</h1>
                 </div>
 
-                <div>
-
+                <div className='div-responsive'>
+                  <h1 className='h1-porcentagem-atingida'>Porcentagem atingida / Meta %</h1>
+                <ResponsiveContainer width="100%" height={75}>
+      <PieChart>
+        <Pie
+          data={data}
+          cx="50%"
+          cy="50%"
+          innerRadius={15}
+          outerRadius={30}
+          fill="#8884d8"
+          paddingAngle={2}
+          dataKey="value"
+          label
+        >
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          ))}
+        </Pie>
+        <Tooltip />
+     
+      </PieChart>
+    </ResponsiveContainer>  
                 </div>
 
               </div>
