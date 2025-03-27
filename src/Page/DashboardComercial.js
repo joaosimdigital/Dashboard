@@ -29,13 +29,12 @@ export default function DashboardComercial() {
   const [metaTotal, setMetaTotal] = useState("");
   const [porcentagemMeta, setPorcentagemMeta] = useState(0);
   
-const data = [
-  { name: 'Grupo A', value: 400 },
-  { name: 'Grupo B', value: 300 }
+  const data = [
+    { name: "Alcançado", value: porcentagemMeta},
+    { name: "Restante", value: 100 - porcentagemMeta}
+  ];
 
-]
-
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const COLORS = ['#FF4500', '#D3D3D3'];
 
   
   useEffect(() => {
@@ -56,12 +55,14 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 
   useEffect(() => {
+    const meta = 1035
     const total = Number(totalVendasDiaSC) + Number(totalVendasDiaRS);
     setMetaTotal(total);
 
 
-    const totalMeses = Number(totalCadastrosSC) + Number(totalCadastrosRS) / metaTotal
-    console.log(totalMeses)
+    const totalMeses = Number(totalCadastrosSC) + Number(totalCadastrosRS)
+    const porcentagemmes = (((totalMeses / meta) * 100).toFixed(0))
+    setPorcentagemMeta(porcentagemmes)
 
   }, [totalVendasDiaSC, totalVendasDiaRS]);
 
@@ -338,27 +339,30 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
                 <div className='div-responsive'>
                   <h1 className='h1-porcentagem-atingida'>Porcentagem atingida / Meta %</h1>
-                <ResponsiveContainer width="100%" height={75}>
-      <PieChart>
-        <Pie
-          data={data}
-          cx="50%"
-          cy="50%"
-          innerRadius={15}
-          outerRadius={30}
-          fill="#8884d8"
-          paddingAngle={2}
-          dataKey="value"
-          label
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip />
-     
-      </PieChart>
-    </ResponsiveContainer>  
+                  <ResponsiveContainer width="100%" height={75}>
+                  <PieChart>
+                    <Pie
+                      data={data}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={15} // Raio interno
+                      outerRadius={30} // Raio externo
+                      paddingAngle={2}
+                      dataKey="value"
+                      label={(entry) => `${entry.value}%`} 
+                    >
+                     {data.map((entry, index) => (
+        <Cell
+          key={`cell-${index}`}
+          fill={COLORS[index]} // Aplica a cor baseada no índice, primeiro alcançado (laranja), depois restante (cinza)
+        />
+      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+
+
                 </div>
 
               </div>
