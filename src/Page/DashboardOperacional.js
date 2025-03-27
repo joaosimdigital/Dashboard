@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList} from 'recharts';
+import * as XLSX from 'xlsx'
+
 
 
 import '../CSS/DashboardOperaciona.css'
@@ -25,6 +27,15 @@ export default function DashboardOperacional() {
      const [totalIRR, setTotalIRR] = useState(0);
      const [totalIQR, setTotalIQR] = useState(0);
      const [graficoData, setGraficoData] = useState([]);
+
+     const [regionsData, setRegionsData] = useState([
+      { name: 'Caxias', days: 2 },
+      { name: 'Continente', days: 6 },
+      { name: 'Norte', days: 8 },
+      { name: 'Sul', days: 5 },
+      { name: 'Centro', days: 7 },
+    ]);
+
         const total1 = 810;
         const total2 = 1200;
       
@@ -132,15 +143,7 @@ export default function DashboardOperacional() {
     return () => clearInterval(intervalId);
   }, []); // O array vazio faz a requisição apenas uma vez quando o componente for montado
       
-    
 
-
-    const data = [
-        { month: 'Janeiro', instalacoes: 200 },
-        { month: 'Fevereiro', instalacoes: 300 },
-        { month: 'Março', instalacoes: 400 },
-      ];
-      
 
   return (
     <div>
@@ -283,6 +286,15 @@ export default function DashboardOperacional() {
                         <div className='div-agenda2-operacao'>
                         <h1 className='titulo-agenda-operacao'>Agenda</h1>
                         <h1 className='titulo1-agenda-operacao'>Prazo de instalação</h1>
+
+                        {regionsData.map((region, index) => (
+                          <div className='row-titulo-agenda-operacao'>
+                <h1 className='h1-titulo-agenda-operacao' key={index}>{region.name}
+                </h1>
+                <h1  className='h2-titulo-agenda-operacao'>{region.days}</h1>
+                </div>
+              ))}
+
                         </div>
                     </div>
                     <div className='body2-agenda-operacao'>

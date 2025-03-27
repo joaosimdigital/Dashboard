@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList, PieChart, Pie, Cell } from 'recharts';
 
 
+
 //CSS
 import '../CSS/DashboardComercial.css'
 import '../CSS/Dashboard.css'
@@ -28,6 +29,7 @@ export default function DashboardComercial() {
   const [mediaDiaria, setMediaDiaria] = useState(0);
   const [metaTotal, setMetaTotal] = useState("");
   const [porcentagemMeta, setPorcentagemMeta] = useState(0);
+ 
   
   const data = [
     { name: "Alcançado", value: porcentagemMeta},
