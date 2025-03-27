@@ -12,6 +12,7 @@ import schedule from '../Images/schedule.png'
 import person from '../Images/person.png'
 
 export default function DashboardOperacional() {
+  window.location.reload();
      const [totalHabilitadosHoje, setTotalHabilitadosHoje] = useState(0);
      const [totalHabilitadosMesSC, setTotalHabilitadosMesSC] = useState(0);
      const [totalHabilitadosMesRS, setTotalHabilitadosMesRS] = useState(0);
