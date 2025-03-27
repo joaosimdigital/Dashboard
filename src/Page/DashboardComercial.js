@@ -338,7 +338,7 @@ const COLORS = ['#FF4500', '#D3D3D3'];
                 </div>
 
                 <div className='div-responsive'>
-                  <h1 className='h1-porcentagem-atingida'>Porcentagem atingida / Meta %</h1>
+                  <h1 className='h1-porcentagem-atingida'>Porcentagem atingida %</h1>
                   <ResponsiveContainer width="100%" height={75}>
                   <PieChart>
                     <Pie
