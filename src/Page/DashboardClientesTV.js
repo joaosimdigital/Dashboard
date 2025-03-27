@@ -53,6 +53,7 @@ function DashboardClientesTV() {
             
             const somar = Number(totalclienterspf) + Number(totalclienterspj) 
             setTotalClienteRS(somar)
+            console.log(somar)
 
             const responseclienterspf = await fetch('http://38.224.145.3:3004/clientes-rs-pf');
             const dataclienterspf = await responseclienterspf.json();
