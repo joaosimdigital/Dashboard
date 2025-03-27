@@ -72,7 +72,7 @@ export default function DashboardOperacional() {
 
         const responseirr = await fetch('http://38.224.145.3:3003/clientes-repetidos-30-dias');
         const datairr = await responseirr.json();
-        setTotalIRR(datairr.total_clientes_repetidos); // Armazenando o total de cadastros de SC
+        setTotalIRR(datairr.porcentagem_repetidos); // Armazenando o total de cadastros de SC
      
         const responsehojehabilitados = await fetch('http://38.224.145.3:3003/total-clientes-habilitados-hoje');
         const datahabilitadoshoje = await responsehojehabilitados.json();
