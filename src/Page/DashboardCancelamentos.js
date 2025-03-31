@@ -229,7 +229,7 @@ export default function DashboardCancelamentos() {
 
       <div className='div-texto-status'>
         <h1 className='h1-texto-status'>Projeção</h1>
-        <h1 className='h2-texto-status'>MÉDIO</h1>
+        <h1 className='h2-texto-status'>ACIMA</h1>
       </div>
 
       </div>
