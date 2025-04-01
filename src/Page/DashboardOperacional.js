@@ -25,6 +25,7 @@ export default function DashboardOperacional() {
      const [totalOrdemServicoConcluido, setTotalOrdemServicoConcluido] = useState(0);
      const [totalIRR, setTotalIRR] = useState(0);
      const [totalIQR, setTotalIQR] = useState(0);
+     const [totalIQI, setTotalIQI] = useState(0);
      const [graficoData, setGraficoData] = useState([]);
 
      const [regionsData, setRegionsData] = useState([
@@ -94,6 +95,10 @@ export default function DashboardOperacional() {
         const responsemesexecutadosc = await fetch('http://38.224.145.3:3003/total-clientes-habilitados-executado-sc');
         const dataexecutadomesSC = await responsemesexecutadosc.json();
         setTotalExecutadoMesSC(dataexecutadomesSC.total_clientes_habilitados); // Armazenando o total de cadastros de SC
+
+        const responsiqi = await fetch('http://38.224.145.3:3003/porcentagem-clientes-repetidos');
+        const dataiqi = await responsiqi.json();
+        setTotalIQI(dataiqi.porcentagem_restante); // Armazenando o total de cadastros de SC
 
 
         const responsemesexecutadohoje = await fetch('http://38.224.145.3:3003/total-clientes-habilitados-executado-dia');
@@ -347,6 +352,13 @@ export default function DashboardOperacional() {
                                 <div className='row-div3-agenda-operacao'>
                                  
                                     <h1 className='titulo-agenda1-operacao'>{totalIRR}</h1>
+                                    </div>
+
+
+                                    <h1 className='h1-card-dados-principais-dados1'>IQI</h1>
+                                <div className='row-div3-agenda-operacao'>
+                                 
+                                    <h1 className='titulo-agenda1-operacao'>{totalIQI}</h1>
                                     </div>
 
                                     <h1 className='h1-card-dados-principais-dados1'>IQR</h1>
