@@ -291,7 +291,7 @@ const COLORS = ['#FF4500', '#D3D3D3'];
           <tbody>
             {planosVendidos.map((plano, index) => (
               <tr key={index}>
-                <td className='titulo-tabela-grafico-vendas'>{plano.plano}</td>
+           <td className='titulo-tabela-grafico-vendas'>{plano.plano.length > 30 ? plano.plano.substring(0, 30) + "..." : plano.plano}</td>
                 <td className='subtitulo-tabela-grafico-vendas'>{plano.total_vendas}</td>
               </tr>
             ))}
