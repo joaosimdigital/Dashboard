@@ -358,7 +358,7 @@ export default function DashboardOperacional() {
                                     <h1 className='h1-card-dados-principais-dados1'>IQI</h1>
                                 <div className='row-div3-agenda-operacao'>
                                  
-                                    <h1 className='titulo-agenda1-operacao'>{totalIQI}</h1>
+                                    <h1 className='titulo-agenda1-operacao'>{totalIQI}%</h1>
                                     </div>
 
                                     <h1 className='h1-card-dados-principais-dados1'>IQR</h1>
