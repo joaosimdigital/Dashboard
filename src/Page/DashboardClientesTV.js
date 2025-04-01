@@ -73,9 +73,9 @@ function DashboardClientesTV() {
             const dataclientescpj = await responseclientescpj.json();
             setTotalClienteSCPJ(dataclientescpj.total_clientes_sc); // Armazenando o total de cadastros de SC
 
-            const responseclientestotal = await fetch('http://38.224.145.3:3004/clientestotal');
-            const dataclientestotal = await responseclientestotal.json();
-            setTotalClientes(dataclientestotal.total_clientes); // Armazenando o total de cadastros de SC
+          
+
+            setTotalClientes( Number(totalclientesc) + Number(totalclienteRStotal))
 
 
             const responseclientespj = await fetch('http://38.224.145.3:3004/clientes-tipo-pessoa-pj');
