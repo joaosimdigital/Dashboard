@@ -11,6 +11,7 @@ function DashboardClientesTV() {
     const [totaldebito, setTotalDebito] = useState("")
     const [totalclientesc, setTotalClienteSC] = useState("")
     const [totalclienters, setTotalClienteRS] = useState("")
+    const [totalclienteRStotal, setTotalClienteRSTotal] = useState("")
     const [totalclienterspf, setTotalClienteRSPF] = useState("")
     const [totalclienterspj, setTotalClienteRSPJ] = useState("")
     const [totalclientescpf, setTotalClienteSCPF] = useState("")
@@ -50,11 +51,12 @@ function DashboardClientesTV() {
             const dataclientesc = await responseclientesc.json();
             setTotalClienteSC(dataclientesc.total_clientes_sc); // Armazenando o total de cadastros de SC
 
-            
-            const somar = Number(totalclienterspf) + Number(totalclienterspj) 
-            setTotalClienteRS(somar)
-            console.log(somar)
 
+            const responseclienterstotal = await fetch('http://38.224.145.3:3004/clientes-rs-total');
+            const dataclienterstotal = await responseclienterstotal.json();
+            setTotalClienteRSTotal(dataclienterstotal.total_clientes_sc); // Armazenando o total de cadastros de SC
+
+          
             const responseclienterspf = await fetch('http://38.224.145.3:3004/clientes-rs-pf');
             const dataclienterspf = await responseclienterspf.json();
             setTotalClienteRSPF(dataclienterspf.total_clientes_sc); // Armazenando o total de cadastros de SC
@@ -188,7 +190,7 @@ function DashboardClientesTV() {
 
                         <div className='card1-header-clientes'>
                             <h1 className='h1-card-header-clientes'>TOTAL DE CLIENTES RS</h1>
-                            <h1 className='h2-card-header-clientes'>{totalclienters}</h1>
+                            <h1 className='h2-card-header-clientes'>{totalclienteRStotal}</h1>
                             </div>
 
                             <div className='card1-header-clientes'>
