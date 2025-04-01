@@ -209,7 +209,7 @@ export default function DashboardCancelamentos() {
 
       </div>
       <div className='div-numeros-churn2'>
-        <h1 className='h2-numeros-churn'>369</h1>
+        <h1 className='h2-numeros-churn'>376</h1>
         <h1 className='h2-mes'>Limite</h1>
         <h1 className='h2-numeros-churn'>1.50%</h1>
 
@@ -229,7 +229,7 @@ export default function DashboardCancelamentos() {
 
       <div className='div-texto-status'>
         <h1 className='h1-texto-status'>Projeção</h1>
-        <h1 className='h2-texto-status'>ACIMA</h1>
+        <h1 className='h2-texto-status'>ABAIXO</h1>
       </div>
 
       </div>
