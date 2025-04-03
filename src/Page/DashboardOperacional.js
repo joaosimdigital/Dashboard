@@ -103,7 +103,7 @@ export default function DashboardOperacional() {
 
         const responsemesexecutadohoje = await fetch('http://38.224.145.3:3003/total-clientes-habilitados-executado-dia');
         const dataexecutadomeshoje = await responsemesexecutadohoje.json();
-        setTotalExecutadoMesHoje(dataexecutadomeshoje.total_clientes_habilitados); // Armazenando o total de cadastros de SC
+        setTotalExecutadoMesHoje(dataexecutadomeshoje.total_manutencoes); // Armazenando o total de cadastros de SC
 
         const responsemordemdeserviconarede = await fetch('http://38.224.145.3:3003/ordens-servico-executado-na-rede');
         const dataordemdeserviconarede = await responsemordemdeserviconarede.json();
