@@ -319,8 +319,8 @@ const COLORS = ['#FF4500', '#D3D3D3'];
   <tr key={index}>
 
    <td className='titulo-tabela-grafico-vendas'>
-  {ticket.nome_cliente.length > 25 
-    ? ticket.nome_cliente.slice(0, 25) + '...' 
+  {ticket.nome_cliente.length > 30
+    ? ticket.nome_cliente.slice(0, 30) + '...' 
     : ticket.nome_cliente}
 </td>
 
