@@ -90,7 +90,7 @@ export default function DashboardOperacional() {
 
         const responsemesexecutadors = await fetch('http://38.224.145.3:3003/total-clientes-habilitados-executado-rs');
         const dataexecutadomesRS = await responsemesexecutadors.json();
-        setTotalExecutadoMesRS(dataexecutadomesRS.total_clientes_habilitados); // Armazenando o total de cadastros de SC
+        setTotalExecutadoMesRS(dataexecutadomesRS.total_manutencoes); // Armazenando o total de cadastros de SC
 
         const responsemesexecutadosc = await fetch('http://38.224.145.3:3003/total-clientes-habilitados-executado-sc');
         const dataexecutadomesSC = await responsemesexecutadosc.json();
