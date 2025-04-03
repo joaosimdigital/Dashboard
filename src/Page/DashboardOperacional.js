@@ -94,7 +94,7 @@ export default function DashboardOperacional() {
 
         const responsemesexecutadosc = await fetch('http://38.224.145.3:3003/total-clientes-habilitados-executado-sc');
         const dataexecutadomesSC = await responsemesexecutadosc.json();
-        setTotalExecutadoMesSC(dataexecutadomesSC.total_clientes_habilitados); // Armazenando o total de cadastros de SC
+        setTotalExecutadoMesSC(dataexecutadomesSC.total_manutencoes); // Armazenando o total de cadastros de SC
 
         const responsiqi = await fetch('http://38.224.145.3:3003/porcentagem-clientes-repetidos');
         const dataiqi = await responsiqi.json();
