@@ -301,7 +301,7 @@ const COLORS = ['#FF4500', '#D3D3D3'];
 
           <div className='div-card-grafico-vendas'>
 
-<div>
+<div style={{marginRight: 20}}>
 <h1 className='h1-header-card-grafico-vendas'>Top 3</h1>
 <h1 className='h2-header-card-grafico-vendas'>High ticket's mês</h1>
 </div>
