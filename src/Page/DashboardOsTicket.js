@@ -56,7 +56,7 @@ function DashboardOsTicket() {
   const [graficoData, setGraficoData] = useState([]);
   const [tms, setTms] = useState(null);
   const [data, setData] = useState([]);
-  const COLORS = ['#F45742', '#C4C4C4', '#999999', '#666666', '#333333'];
+  const COLORS = ['#007BFF', '#FF4136', '#FFDC00', '#2ECC40']; 
 
   useEffect(() => {
     fetch('http://38.224.145.3:3006/tickets-atualizados')
