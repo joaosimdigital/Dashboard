@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../CSS/DashboardOsTicket.css';
 import logobranca from '../Images/logobrnaca.png';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList, PieChart, Pie, Cell } from 'recharts';
 
 
 
@@ -54,6 +54,9 @@ function DashboardOsTicket() {
   const [totalResolvidos, setTotalResolvidos] = useState(null);
   const [erro, setErro] = useState(null);
   const [graficoData, setGraficoData] = useState([]);
+  const [tms, setTms] = useState(null);
+  const [data, setData] = useState([]);
+  const COLORS = ['#F45742', '#C4C4C4', '#999999', '#666666', '#333333'];
 
   useEffect(() => {
     fetch('http://38.224.145.3:3006/tickets-atualizados')
@@ -92,6 +95,15 @@ function DashboardOsTicket() {
           .catch(err => setErro(err.message));
 
 
+          fetch('http://38.224.145.3:3006/tempo-medio-resolucao')
+            .then(res => {
+              if (!res.ok) throw new Error('Erro ao buscar tempo médio');
+              return res.json();
+            })
+            .then(data => setTms(data.tempo_medio))
+            .catch(err => console.error(err.message));
+
+
           const fetchGrafico = async () => {
             try {
               const res = await fetch('http://38.224.145.3:3006/tickets-ultimos-3-meses');
@@ -112,6 +124,24 @@ function DashboardOsTicket() {
       
           fetchGrafico();
       
+
+
+          fetch('http://38.224.145.3:3006/resolvidos-por-staff')
+          .then(res => {
+            if (!res.ok) throw new Error('Erro ao buscar dados dos staff');
+            return res.json();
+          })
+          .then(staffData => {
+            const totalGeral = staffData.reduce((acc, staff) => acc + staff.total_resolvidos, 0);
+    
+            const formatado = staffData.map(staff => ({
+              name: staff.nome,
+              value: Math.round((staff.total_resolvidos / totalGeral) * 100)
+            }));
+    
+            setData(formatado);
+          })
+          .catch(err => console.error(err));
 
           const interval = setInterval(fetchGrafico, 10000);
           return () => clearInterval(interval);
@@ -196,12 +226,37 @@ function DashboardOsTicket() {
           <div className='card2-div-graficos'>
             <h1 className='titulo-card2-div-graficos'>TMS</h1>
             <h1  className='subtitulo-card2-div-graficos'>Tempo médio de soluções (dias)</h1>
-            <h1  className='valor-card2-div-graficos'>0</h1>
+            <h1  className='valor-card2-div-graficos'>{tms}</h1>
           </div>
 
 
           <div className='card3-div-graficos'>
-            <h1>Gráficos</h1>
+            <h1 className='titulo-div-card1-div-grafico'>Gráficos</h1>
+
+            <ResponsiveContainer width="100%" height="100%">
+      <PieChart>
+        <Pie
+          data={data}
+          cx="50%"
+          cy="50%"
+          innerRadius={70}
+          outerRadius={100}
+          paddingAngle={2}
+          dataKey="value"
+          label={({ name, value }) => `${name}: ${value}%`} // <-- nome no gráfico
+        >
+          {data.map((entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={COLORS[index % COLORS.length]} // Garante que as cores rodem
+            />
+          ))}
+        </Pie>
+        <Tooltip />
+      </PieChart>
+    </ResponsiveContainer>
+
+
           </div>
 
 
