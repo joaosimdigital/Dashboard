@@ -40,8 +40,8 @@
 
 
 .logo-div-header-osticket{
-    width: 210px;
-    height: 50px;
+    width: 190px;
+    height: 40px;
     margin-right: 30px;
 }
 
@@ -155,7 +155,7 @@
 
 
 .card3-div-graficos{
-    background-color: gray;
+    background-color: white;
     border-radius: 10px;
     width: 35%;
     height: 310px;
@@ -168,3 +168,40 @@
         width: 95%;
         border-radius: 10px;
     }
+
+
+
+.titulo-card2-div-graficos{
+    text-align: center;
+    width: 100%;
+    font-size: 30px;
+    font-family:  'Normal';
+    color: white;
+    margin-bottom: 0px;
+}
+
+.subtitulo-card2-div-graficos{
+    text-align: center;
+    width: 100%;
+    margin-top: 0px;
+    font-size: 13px;
+    font-family:  'Normal';
+    color: white;
+}
+
+
+.valor-card2-div-graficos{
+    text-align: center;
+    width: 100%;
+    margin-top: 0px;
+    font-size: 100px;
+    font-family:  'Bold';
+    color: white;
+}
+
+
+.titulo-div-card1-div-grafico{
+    font-size: 13px;
+    margin-left: 10px;
+    font-family: 'Bold';
+}
