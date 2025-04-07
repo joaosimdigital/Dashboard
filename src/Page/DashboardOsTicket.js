@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import '../CSS/DashboardOsTicket.css';
 import logobranca from '../Images/logobrnaca.png';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList} from 'recharts';
+
+
+
 
 function DashboardOsTicket() {
   const [totais, setTotais] = useState({
@@ -49,6 +53,7 @@ function DashboardOsTicket() {
   const [totalAbertos, setTotalAbertos] = useState(null);
   const [totalResolvidos, setTotalResolvidos] = useState(null);
   const [erro, setErro] = useState(null);
+  const [graficoData, setGraficoData] = useState([]);
 
   useEffect(() => {
     fetch('http://38.224.145.3:3006/tickets-atualizados')
@@ -87,7 +92,30 @@ function DashboardOsTicket() {
           .catch(err => setErro(err.message));
 
 
-  }, []);
+          const fetchGrafico = async () => {
+            try {
+              const res = await fetch('http://38.224.145.3:3006/tickets-ultimos-3-meses');
+              if (!res.ok) throw new Error('Erro ao buscar dados do gráfico');
+              const data = await res.json();
+      
+              // Formatando os dados para o formato que o gráfico espera
+              const formatado = data.map(item => ({
+                month: item.mes,           // Eixo X
+                instalacoes: item.total    // Altura da barra
+              }));
+      
+              setGraficoData(formatado);
+            } catch (err) {
+              console.error(err.message);
+            }
+          };
+      
+          fetchGrafico();
+      
+
+          const interval = setInterval(fetchGrafico, 10000);
+          return () => clearInterval(interval);
+        }, []);
 
 
   
@@ -143,6 +171,23 @@ function DashboardOsTicket() {
 
             <div className='div-card1-div-grafico'>
                 <h1 className='titulo-div-card1-div-grafico'>Abertos x Mês</h1>
+
+                   <ResponsiveContainer width='100%' height={250}>
+                                          <BarChart data={graficoData} margin={{ top: 30, right: 30, left: 20, bottom: 20 }}>
+                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <XAxis 
+                                              dataKey="month" 
+                                              tick={{ fill: '#fff', fontSize: 10 }} 
+                                              fontWeight="bold" 
+                                            />
+                                            <Tooltip />
+                                            <Bar dataKey="instalacoes" fill="#F45742" barSize={50}>
+                                              <LabelList dataKey="instalacoes" position="center" fill="white" />
+                                            </Bar>
+                                          </BarChart>
+                                        </ResponsiveContainer>
+
+
             </div>
 
           </div>

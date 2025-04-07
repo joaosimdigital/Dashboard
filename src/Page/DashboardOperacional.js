@@ -272,19 +272,19 @@ export default function DashboardOperacional() {
                         <div  className='div-agenda-operacao'>
                         <h1 className='h1-tabela-agenda-dia'>Instalações pro trimestre</h1>
                         <ResponsiveContainer width='100%' height={250}>
-      <BarChart data={graficoData} margin={{ top: 30, right: 30, left: 20, bottom: 20 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis 
-          dataKey="month" 
-          tick={{ fill: '#fff', fontSize: 10 }} 
-          fontWeight="bold" 
-        />
-        <Tooltip />
-        <Bar dataKey="instalacoes" fill="#F45742" barSize={50}>
-          <LabelList dataKey="instalacoes" position="center" fill="white" />
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
+                          <BarChart data={graficoData} margin={{ top: 30, right: 30, left: 20, bottom: 20 }}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                              dataKey="month" 
+                              tick={{ fill: '#fff', fontSize: 10 }} 
+                              fontWeight="bold" 
+                            />
+                            <Tooltip />
+                            <Bar dataKey="instalacoes" fill="#F45742" barSize={50}>
+                              <LabelList dataKey="instalacoes" position="center" fill="white" />
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
 
                         </div>
                         <div className='div-agenda2-operacao'>
