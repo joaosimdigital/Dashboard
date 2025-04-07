@@ -55,9 +55,11 @@ export class DashboardOsTicket extends Component {
         <div className='div-graficos'>
 
           <div className='card1-div-graficos'>
-            <div>
-            <h1>Abertos x Mês</h1>
+
+            <div className='div-card1-div-grafico'>
+
             </div>
+
           </div>
 
 
