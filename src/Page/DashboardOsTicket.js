@@ -1,13 +1,98 @@
-import React, { Component } from 'react'
+import React, { useEffect, useState } from 'react';
+import '../CSS/DashboardOsTicket.css';
+import logobranca from '../Images/logobrnaca.png';
+
+function DashboardOsTicket() {
+  const [totais, setTotais] = useState({
+    total: null,
+    abertos: null,
+    atualizados: null,
+    fechados: null,
+  });
+
+  useEffect(() => {
+    const fetchDados = async () => {
+      try {
+        const endpoints = [
+          { key: 'total', url: 'http://localhost:3007/total-tickets' },
+          { key: 'abertos', url: 'http://localhost:3007/tickets-abertos' },
+          { key: 'atualizados', url: 'http://localhost:3007/tickets-atualizados' },
+          { key: 'fechados', url: 'http://localhost:3007/tickets-fechados' },
+        ];
+
+        const results = await Promise.all(
+          endpoints.map(async ({ key, url }) => {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`Erro ao buscar ${key}`);
+            const data = await res.json();
+            return { key, value: data.total };
+          })
+        );
+
+        const novosTotais = results.reduce((acc, item) => {
+          acc[item.key] = item.value;
+          return acc;
+        }, {});
+
+        setTotais(novosTotais);
+      } catch (err) {
+        setErro(err.message);
+      }
+    };
+
+    fetchDados();
+  }, []);
 
 
-import '../CSS/DashboardOsTicket.css'
+  const [Respondidostotal, setRespondidosTotal] = useState(null);
+  const [totalTicket, setTotaTicket] = useState(null);
+  const [totalAbertos, setTotalAbertos] = useState(null);
+  const [totalResolvidos, setTotalResolvidos] = useState(null);
+  const [erro, setErro] = useState(null);
 
-import logobranca from '../Images/logobrnaca.png'
+  useEffect(() => {
+    fetch('http://38.224.145.3:3006/tickets-atualizados')
+      .then(res => {
+        if (!res.ok) throw new Error('Erro na requisição');
+        return res.json();
+      })
+      .then(data => setRespondidosTotal(data.total))
+      .catch(err => setErro(err.message));
 
 
-export class DashboardOsTicket extends Component {
-  render() {
+      fetch('http://38.224.145.3:3006/total-tickets')
+      .then(res => {
+        if (!res.ok) throw new Error('Erro na requisição');
+        return res.json();
+      })
+      .then(data => setTotaTicket(data.total))
+      .catch(err => setErro(err.message));
+
+
+        fetch('http://38.224.145.3:3006/tickets-status-aberto')
+          .then(res => {
+            if (!res.ok) throw new Error('Erro ao buscar tickets abertos');
+            return res.json();
+          })
+          .then(data => setTotalAbertos(data.total))
+          .catch(err => setErro(err.message));
+
+
+          fetch('http://38.224.145.3:3006/tickets-fechados')
+          .then(res => {
+            if (!res.ok) throw new Error('Erro ao buscar tickets abertos');
+            return res.json();
+          })
+          .then(data => setTotalResolvidos(data.total))
+          .catch(err => setErro(err.message));
+
+
+  }, []);
+
+
+  
+
+
     return (
       <div>
 
@@ -26,24 +111,24 @@ export class DashboardOsTicket extends Component {
            
             <div className='card1-metricas-osticket'>
               <h1 className='card-titulo-metricas'>Total</h1>
-              <h1  className='card-subtitulo-metricas'>0</h1>
+              <h1  className='card-subtitulo-metricas'>{totalTicket}</h1>
             </div>
 
 
             <div className='card2-metricas-osticket'>
               <h1 className='card-titulo-metricas'>Abertos</h1>
-              <h1  className='card-subtitulo-metricas'>0</h1>
+              <h1  className='card-subtitulo-metricas'>{totalAbertos}</h1>
             </div>
 
             <div  className='card3-metricas-osticket'>
               <h1 className='card-titulo-metricas'>Respondidos</h1>
-              <h1  className='card-subtitulo-metricas'>0</h1>
+              <h1  className='card-subtitulo-metricas'>{Respondidostotal}</h1>
             </div>
 
 
             <div  className='card4-metricas-osticket'>
               <h1 className='card-titulo-metricas'>Resolvidos</h1>
-              <h1  className='card-subtitulo-metricas'>0</h1>
+              <h1  className='card-subtitulo-metricas'>{totalResolvidos}</h1>
             </div>
 
 
@@ -80,6 +165,6 @@ export class DashboardOsTicket extends Component {
       </div>
     )
   }
-}
 
-export default DashboardOsTicket
+
+export default DashboardOsTicket;
