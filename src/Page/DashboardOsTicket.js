@@ -13,7 +13,7 @@ export class DashboardOsTicket extends Component {
 
         <div className='div-header-osticket'>
 
-          <h1 style={{marginLeft: 20}}></h1>
+          <h1 style={{marginLeft: 50}}></h1>
 
             <h1 className='titulo-div-header-osticket'>TI<h1 className='subtitulo-div-header-osticket'>CKET's</h1></h1>
             <img className='logo-div-header-osticket' src={logobranca}/>
