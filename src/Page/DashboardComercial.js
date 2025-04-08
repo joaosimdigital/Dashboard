@@ -17,6 +17,7 @@ export default function DashboardComercial() {
   const [totalCadastrosRSPF, setTotalCadastrosRSPF] = useState(0); // PF no RS
   const [totalCadastrosRSPJ, setTotalCadastrosRSPJ] = useState(0); // PJ no RS
   const [totalCadastrosSCPF, setTotalCadastrosSCPF] = useState(0); // PF no SC
+  const [totalmediadia, setTotalMediaDia] = useState(0); // PF no SC
   const [totalCadastrosSCPJ, setTotalCadastrosSCPJ] = useState(0); // PJ no SC
   const [totalVendasDiaSC, setTotalVendasDiaSC] = useState(0);
   const [totalVendasDiaRS, setTotalVendasDiaRS] = useState(0);
@@ -80,6 +81,11 @@ const COLORS = ['#FF4500', '#D3D3D3'];
         const responseRS = await fetch('http://38.224.145.3:3002/cadastros-rs');
         const dataRS = await responseRS.json();
         setTotalCadastrosRS(dataRS.total_cadastros); // Armazenando o total de cadastros de RS
+
+         // Buscar dados de RS
+         const responseMediadia = await fetch('http://38.224.145.3:3002/media-clientes-dia');
+         const dataMediadia = await responseMediadia.json();
+         setTotalMediaDia(dataMediadia.media_por_dia); // Armazenando o total de cadastros de RS
 
         const responseDiaSC = await fetch('http://38.224.145.3:3002/cadastros-sc-dia');
         const dataDiaSC = await responseDiaSC.json();
@@ -217,7 +223,7 @@ const COLORS = ['#FF4500', '#D3D3D3'];
             </div>
             <div className='card-upgrade'>
                 <h1  className='h1-card-upgrade'>Media / Dia</h1>
-                <h1  className='h2-card-upgrade'>{metaTotal}</h1>
+                <h1  className='h2-card-upgrade'>{totalmediadia}</h1>
             </div>
         </div>
 
