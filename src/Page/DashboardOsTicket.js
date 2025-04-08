@@ -141,7 +141,7 @@ function DashboardOsTicket() {
         fetchDados();
 
         // E depois a cada 10 segundos
-        const interval = setInterval(fetchDados, 10000);
+        const interval = setInterval(fetchDados, 1000);
         return () => clearInterval(interval);
         }, []);
 
