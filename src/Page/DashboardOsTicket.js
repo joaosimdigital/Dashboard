@@ -26,7 +26,6 @@ function DashboardOsTicket() {
   const COLORS = ['#007BFF', '#FF4136', '#FFDC00', '#2ECC40']; 
 
   useEffect(() => {
-
     const fetchDados = async () => {
       try {
         const endpoints = [
@@ -55,8 +54,6 @@ function DashboardOsTicket() {
         setErro(err.message);
       }
  
-
-
 
     fetch('http://38.224.145.3:3006/tickets-atualizados')
       .then(res => {
