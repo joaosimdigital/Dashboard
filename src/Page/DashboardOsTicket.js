@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import '../CSS/DashboardOsTicket.css';
 import logobranca from '../Images/logobrnaca.png';
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList, PieChart, Pie, Cell
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList, PieChart, Pie, Cell } from 'recharts';
+
+
+
 
 function DashboardOsTicket() {
   const [totais, setTotais] = useState({
@@ -13,7 +14,8 @@ function DashboardOsTicket() {
     fechados: null,
   });
 
-  const [respondidosTotal, setRespondidosTotal] = useState(null);
+
+  const [Respondidostotal, setRespondidosTotal] = useState(null);
   const [totalTicket, setTotaTicket] = useState(null);
   const [totalAbertos, setTotalAbertos] = useState(null);
   const [totalResolvidos, setTotalResolvidos] = useState(null);
@@ -21,12 +23,12 @@ function DashboardOsTicket() {
   const [graficoData, setGraficoData] = useState([]);
   const [tms, setTms] = useState(null);
   const [data, setData] = useState([]);
-  const COLORS = ['#007BFF', '#FF4136', '#FFDC00', '#2ECC40'];
+  const COLORS = ['#007BFF', '#FF4136', '#FFDC00', '#2ECC40']; 
 
   useEffect(() => {
+
     const fetchDados = async () => {
       try {
-        // Totais tickets (vários endpoints)
         const endpoints = [
           { key: 'total', url: 'http://localhost:3007/total-tickets' },
           { key: 'abertos', url: 'http://localhost:3007/tickets-abertos' },
@@ -49,59 +51,101 @@ function DashboardOsTicket() {
         }, {});
 
         setTotais(novosTotais);
-
-        // Respondidos
-        const resp1 = await fetch('http://38.224.145.3:3006/tickets-atualizados');
-        setRespondidosTotal((await resp1.json()).total);
-
-        // Total
-        const resp2 = await fetch('http://38.224.145.3:3006/total-tickets');
-        setTotaTicket((await resp2.json()).total);
-
-        // Abertos
-        const resp3 = await fetch('http://38.224.145.3:3006/tickets-status-aberto');
-        setTotalAbertos((await resp3.json()).total);
-
-        // Resolvidos
-        const resp4 = await fetch('http://38.224.145.3:3006/tickets-fechados');
-        setTotalResolvidos((await resp4.json()).total);
-
-        // Tempo médio
-        const resp5 = await fetch('http://38.224.145.3:3006/tempo-medio-resolucao');
-        setTms((await resp5.json()).tempo_medio);
-
-        // Gráfico 3 meses
-        const resp6 = await fetch('http://38.224.145.3:3006/tickets-ultimos-3-meses');
-        const dadosGrafico = await resp6.json();
-        const formatado = dadosGrafico.map(item => ({
-          month: item.mes,
-          instalacoes: item.total
-        }));
-        setGraficoData(formatado);
-
-        // Por staff
-        const resp7 = await fetch('http://38.224.145.3:3006/resolvidos-por-staff');
-        const staffData = await resp7.json();
-        const totalGeral = staffData.reduce((acc, staff) => acc + staff.total_resolvidos, 0);
-        const formatadoStaff = staffData.map(staff => ({
-          name: staff.nome,
-          value: Math.round((staff.total_resolvidos / totalGeral) * 100)
-        }));
-        setData(formatadoStaff);
-
       } catch (err) {
-        console.error(err.message);
         setErro(err.message);
       }
-    };
+ 
 
-    // Chama uma vez ao carregar
-    fetchDados();
 
-    // E depois a cada 10 segundos
-    const interval = setInterval(fetchDados, 10000);
-    return () => clearInterval(interval);
-  }, []);
+
+    fetch('http://38.224.145.3:3006/tickets-atualizados')
+      .then(res => {
+        if (!res.ok) throw new Error('Erro na requisição');
+        return res.json();
+      })
+      .then(data => setRespondidosTotal(data.total))
+      .catch(err => setErro(err.message));
+
+
+      fetch('http://38.224.145.3:3006/total-tickets')
+      .then(res => {
+        if (!res.ok) throw new Error('Erro na requisição');
+        return res.json();
+      })
+      .then(data => setTotaTicket(data.total))
+      .catch(err => setErro(err.message));
+
+
+        fetch('http://38.224.145.3:3006/tickets-status-aberto')
+          .then(res => {
+            if (!res.ok) throw new Error('Erro ao buscar tickets abertos');
+            return res.json();
+          })
+          .then(data => setTotalAbertos(data.total))
+          .catch(err => setErro(err.message));
+
+
+          fetch('http://38.224.145.3:3006/tickets-fechados')
+          .then(res => {
+            if (!res.ok) throw new Error('Erro ao buscar tickets abertos');
+            return res.json();
+          })
+          .then(data => setTotalResolvidos(data.total))
+          .catch(err => setErro(err.message));
+
+
+          fetch('http://38.224.145.3:3006/tempo-medio-resolucao')
+            .then(res => {
+              if (!res.ok) throw new Error('Erro ao buscar tempo médio');
+              return res.json();
+            })
+            .then(data => setTms(data.tempo_medio))
+            .catch(err => console.error(err.message));
+
+
+         
+              const res = await fetch('http://38.224.145.3:3006/tickets-ultimos-3-meses');
+              if (!res.ok) throw new Error('Erro ao buscar dados do gráfico');
+              const data = await res.json();
+      
+              // Formatando os dados para o formato que o gráfico espera
+              const formatado = data.map(item => ({
+                month: item.mes,           // Eixo X
+                instalacoes: item.total    // Altura da barra
+              }));
+      
+              setGraficoData(formatado);
+            
+      
+
+
+          fetch('http://38.224.145.3:3006/resolvidos-por-staff')
+          .then(res => {
+            if (!res.ok) throw new Error('Erro ao buscar dados dos staff');
+            return res.json();
+          })
+          .then(staffData => {
+            const totalGeral = staffData.reduce((acc, staff) => acc + staff.total_resolvidos, 0);
+    
+            const formatado = staffData.map(staff => ({
+              name: staff.nome,
+              value: Math.round((staff.total_resolvidos / totalGeral) * 100)
+            }));
+    
+            setData(formatado);
+          })
+          .catch(err => console.error(err));
+
+
+        };
+        fetchDados();
+
+        // E depois a cada 10 segundos
+        const interval = setInterval(fetchDados, 10000);
+        return () => clearInterval(interval);
+        }, []);
+
+
   
 
 
@@ -134,7 +178,7 @@ function DashboardOsTicket() {
 
             <div  className='card3-metricas-osticket'>
               <h1 className='card-titulo-metricas'>Respondidos</h1>
-              <h1  className='card-subtitulo-metricas'>{respondidosTotal}</h1>
+              <h1  className='card-subtitulo-metricas'>{Respondidostotal}</h1>
             </div>
 
 
