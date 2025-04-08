@@ -3,9 +3,6 @@ import '../CSS/DashboardOsTicket.css';
 import logobranca from '../Images/logobrnaca.png';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList, PieChart, Pie, Cell } from 'recharts';
 
-
-
-
 function DashboardOsTicket() {
   const [totais, setTotais] = useState({
     total: null,
@@ -14,14 +11,24 @@ function DashboardOsTicket() {
     fechados: null,
   });
 
+  const [respondidosTotal, setRespondidosTotal] = useState(null);
+  const [totalTicket, setTotalTicket] = useState(null);
+  const [totalAbertos, setTotalAbertos] = useState(null);
+  const [totalResolvidos, setTotalResolvidos] = useState(null);
+  const [erro, setErro] = useState(null);
+  const [graficoData, setGraficoData] = useState([]);
+  const [tms, setTms] = useState(null);
+  const [data, setData] = useState([]);
+  const COLORS = ['#007BFF', '#FF4136', '#FFDC00', '#2ECC40'];
+
   useEffect(() => {
     const fetchDados = async () => {
       try {
         const endpoints = [
-          { key: 'total', url: 'http://localhost:3007/total-tickets' },
-          { key: 'abertos', url: 'http://localhost:3007/tickets-abertos' },
-          { key: 'atualizados', url: 'http://localhost:3007/tickets-atualizados' },
-          { key: 'fechados', url: 'http://localhost:3007/tickets-fechados' },
+          { key: 'total', url: 'http://38.224.145.3:3006/total-tickets' },
+          { key: 'abertos', url: 'http://38.224.145.3:3006/tickets-abertos' },
+          { key: 'atualizados', url: 'http://38.224.145.3:3006/tickets-atualizados' },
+          { key: 'fechados', url: 'http://38.224.145.3:3006/tickets-fechados' },
         ];
 
         const results = await Promise.all(
@@ -44,112 +51,118 @@ function DashboardOsTicket() {
       }
     };
 
+    const fetchRespondidosTotal = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3006/tickets-atualizados');
+        if (!res.ok) throw new Error('Erro na requisição');
+        const data = await res.json();
+        setRespondidosTotal(data.total);
+      } catch (err) {
+        setErro(err.message);
+      }
+    };
+
+    const fetchTotalTicket = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3006/total-tickets');
+        if (!res.ok) throw new Error('Erro na requisição');
+        const data = await res.json();
+        setTotalTicket(data.total);
+      } catch (err) {
+        setErro(err.message);
+      }
+    };
+
+    const fetchTotalAbertos = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3006/tickets-status-aberto');
+        if (!res.ok) throw new Error('Erro ao buscar tickets abertos');
+        const data = await res.json();
+        setTotalAbertos(data.total);
+      } catch (err) {
+        setErro(err.message);
+      }
+    };
+
+    const fetchTotalResolvidos = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3006/tickets-fechados');
+        if (!res.ok) throw new Error('Erro ao buscar tickets fechados');
+        const data = await res.json();
+        setTotalResolvidos(data.total);
+      } catch (err) {
+        setErro(err.message);
+      }
+    };
+
+    const fetchTms = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3006/tempo-medio-resolucao');
+        if (!res.ok) throw new Error('Erro ao buscar tempo médio');
+        const data = await res.json();
+        setTms(data.tempo_medio);
+      } catch (err) {
+        setErro(err.message);
+      }
+    };
+
+    const fetchGrafico = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3006/tickets-ultimos-3-meses');
+        if (!res.ok) throw new Error('Erro ao buscar dados do gráfico');
+        const data = await res.json();
+
+        const formatado = data.map(item => ({
+          month: item.mes,
+          instalacoes: item.total,
+        }));
+
+        setGraficoData(formatado);
+      } catch (err) {
+        setErro(err.message);
+      }
+    };
+
+    const fetchStaffData = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3006/resolvidos-por-staff');
+        if (!res.ok) throw new Error('Erro ao buscar dados dos staff');
+        const staffData = await res.json();
+        const totalGeral = staffData.reduce((acc, staff) => acc + staff.total_resolvidos, 0);
+
+        const formatado = staffData.map(staff => ({
+          name: staff.nome,
+          value: Math.round((staff.total_resolvidos / totalGeral) * 100),
+        }));
+
+        setData(formatado);
+      } catch (err) {
+        setErro(err.message);
+      }
+    };
+
     fetchDados();
+    fetchRespondidosTotal();
+    fetchTotalTicket();
+    fetchTotalAbertos();
+    fetchTotalResolvidos();
+    fetchTms();
+    fetchGrafico();
+    fetchStaffData();
+
+    const interval = setInterval(() => {
+      fetchDados();
+      fetchRespondidosTotal();
+      fetchTotalTicket();
+      fetchTotalAbertos();
+      fetchTotalResolvidos();
+      fetchTms();
+      fetchGrafico();
+      fetchStaffData();
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
-
-
-  const [Respondidostotal, setRespondidosTotal] = useState(null);
-  const [totalTicket, setTotaTicket] = useState(null);
-  const [totalAbertos, setTotalAbertos] = useState(null);
-  const [totalResolvidos, setTotalResolvidos] = useState(null);
-  const [erro, setErro] = useState(null);
-  const [graficoData, setGraficoData] = useState([]);
-  const [tms, setTms] = useState(null);
-  const [data, setData] = useState([]);
-  const COLORS = ['#007BFF', '#FF4136', '#FFDC00', '#2ECC40']; 
-
-  useEffect(() => {
-    fetch('http://38.224.145.3:3006/tickets-atualizados')
-      .then(res => {
-        if (!res.ok) throw new Error('Erro na requisição');
-        return res.json();
-      })
-      .then(data => setRespondidosTotal(data.total))
-      .catch(err => setErro(err.message));
-
-
-      fetch('http://38.224.145.3:3006/total-tickets')
-      .then(res => {
-        if (!res.ok) throw new Error('Erro na requisição');
-        return res.json();
-      })
-      .then(data => setTotaTicket(data.total))
-      .catch(err => setErro(err.message));
-
-
-        fetch('http://38.224.145.3:3006/tickets-status-aberto')
-          .then(res => {
-            if (!res.ok) throw new Error('Erro ao buscar tickets abertos');
-            return res.json();
-          })
-          .then(data => setTotalAbertos(data.total))
-          .catch(err => setErro(err.message));
-
-
-          fetch('http://38.224.145.3:3006/tickets-fechados')
-          .then(res => {
-            if (!res.ok) throw new Error('Erro ao buscar tickets abertos');
-            return res.json();
-          })
-          .then(data => setTotalResolvidos(data.total))
-          .catch(err => setErro(err.message));
-
-
-          fetch('http://38.224.145.3:3006/tempo-medio-resolucao')
-            .then(res => {
-              if (!res.ok) throw new Error('Erro ao buscar tempo médio');
-              return res.json();
-            })
-            .then(data => setTms(data.tempo_medio))
-            .catch(err => console.error(err.message));
-
-
-          const fetchGrafico = async () => {
-            try {
-              const res = await fetch('http://38.224.145.3:3006/tickets-ultimos-3-meses');
-              if (!res.ok) throw new Error('Erro ao buscar dados do gráfico');
-              const data = await res.json();
-      
-              // Formatando os dados para o formato que o gráfico espera
-              const formatado = data.map(item => ({
-                month: item.mes,           // Eixo X
-                instalacoes: item.total    // Altura da barra
-              }));
-      
-              setGraficoData(formatado);
-            } catch (err) {
-              console.error(err.message);
-            }
-          };
-      
-          fetchGrafico();
-      
-
-
-          fetch('http://38.224.145.3:3006/resolvidos-por-staff')
-          .then(res => {
-            if (!res.ok) throw new Error('Erro ao buscar dados dos staff');
-            return res.json();
-          })
-          .then(staffData => {
-            const totalGeral = staffData.reduce((acc, staff) => acc + staff.total_resolvidos, 0);
-    
-            const formatado = staffData.map(staff => ({
-              name: staff.nome,
-              value: Math.round((staff.total_resolvidos / totalGeral) * 100)
-            }));
-    
-            setData(formatado);
-          })
-          .catch(err => console.error(err));
-
-          const interval = setInterval(fetchGrafico, 10000);
-          return () => clearInterval(interval);
-        }, []);
-
-
-  
-
 
     return (
       <div>
