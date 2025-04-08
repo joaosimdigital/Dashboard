@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import '../CSS/DashboardOsTicket.css';
 import logobranca from '../Images/logobrnaca.png';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList, PieChart, Pie, Cell } from 'recharts';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList, PieChart, Pie, Cell
+} from 'recharts';
 
 function DashboardOsTicket() {
   const [totais, setTotais] = useState({
@@ -12,7 +14,7 @@ function DashboardOsTicket() {
   });
 
   const [respondidosTotal, setRespondidosTotal] = useState(null);
-  const [totalTicket, setTotalTicket] = useState(null);
+  const [totalTicket, setTotaTicket] = useState(null);
   const [totalAbertos, setTotalAbertos] = useState(null);
   const [totalResolvidos, setTotalResolvidos] = useState(null);
   const [erro, setErro] = useState(null);
@@ -24,11 +26,12 @@ function DashboardOsTicket() {
   useEffect(() => {
     const fetchDados = async () => {
       try {
+        // Totais tickets (vários endpoints)
         const endpoints = [
-          { key: 'total', url: 'http://38.224.145.3:3006/total-tickets' },
-          { key: 'abertos', url: 'http://38.224.145.3:3006/tickets-abertos' },
-          { key: 'atualizados', url: 'http://38.224.145.3:3006/tickets-atualizados' },
-          { key: 'fechados', url: 'http://38.224.145.3:3006/tickets-fechados' },
+          { key: 'total', url: 'http://localhost:3007/total-tickets' },
+          { key: 'abertos', url: 'http://localhost:3007/tickets-abertos' },
+          { key: 'atualizados', url: 'http://localhost:3007/tickets-atualizados' },
+          { key: 'fechados', url: 'http://localhost:3007/tickets-fechados' },
         ];
 
         const results = await Promise.all(
@@ -46,123 +49,61 @@ function DashboardOsTicket() {
         }, {});
 
         setTotais(novosTotais);
-      } catch (err) {
-        setErro(err.message);
-      }
-    };
 
-    const fetchRespondidosTotal = async () => {
-      try {
-        const res = await fetch('http://38.224.145.3:3006/tickets-atualizados');
-        if (!res.ok) throw new Error('Erro na requisição');
-        const data = await res.json();
-        setRespondidosTotal(data.total);
-      } catch (err) {
-        setErro(err.message);
-      }
-    };
+        // Respondidos
+        const resp1 = await fetch('http://38.224.145.3:3006/tickets-atualizados');
+        setRespondidosTotal((await resp1.json()).total);
 
-    const fetchTotalTicket = async () => {
-      try {
-        const res = await fetch('http://38.224.145.3:3006/total-tickets');
-        if (!res.ok) throw new Error('Erro na requisição');
-        const data = await res.json();
-        setTotalTicket(data.total);
-      } catch (err) {
-        setErro(err.message);
-      }
-    };
+        // Total
+        const resp2 = await fetch('http://38.224.145.3:3006/total-tickets');
+        setTotaTicket((await resp2.json()).total);
 
-    const fetchTotalAbertos = async () => {
-      try {
-        const res = await fetch('http://38.224.145.3:3006/tickets-status-aberto');
-        if (!res.ok) throw new Error('Erro ao buscar tickets abertos');
-        const data = await res.json();
-        setTotalAbertos(data.total);
-      } catch (err) {
-        setErro(err.message);
-      }
-    };
+        // Abertos
+        const resp3 = await fetch('http://38.224.145.3:3006/tickets-status-aberto');
+        setTotalAbertos((await resp3.json()).total);
 
-    const fetchTotalResolvidos = async () => {
-      try {
-        const res = await fetch('http://38.224.145.3:3006/tickets-fechados');
-        if (!res.ok) throw new Error('Erro ao buscar tickets fechados');
-        const data = await res.json();
-        setTotalResolvidos(data.total);
-      } catch (err) {
-        setErro(err.message);
-      }
-    };
+        // Resolvidos
+        const resp4 = await fetch('http://38.224.145.3:3006/tickets-fechados');
+        setTotalResolvidos((await resp4.json()).total);
 
-    const fetchTms = async () => {
-      try {
-        const res = await fetch('http://38.224.145.3:3006/tempo-medio-resolucao');
-        if (!res.ok) throw new Error('Erro ao buscar tempo médio');
-        const data = await res.json();
-        setTms(data.tempo_medio);
-      } catch (err) {
-        setErro(err.message);
-      }
-    };
+        // Tempo médio
+        const resp5 = await fetch('http://38.224.145.3:3006/tempo-medio-resolucao');
+        setTms((await resp5.json()).tempo_medio);
 
-    const fetchGrafico = async () => {
-      try {
-        const res = await fetch('http://38.224.145.3:3006/tickets-ultimos-3-meses');
-        if (!res.ok) throw new Error('Erro ao buscar dados do gráfico');
-        const data = await res.json();
-
-        const formatado = data.map(item => ({
+        // Gráfico 3 meses
+        const resp6 = await fetch('http://38.224.145.3:3006/tickets-ultimos-3-meses');
+        const dadosGrafico = await resp6.json();
+        const formatado = dadosGrafico.map(item => ({
           month: item.mes,
-          instalacoes: item.total,
+          instalacoes: item.total
         }));
-
         setGraficoData(formatado);
-      } catch (err) {
-        setErro(err.message);
-      }
-    };
 
-    const fetchStaffData = async () => {
-      try {
-        const res = await fetch('http://38.224.145.3:3006/resolvidos-por-staff');
-        if (!res.ok) throw new Error('Erro ao buscar dados dos staff');
-        const staffData = await res.json();
+        // Por staff
+        const resp7 = await fetch('http://38.224.145.3:3006/resolvidos-por-staff');
+        const staffData = await resp7.json();
         const totalGeral = staffData.reduce((acc, staff) => acc + staff.total_resolvidos, 0);
-
-        const formatado = staffData.map(staff => ({
+        const formatadoStaff = staffData.map(staff => ({
           name: staff.nome,
-          value: Math.round((staff.total_resolvidos / totalGeral) * 100),
+          value: Math.round((staff.total_resolvidos / totalGeral) * 100)
         }));
+        setData(formatadoStaff);
 
-        setData(formatado);
       } catch (err) {
+        console.error(err.message);
         setErro(err.message);
       }
     };
 
+    // Chama uma vez ao carregar
     fetchDados();
-    fetchRespondidosTotal();
-    fetchTotalTicket();
-    fetchTotalAbertos();
-    fetchTotalResolvidos();
-    fetchTms();
-    fetchGrafico();
-    fetchStaffData();
 
-    const interval = setInterval(() => {
-      fetchDados();
-      fetchRespondidosTotal();
-      fetchTotalTicket();
-      fetchTotalAbertos();
-      fetchTotalResolvidos();
-      fetchTms();
-      fetchGrafico();
-      fetchStaffData();
-    }, 10000);
-
+    // E depois a cada 10 segundos
+    const interval = setInterval(fetchDados, 10000);
     return () => clearInterval(interval);
   }, []);
+  
+
 
     return (
       <div>
@@ -193,7 +134,7 @@ function DashboardOsTicket() {
 
             <div  className='card3-metricas-osticket'>
               <h1 className='card-titulo-metricas'>Respondidos</h1>
-              <h1  className='card-subtitulo-metricas'>{Respondidostotal}</h1>
+              <h1  className='card-subtitulo-metricas'>{respondidosTotal}</h1>
             </div>
 
 
