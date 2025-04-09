@@ -170,12 +170,12 @@ function DashboardOsTicket() {
 
             <div className='card2-metricas-osticket'>
               <h1 className='card-titulo-metricas'>Abertos</h1>
-              <h1  className='card-subtitulo-metricas'>{totalAbertos}</h1>
+              <h1  className='card-subtitulo-metricas'>{Respondidostotal}</h1>
             </div>
 
             <div  className='card3-metricas-osticket'>
               <h1 className='card-titulo-metricas'>Respondidos</h1>
-              <h1  className='card-subtitulo-metricas'>{Respondidostotal}</h1>
+              <h1  className='card-subtitulo-metricas'>{totalAbertos}</h1>
             </div>
 
 
