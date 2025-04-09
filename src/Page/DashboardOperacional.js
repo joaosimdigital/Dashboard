@@ -29,11 +29,11 @@ export default function DashboardOperacional() {
      const [graficoData, setGraficoData] = useState([]);
 
      const [regionsData, setRegionsData] = useState([
-      { name: 'Caxias', days: 2 },
-      { name: 'Continente', days: 6 },
-      { name: 'Norte', days: 8 },
-      { name: 'Sul', days: 5 },
-      { name: 'Centro', days: 7 },
+      { name: 'Caxias', days: 3 },
+      { name: 'Continente', days: 12 },
+      { name: 'Norte', days: 12 },
+      { name: 'Sul', days: 12 },
+      { name: 'Centro', days: 12 },
     ]);
 
         const total1 = 810;
