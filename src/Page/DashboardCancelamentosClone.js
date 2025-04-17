@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
+import { useLocation } from 'react-router-dom';
+
 
 //CSS
 import '../CSS/Dashboard.css'
@@ -12,7 +14,7 @@ import logobranca from '../Images/logobrnaca.png'
 
 
 
-export default function DashboardCancelamentos() {
+export default function DashboardCancelamentosClone() {
     const [totalCanceladosMes, setTotalCanceladosMes] = useState(null);
     const [totalCanceladosHoje, setTotalCanceladosHoje] = useState(null);
     const [totalClientesAtivos, setTotalClientesAtivos] = useState(null);
@@ -23,6 +25,12 @@ export default function DashboardCancelamentos() {
       const [erro, setErro] = useState(null);
       const [cancelamentosPorCidade, setCancelamentosPorCidade] = useState([]);
       const [churnUltimosMeses, setChurnUltimosMeses] = useState([]);
+      const location = useLocation();
+      const params = new URLSearchParams(location.search);
+
+      const mes = parseInt(params.get("mes"));
+      const ano = parseInt(params.get("ano"));
+      console.log(mes, ano)
      
 
         // Mapeamento de números de mês para nomes
@@ -121,7 +129,12 @@ export default function DashboardCancelamentos() {
 
       const fetchChurnData = async () => {
         try {
-          const responseMensal = await fetch('http://38.224.145.3:3001/churn-mensal');
+          let urlMensal = `http://38.224.145.3:3007/churn-mensal`;
+          if (mes && ano) {
+            urlMensal += `?mes=${mes}&ano=${ano}`;
+          }
+      
+          const responseMensal = await fetch(urlMensal);
           const dataMensal = await responseMensal.json();
           setChurnMensal(dataMensal.churn_mensal);
     
