@@ -9,6 +9,7 @@ import DashboardOperacional from '../Page/DashboardOperacional';
 import DashboardClientes from '../Page/DashboardClientes';
 import DashboardClientesTV from '../Page/DashboardClientesTV';
 import DashboardOsTicket from '../Page/DashboardOsTicket';
+import DashboardChurnGerencial from '../Page/DashboardChurnGerencial';
 
 const Rotas = () => {
   return (
@@ -20,7 +21,7 @@ const Rotas = () => {
         <Route path='/clientestv' element={<DashboardClientesTV />} />
         <Route path='/clientestv1' element={<DashboardClientes />} />
         <Route path='/osticket' element={<DashboardOsTicket />} />
-        
+        <Route path='/dashboardchurngerencial' element={<DashboardChurnGerencial />} />
       </Routes>
     </Router>
   );

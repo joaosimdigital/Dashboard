@@ -184,11 +184,7 @@ function DashboardOsTicket() {
               <h1  className='card-subtitulo-metricas'>{totalResolvidos}</h1>
             </div>
 
-
-
-
         </div>
-
 
         <div className='div-graficos'>
 
