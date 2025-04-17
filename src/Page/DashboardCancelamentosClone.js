@@ -92,18 +92,7 @@ export default function DashboardCancelamentosClone() {
   
   
     useEffect(() => {
-      // Função para buscar o total de cancelados do mês
-      const fetchCanceladosMes = async () => {
-        try {
-          const response = await fetch('http://38.224.145.3:3001/total-clientes-cancelados-mes');
-          const data = await response.json();
-          setTotalCanceladosMes(data.total_cancelados_este_mes);
-        } catch (error) {
-          console.error('Erro ao buscar os cancelamentos do mês:', error);
-        }
-      };
   
-
       const fetchCanceladosHoje = async () => {
         try {
           const response = await fetch('http://38.224.145.3:3001/total-clientes-cancelados-hoje');
@@ -137,6 +126,7 @@ export default function DashboardCancelamentosClone() {
           const responseMensal = await fetch(urlMensal);
           const dataMensal = await responseMensal.json();
           setChurnMensal(dataMensal.churn_mensal);
+          setTotalCanceladosMes(dataMensal.total_cancelamentos_mes);
     
           const responseDiario = await fetch('http://38.224.145.3:3001/churn-diario');
           const dataDiario = await responseDiario.json();
@@ -148,7 +138,7 @@ export default function DashboardCancelamentosClone() {
       };
   
       // Inicializa as buscas
-      fetchCanceladosMes();
+ 
       fetchCanceladosHoje();
       fetchClientesAtivos();
       fetchChurnData();
@@ -160,7 +150,6 @@ export default function DashboardCancelamentosClone() {
       const intervalId = setInterval(() => {
         fetchCancelamentosPorCidade();
         fetchChurnData()
-        fetchCanceladosMes();
         fetchCanceladosHoje();
         fetchClientesAtivos();
         fetchCancelamentoPorcentagem();
