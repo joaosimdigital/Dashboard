@@ -91,93 +91,94 @@ export default function DashboardCancelamentosClone() {
   
   
   
-    useEffect(() => {
-  
-      const fetchCanceladosHoje = async () => {
-        try {
-          const response = await fetch('http://38.224.145.3:3001/total-clientes-cancelados-hoje');
-          const data = await response.json();
-          setTotalCanceladosHoje(data.total_cancelados_hoje);
-        } catch (error) {
-          console.error('Erro ao buscar os cancelamentos do mês:', error);
-        }
-      };
-  
-      
+      useEffect(() => {
 
-      // Função para buscar o total de clientes ativos
-      const fetchClientesAtivos = async () => {
-        try {
-          const response = await fetch('http://38.224.145.3:3001/total-clientes-ativos');
-          const data = await response.json();
-          setTotalClientesAtivos(data.total_clientes_ativos);
-        } catch (error) {
-          console.error('Erro ao buscar os clientes ativos:', error);
-        }
-      };
-
-      const fetchChurnData = async () => {
-        try {
-          let urlMensal = `http://38.224.145.3:3007/churn-mensal`;
-          if (mes && ano) {
-            urlMensal += `?mes=${mes}&ano=${ano}`;
+        const fetchCanceladosHoje = async () => {
+          try {
+            const response = await fetch('http://38.224.145.3:3001/total-clientes-cancelados-hoje');
+            const data = await response.json();
+            setTotalCanceladosHoje(data.total_cancelados_hoje);
+          } catch (error) {
+            console.error('Erro ao buscar os cancelamentos do dia:', error);
           }
+        };
       
-          const responseMensal = await fetch(urlMensal);
-          const dataMensal = await responseMensal.json();
-          setChurnMensal(dataMensal.churn_mensal);
-          setTotalCanceladosMes(dataMensal.total_cancelamentos_mes);
-    
-          const responseDiario = await fetch('http://38.224.145.3:3001/churn-diario');
-          const dataDiario = await responseDiario.json();
-         
-          setChurnDiario(dataDiario.churn_diario);
-        } catch (error) {
-          console.error('Erro ao buscar os dados de churn:', error);
-        }
-      };
-  
-      // Inicializa as buscas
- 
-      fetchCanceladosHoje();
-      fetchClientesAtivos();
-      fetchChurnData();
-      fetchCancelamentosPorCidade();
-      fetchCancelamentoPorcentagem();
-      fetchChurnUltimosMeses();
-  
-      // Define o intervalo para atualizar a cada 30 segundos
-      const intervalId = setInterval(() => {
-        fetchCancelamentosPorCidade();
-        fetchChurnData()
+        const fetchClientesAtivos = async () => {
+          try {
+            const response = await fetch('http://38.224.145.3:3001/total-clientes-ativos');
+            const data = await response.json();
+            setTotalClientesAtivos(data.total_clientes_ativos);
+          } catch (error) {
+            console.error('Erro ao buscar os clientes ativos:', error);
+          }
+        };
+      
+        const fetchChurnData = async () => {
+          try {
+            let urlMensal = `http://38.224.145.3:3007/churn-mensal`;
+            if (mes && ano) {
+              urlMensal += `?mes=${mes}&ano=${ano}`;
+            }
+      
+            const responseMensal = await fetch(urlMensal);
+            const dataMensal = await responseMensal.json();
+            setChurnMensal(dataMensal.churn_mensal);
+            setTotalCanceladosMes(dataMensal.total_cancelamentos_mes);
+      
+            const responseDiario = await fetch('http://38.224.145.3:3001/churn-diario');
+            const dataDiario = await responseDiario.json();
+           
+            setChurnDiario(dataDiario.churn_diario);
+          } catch (error) {
+            console.error('Erro ao buscar os dados de churn:', error);
+          }
+        };
+      
+        const fetchCancelamentosPorCidade = async (mes, ano) => {
+          try {
+            let url = 'http://38.224.145.3:3007/churn-cidade-reduzido';
+            if (mes && ano) {
+              url += `?mes=${mes}&ano=${ano}`;
+            }
+      
+            const response = await fetch(url);
+            if (!response.ok) {
+              throw new Error('Erro ao buscar cancelamentos por cidade');
+            }
+      
+            const data = await response.json();
+            setCancelamentosPorCidade(data.dados || []);
+      
+          } catch (error) {
+            console.error('Erro ao buscar cancelamentos por cidade:', error);
+          }
+        };
+      
+        // Chamadas iniciais
         fetchCanceladosHoje();
         fetchClientesAtivos();
+        fetchChurnData();
+        fetchCancelamentosPorCidade(mes, ano);  // <-- AQUI: passe mes e ano
         fetchCancelamentoPorcentagem();
         fetchChurnUltimosMeses();
-      }, 30000);
+      
+        // Atualizações periódicas a cada 30 segundos
+        const intervalId = setInterval(() => {
+          fetchCancelamentosPorCidade(mes, ano); // <-- AQUI TAMBÉM: mes e ano!
+          fetchChurnData();
+          fetchCanceladosHoje();
+          fetchClientesAtivos();
+          fetchCancelamentoPorcentagem();
+          fetchChurnUltimosMeses();
+        }, 30000);
+      
+        return () => clearInterval(intervalId);
+      }, [mes, ano]); // <-- AQUI: Dependências adicionadas      
+    
   
-      // Limpa o intervalo quando o componente for desmontado
-      return () => clearInterval(intervalId);
-    }, []); // O array vazio [] faz a requisição apenas na montagem do componente
-  
-
-    const fetchCancelamentosPorCidade = async () => {
-        try {
-            const response = await fetch('http://38.224.145.3:3001/churn-cidade');
-            if (!response.ok) {
-                throw new Error('Erro ao buscar cancelamentos por cidade');
-            }
-            const data = await response.json();
-            setCancelamentosPorCidade(data);
-        } catch (error) {
-            console.error('Erro ao buscar cancelamentos por cidade:', error);
-        }
-    };
 
   return (
     <div className='body-principal'>
-
-
 
     <div className='row-body-principal'>
     <div  className='div-segunda-dados-tabelas'>
@@ -239,33 +240,38 @@ export default function DashboardCancelamentosClone() {
  
       <div className='div-segunda-dados-tabelas'>
 
-    <div className='tabela-churn-cidade'>
-        <h1 className='h1-tabela-churn-cidade'>Cancelamentos por Cidade</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th className='titulo-tabela-churn-cidade'>Cidade</th>
-                    <th className='titulo-tabela-churn-cidade'>Cancelamentos</th>
-                    <th className='titulo-tabela-churn-cidade'>Churn (%)</th> {/* Adicionando a coluna de churn */}
-                </tr>
-            </thead>
-            <tbody>
-                {cancelamentosPorCidade.length > 0 ? (
-                    cancelamentosPorCidade.map((cidade, index) => (
-                        <tr key={index}>
-                            <th className='titulo-tabela-churn-cidade'>{cidade.cidade_nome}</th>
-                            <th className='titulo-tabela-churn-cidade'>{cidade.total_cancelamentos}</th>
-                            <th className='titulo-tabela-churn-cidade' >{cidade.churn_rate ? `${cidade.churn_rate}%` : 'N/A'}</th> 
-                        </tr>
-                    ))
-                ) : (
-                    <tr>
-                        <td colSpan="3">Sem dados disponíveis</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>
-    </div>
+      <div className='tabela-churn-cidade'>
+  <h1 className='h1-tabela-churn-cidade'>
+    Cancelamentos por Cidade {mes && ano ? `(${obterNomeDoMes(mes)}/${ano})` : ''}
+  </h1>
+  <table>
+    <thead>
+      <tr>
+        <th className='titulo-tabela-churn-cidade'>Cidade</th>
+        <th className='titulo-tabela-churn-cidade'>Cancelamentos</th>
+        <th className='titulo-tabela-churn-cidade'>Churn (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {cancelamentosPorCidade.length > 0 ? (
+        cancelamentosPorCidade.map((cidade, index) => (
+          <tr key={index}>
+            <th className='titulo-tabela-churn-cidade'>{cidade.cidade_nome}</th>
+            <th className='titulo-tabela-churn-cidade'>{cidade.total_cancelamentos}</th>
+            <th className='titulo-tabela-churn-cidade'>
+              {cidade.churn_rate ? `${cidade.churn_rate}%` : 'N/A'}
+            </th>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td colSpan="3">Sem dados disponíveis</td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
 
     <div className='grafico'>
                 <h1 className='h1-tabela-agenda-dia'>Churn dos Últimos Meses</h1>

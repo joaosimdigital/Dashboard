@@ -30,10 +30,10 @@ export default function DashboardOperacional() {
 
      const [regionsData, setRegionsData] = useState([
       { name: 'Caxias', days: 1 },
-      { name: 'Continente', days: 9 },
-      { name: 'Norte', days: 9 },
-      { name: 'Sul', days: 8 },
-      { name: 'Centro', days: 8 },
+      { name: 'Continente', days: 6 },
+      { name: 'Norte', days: 6 },
+      { name: 'Sul', days: 6 },
+      { name: 'Centro', days: 6 },
     ]);
 
         const total1 = 810;
