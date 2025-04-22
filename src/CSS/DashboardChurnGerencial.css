@@ -168,3 +168,32 @@
     width: 98%;
     height: 95%;
 }
+
+.div-body-opcao{
+    height: 100px;
+    background-color: black;
+    width: 95%;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+
+.h1-body-opcao{
+    color: white;
+    font-family: Bold;
+
+}
+
+
+.div-body-opcao1{
+    display: flex;
+    width: 45%;
+}
+
+.button-body-opcao{
+    margin-left: 20px;
+    width: 200px;
+}

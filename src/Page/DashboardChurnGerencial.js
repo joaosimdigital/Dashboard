@@ -13,6 +13,18 @@ function DashboardChurnGerencial() {
                 </div>
 
 
+                <div className='div-body-opcao'>
+                    <div className='div-body-opcao1'>
+                    <h1 className='h1-body-opcao'>Ano</h1>
+                    <button className='button-body-opcao'>2025</button>
+                    </div>
+
+                    <div className='div-body-opcao1'>
+                    <h1 className='h1-body-opcao'>Semana</h1>
+                    <button className='button-body-opcao'>Semana 1</button>
+                    </div>
+                </div>
+
                 <div className='row-gerencial-body1'>
 
                     <div className='div-gerencial-body1'>
