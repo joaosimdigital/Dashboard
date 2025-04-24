@@ -244,7 +244,8 @@ export default function DashboardCancelamentos() {
                 <tr>
                     <th className='titulo-tabela-churn-cidade'>Cidade</th>
                     <th className='titulo-tabela-churn-cidade'>Cancelamentos</th>
-                    <th className='titulo-tabela-churn-cidade'>Churn (%)</th> {/* Adicionando a coluna de churn */}
+                    <th className='titulo-tabela-churn-cidade'>Churn (%)</th>
+                    
                 </tr>
             </thead>
             <tbody>

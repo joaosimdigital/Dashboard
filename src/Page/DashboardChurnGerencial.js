@@ -28,8 +28,12 @@ function DashboardChurnGerencial() {
     const [cancelamentosDetalhados, setCancelamentosDetalhados] = useState([]);
     const [clientesRepetidos, setClientesRepetidos] = useState([]);
     const [clientesRepetidosAtendimento, setClientesRepetidosAtendimento] = useState([]);
+    const [motivoSelecionado, setMotivoSelecionado] = useState(null);
+    const [cidadeSelecionada, setCidadeSelecionada] = useState(null);
+    const [bairroSelecionado, setBairroSelecionado] = useState(null);
 
 
+    
 
 
     useEffect(() => {
@@ -67,7 +71,7 @@ function DashboardChurnGerencial() {
 
           const fetchChurn3Meses = async () => {
             try {
-              const response = await fetch(`http://localhost:3007/churn-mensal-3meses?ano=${anoSelecionado}&mes=${mesSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3007/churn-mensal-3meses?ano=${anoSelecionado}&mes=${mesSelecionado}`);
               const data = await response.json();
           
               if (response.ok) {
@@ -147,7 +151,7 @@ function DashboardChurnGerencial() {
 
           const fetchMotivosCancelamento = async () => {
             try {
-              const response = await fetch(`http://localhost:3007/motivos_cancelamentos?ano=${anoSelecionado}&mes=${mesSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3007/motivos_cancelamentos?ano=${anoSelecionado}&mes=${mesSelecionado}`);
               const data = await response.json();
               if (response.ok) {
                 setMotivosCancelamentos(data.motivos);
@@ -184,7 +188,7 @@ function DashboardChurnGerencial() {
           
             try {
               const responses = await Promise.all(meses.map(async ({ mes, ano, label }) => {
-                const response = await fetch(`http://localhost:3007/atendimentos_tipo?mes=${mes}&ano=${ano}`);
+                const response = await fetch(`http://38.224.145.3:3007/atendimentos_tipo?mes=${mes}&ano=${ano}`);
                 const data = await response.json();
           
                 if (response.ok && data.meses.length > 0) {
@@ -259,7 +263,7 @@ function DashboardChurnGerencial() {
 
           const fetchClientesHabilitados = async () => {
             try {
-              const response = await fetch(`http://localhost:3007/total-clientes-habilitados-ultimos-12-meses?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3007/total-clientes-habilitados-ultimos-12-meses?mes=${mesSelecionado}&ano=${anoSelecionado}`);
               const data = await response.json();
           
               if (response.ok && data.total_clientes_habilitados) {
@@ -285,7 +289,7 @@ function DashboardChurnGerencial() {
           
           const fetchCancelamentosDetalhados = async () => {
             try {
-              const response = await fetch(`http://localhost:3007/churn-descricao?ano=${anoSelecionado}&mes=${mesSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3007/churn-descricao?ano=${anoSelecionado}&mes=${mesSelecionado}`);
               const data = await response.json();
               if (response.ok) {
                 setCancelamentosDetalhados(data.cancelamentos_detalhados || []);
@@ -300,7 +304,7 @@ function DashboardChurnGerencial() {
 
           const fetchClientesRepetidos = async () => {
             try {
-              const response = await fetch(`http://localhost:3007/clientes-repetidos-3meses?ano=${anoSelecionado}&mes=${mesSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3007/clientes-repetidos-3meses?ano=${anoSelecionado}&mes=${mesSelecionado}`);
               const data = await response.json();
               if (response.ok && data.clientes_repetidos) {
                 setClientesRepetidos(data.clientes_repetidos);
@@ -315,7 +319,7 @@ function DashboardChurnGerencial() {
 
           const fetchClientesRepetidosAtendimento = async () => {
             try {
-              const response = await fetch(`http://localhost:3007/clientes-repetidos-atendimentos?ano=${anoSelecionado}&mes=${mesSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3007/clientes-repetidos-atendimentos?ano=${anoSelecionado}&mes=${mesSelecionado}`);
               const data = await response.json();
               if (response.ok && data.clientes_repetidos_atendimento) {
                 setClientesRepetidosAtendimento(data.clientes_repetidos_atendimento);
@@ -518,16 +522,27 @@ function DashboardChurnGerencial() {
                         </tr>
                     </thead>
                     <tbody>
-                        {churnPorBairro.map((item, index) => (
-                        <tr className='link-tabela-bairros' key={index}>
-                            <td  className='h2-tabela-bairros-gerencial'>{item.bairro_nome}</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.total_clientes_ativos}</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.pct_pedido}%</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.pct_automatico}%</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.churn_rate}</td>
-                        </tr>
-                        ))}
+                    {churnPorBairro.map((item, index) => (
+                              <tr
+                                className='link-tabela-bairros'
+                                key={index}
+                                onClick={() =>
+                                  setBairroSelecionado(prev => prev === item.bairro_nome ? null : item.bairro_nome)
+                                }
+                                style={{
+                                  cursor: 'pointer',
+                                  backgroundColor: bairroSelecionado === item.bairro_nome ? '#f2f2f2' : 'white'
+                                }}
+                              >
+                                <td className='h2-tabela-bairros-gerencial'>{item.bairro_nome}</td>
+                                <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
+                                <td className='h2-tabela-bairros-gerencial'>{item.total_clientes_ativos}</td>
+                                <td className='h2-tabela-bairros-gerencial'>{item.pct_pedido}%</td>
+                                <td className='h2-tabela-bairros-gerencial'>{item.pct_automatico}%</td>
+                                <td className='h2-tabela-bairros-gerencial'>{item.churn_rate}</td>
+                              </tr>
+                            ))}
+
                     </tbody>
                     </table>
                 </div>
@@ -552,18 +567,27 @@ function DashboardChurnGerencial() {
                         </tr>
                     </thead>
                     <tbody>
-                        {churnPorCidade.map((item, index) => (
-                        <tr className='link-tabela-bairros' key={index}>
-                            <td  className='h2-tabela-bairros-gerencial'>{item.cidade_nome}</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.total_clientes_ativos}</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.perc_cancelamento_pedido}%</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.perc_cancelamento_automatico}%</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.churn_rate}%</td>
-                            
-                        </tr>
-                        ))}
-                    </tbody>
+                            {churnPorCidade.map((item, index) => (
+                              <tr
+                                className='link-tabela-bairros'
+                                key={index}
+                                onClick={() =>
+                                  setCidadeSelecionada(prev => prev === item.cidade_nome ? null : item.cidade_nome)
+                                }
+                                style={{
+                                  cursor: 'pointer',
+                                  backgroundColor: cidadeSelecionada === item.cidade_nome ? '#f2f2f2' : 'white'
+                                }}
+                              >
+                                <td className='h2-tabela-bairros-gerencial'>{item.cidade_nome}</td>
+                                <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
+                                <td className='h2-tabela-bairros-gerencial'>{item.total_clientes_ativos}</td>
+                                <td className='h2-tabela-bairros-gerencial'>{item.perc_cancelamento_pedido}%</td>
+                                <td className='h2-tabela-bairros-gerencial'>{item.perc_cancelamento_automatico}%</td>
+                                <td className='h2-tabela-bairros-gerencial'>{item.churn_rate}%</td>
+                              </tr>
+                            ))}
+                          </tbody>
                     </table>
                                 </div>
                         </div>
@@ -571,7 +595,7 @@ function DashboardChurnGerencial() {
                         <div  className='div-gerencial-body2'>
                        
                             <div className='card-div-gerencial-body2'>
-                            <h1 className='h1-div-gerencial-gerencial'>Downgrades</h1>
+                            <h1 className='h1-div-gerencial-gerencial'>Upgrade de Planos</h1>
                                 
                             {downgradeAtendimentos.length > 0 ? (
                                 <div style={{ marginTop: 30 }}>
@@ -626,13 +650,24 @@ function DashboardChurnGerencial() {
                         </tr>
                     </thead>
                     <tbody>
-                        {motivosCancelamentos.map((item, index) => (
-                        <tr className='link-tabela-bairros' key={index}>
-                            <td className='h2-tabela-bairros-gerencial'>{item.descricao}</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
-                        </tr>
-                        ))}
-                    </tbody>
+                          {motivosCancelamentos.map((item, index) => (
+                            <tr 
+                              className='link-tabela-bairros' 
+                              key={index}
+                              onClick={() =>
+                                setMotivoSelecionado(prev => prev === item.descricao ? null : item.descricao)
+                              }
+                              style={{ 
+                                cursor: 'pointer',
+                                backgroundColor: motivoSelecionado === item.descricao ? '#f2f2f2' : 'white'
+                              }}
+                            >
+                              <td className='h2-tabela-bairros-gerencial'>{item.descricao}</td>
+                              <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+
                     </table>
                 </div>
                 </div>
@@ -643,7 +678,7 @@ function DashboardChurnGerencial() {
                 <div  className='div-gerencial-body2'>
                        
                        <div className='card-div-gerencial-body2'>
-                       <h1 className='h1-div-gerencial-gerencial'>Downgrades</h1>
+                       <h1 className='h1-div-gerencial-gerencial'>Reversão de Cancelamento</h1>
                            
                        {atendimentosTipo257.length > 0 ? (
                            <div style={{ marginTop: 30 }}>
@@ -786,6 +821,8 @@ function DashboardChurnGerencial() {
                                       <tr style={{ backgroundColor: 'white' }}>
                                         <th className='h1-tabela-bairros-gerencial'>Cliente</th>
                                         <th className='h1-tabela-bairros-gerencial'>Bairro</th>
+                                        <th className='h1-tabela-bairros-gerencial'>Cidade</th>
+                                        <th className='h1-tabela-bairros-gerencial'>Motivo de Cancelamento</th>
                                         <th className='h1-tabela-bairros-gerencial'>Valor</th>
                                         <th className='h1-tabela-bairros-gerencial'>Tipo</th>
                                         <th className='h1-tabela-bairros-gerencial'>Data Cancelamento</th>
@@ -793,21 +830,31 @@ function DashboardChurnGerencial() {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {cancelamentosDetalhados.map((item, index) => (
-                                        <tr key={index} className='link-tabela-bairros'>
-                                          <td className='h2-tabela-bairros-gerencial'>{item.nome_razaosocial}</td>
-                                          <td className='h2-tabela-bairros-gerencial'>{item.bairro}</td>
-                                          <td className='h2-tabela-bairros-gerencial'>
-                                            {parseFloat(item.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                          </td>
-                                          <td className='h2-tabela-bairros-gerencial'>{item.tipo_pessoa.toUpperCase()}</td>
-                                          <td className='h2-tabela-bairros-gerencial'>
-                                            {new Date(item.data_cancelamento).toLocaleDateString('pt-BR')}
-                                          </td>
-                                          <td className='h2-tabela-bairros-gerencial'>{item.observacao}</td>
-                                        </tr>
-                                      ))}
-                                    </tbody>
+                                                {cancelamentosDetalhados
+                                                  .filter(item => 
+                                                    (!motivoSelecionado || item.motivo_cancelamento === motivoSelecionado) &&
+                                                    (!cidadeSelecionada || item.cidade_nome === cidadeSelecionada) &&
+                                                    (!bairroSelecionado || item.bairro === bairroSelecionado)
+                                                  )
+                                                  .map((item, index) => (
+                                                    <tr key={index} className='link-tabela-bairros'>
+                                                      <td className='h2-tabela-bairros-gerencial'>{item.nome_razaosocial}</td>
+                                                      <td className='h2-tabela-bairros-gerencial'>{item.bairro}</td>
+                                                      <td className='h2-tabela-bairros-gerencial'>{item.cidade_nome}</td>
+                                                      <td className='h2-tabela-bairros-gerencial'>{item.motivo_cancelamento}</td>
+                                                      
+                                                      <td className='h2-tabela-bairros-gerencial'>
+                                                        {parseFloat(item.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                      </td>
+                                                      <td className='h2-tabela-bairros-gerencial'>{item.tipo_pessoa.toUpperCase()}</td>
+                                                      <td className='h2-tabela-bairros-gerencial'>
+                                                        {new Date(item.data_cancelamento).toLocaleDateString('pt-BR')}
+                                                      </td>
+                                                      <td className='h2-tabela-bairros-gerencial'>{item.observacao}</td>
+                                                    </tr>
+                                                ))}
+                                              </tbody>
+
                                   </table>
                                 </div>
                                 </div>
