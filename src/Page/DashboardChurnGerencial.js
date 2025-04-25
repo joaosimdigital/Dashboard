@@ -8,9 +8,11 @@ import grafico from '../Images/chart-graphic.png'
 import '../CSS/DashboardChurnGerencial.css'
 
 function DashboardChurnGerencial() {
-    const currentYear = new Date().getFullYear();
-    const [anoSelecionado, setAnoSelecionado] = useState(currentYear);
-    const [mesSelecionado, setMesSelecionado] = useState('');
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1;
+  const [anoSelecionado, setAnoSelecionado] = useState(currentYear);
+  const [mesSelecionado, setMesSelecionado] = useState(currentMonth);
     const [churnMensal, setChurnMensal] = useState(null);
     const [projecao, setProjecao] = useState(0);
     const [cancelamentosPJ, setCancelamentosPJ] = useState(0);
@@ -31,6 +33,9 @@ function DashboardChurnGerencial() {
     const [motivoSelecionado, setMotivoSelecionado] = useState(null);
     const [cidadeSelecionada, setCidadeSelecionada] = useState(null);
     const [bairroSelecionado, setBairroSelecionado] = useState(null);
+    const [statusMeta, setStatusMeta] = useState('');
+    
+
 
 
     
@@ -332,6 +337,20 @@ function DashboardChurnGerencial() {
           };
           
 
+          const fetchStatusMeta = async () => {
+            try {
+              const response = await fetch(`http://38.224.145.3:3007/meta?ano=${anoSelecionado}&mes=${mesSelecionado}`);
+              const data = await response.json();
+              if (response.ok) {
+                setStatusMeta(data.status); // "acima" ou "abaixo"
+              } else {
+                console.error('Erro ao buscar status da meta:', data.error);
+              }
+            } catch (error) {
+              console.error('Erro na requisição do status da meta:', error);
+            }
+          };
+
 
           const fetchAll = async () => {
             await fetchChurnMensal();
@@ -349,6 +368,7 @@ function DashboardChurnGerencial() {
             await fetchCancelamentosDetalhados();
             await fetchClientesRepetidos();
             await fetchClientesRepetidosAtendimento();
+            await fetchStatusMeta();
           };
       
           // Chama a primeira vez imediatamente
@@ -455,7 +475,7 @@ function DashboardChurnGerencial() {
                                             )}
 
 
-                                            <img src={grafico}/>
+                                            <img src={grafico} style={{height: 100}}/>
 
                             </div>
 
@@ -470,11 +490,6 @@ function DashboardChurnGerencial() {
                         </h1>
                         </div>
 
-                            <div className='card1-div-gerencial-body1'>
-                                <h1 className='h1-div-gerencial-body2'>Projeção</h1>
-                                <h1 className='h2-div-gerencial-body1'>Abaixo</h1>
-                            </div>
-
                             <div className='card2-div-gerencial-body1'>
                                 <h1 className='h1-div-gerencial-body2'>Limite de Meta</h1>
                             </div>
@@ -484,14 +499,9 @@ function DashboardChurnGerencial() {
 
 
                     <div className='card1-div-gerencial-body1'>
-                                <h1 className='h1-div-gerencial-body1'>LTV TOTAL</h1>
+                                <h1 className='h1-div-gerencial-body2'>Projeção</h1>
+                                <h1 className='h2-div-gerencial-body1'>{statusMeta}</h1>
                             </div>
-
-
-                            <div className='card3-div-gerencial-body1'>
-                                <h1 className='h1-div-gerencial-body1'>LTV CHURN</h1>
-                            </div>
-
 
                             <div className='card3-div-gerencial-body1'>
                                 <h1 className='h1-div-gerencial-body1'>PF</h1>
