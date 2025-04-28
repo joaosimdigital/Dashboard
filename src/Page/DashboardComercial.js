@@ -82,10 +82,7 @@ const COLORS = ['#FF4500', '#D3D3D3'];
         const dataRS = await responseRS.json();
         setTotalCadastrosRS(dataRS.total_cadastros); // Armazenando o total de cadastros de RS
 
-         // Buscar dados de RS
-         const responseMediadia = await fetch('http://38.224.145.3:3002/media-clientes-dia');
-         const dataMediadia = await responseMediadia.json();
-         setTotalMediaDia(dataMediadia.media_por_dia); // Armazenando o total de cadastros de RS
+        
 
         const responseDiaSC = await fetch('http://38.224.145.3:3002/cadastros-sc-dia');
         const dataDiaSC = await responseDiaSC.json();
