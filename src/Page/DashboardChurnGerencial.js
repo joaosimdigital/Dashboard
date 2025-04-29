@@ -580,7 +580,7 @@ function DashboardChurnGerencial() {
                                 <PieChart>
                                   <Pie
                                     data={[
-                                      { name: 'Meta Atingida', value: limiteMeta.porcentagem_batida },
+                                      { name: '', value: limiteMeta.porcentagem_batida },
                                       { name: 'Restante', value: limiteMeta.porcentagem_restante }
                                     ]}
                                     cx="50%"
