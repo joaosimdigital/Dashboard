@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
-
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList, PieChart, Pie, Cell } from 'recharts';
 
 
 import logobranca from '../Images/logobrnaca.png'
@@ -33,202 +32,263 @@ function DashboardChurnGerencial() {
     const [motivoSelecionado, setMotivoSelecionado] = useState(null);
     const [cidadeSelecionada, setCidadeSelecionada] = useState(null);
     const [bairroSelecionado, setBairroSelecionado] = useState(null);
+    const [limiteMeta, setLimiteMeta] = useState({ porcentagem_batida: 0, porcentagem_restante: 100 });
     const [statusMeta, setStatusMeta] = useState('');
+    const dataMeta = [
+      { name: '', value: limiteMeta.porcentagem_batida },
+      { name: 'Restante', value: limiteMeta.porcentagem_restante }
+    ];
     
-
-
-
-    
+    const COLORS = ['#F45742', '#00000']; // Cores para Batido e Restante
 
 
     useEffect(() => {
     if (anoSelecionado && mesSelecionado) {
-        const fetchChurnMensal = async () => {
+    
+      const fetchChurnMensal = async () => {
         try {
-            const response = await fetch(`http://38.224.145.3:3007/churn-mensal?ano=${anoSelecionado}&mes=${mesSelecionado}`);
-            const data = await response.json();
-            if (response.ok) {
-            setChurnMensal(data.total_cancelamentos_mes);
-            
-            } else {
-            console.error('Erro:', data.error);
-            }
+          let url = `http://38.224.145.3:3007/churn-mensal?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+      
+          if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+          if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
+          if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+      
+          const response = await fetch(url);
+          const data = await response.json();
+          
+          if (response.ok) {
+            setChurnMensal(data.total_cancelamentos_mes); // Mostra o número de cancelamentos conforme os filtros aplicados
+          } else {
+            console.error('Erro ao buscar churn mensal:', data.error);
+          }
         } catch (error) {
-            console.error('Erro na requisição:', error);
+          console.error('Erro ao buscar churn mensal:', error);
         }
-        };
+      };
+      
 
+      const fetchLimiteMeta = async () => {
+        try {
+          let url = `http://38.224.145.3:3007/limitemeta?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+      
+          if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+          if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
+          if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+      
+          const response = await fetch(url);
+          const data = await response.json();
+      
+          if (response.ok) {
+            setLimiteMeta({
+              porcentagem_batida: parseFloat(data.porcentagem_batida),
+              porcentagem_restante: parseFloat(data.porcentagem_restante)
+            });
+          } else {
+            console.error('Erro:', data.error);
+          }
+        } catch (error) {
+          console.error('Erro ao buscar limite de meta:', error);
+        }
+      };
+      
+      
 
         const fetchChurnTipoPessoa = async () => {
-            try {
-              const response = await fetch(`http://38.224.145.3:3007/churn-mensal_tipo_pessoa?ano=${anoSelecionado}&mes=${mesSelecionado}`);
-              const data = await response.json();
-              if (response.ok) {
-                setCancelamentosPJ(data.cancelamentos.PJ || 0);
-                setCancelamentosPF(data.cancelamentos.PF || 0);
-              } else {
-                console.error('Erro:', data.error);
-              }
-            } catch (error) {
-              console.error('Erro na requisição de tipos de pessoa:', error);
+          try {
+            let url = `http://38.224.145.3:3007/churn-mensal_tipo_pessoa?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+        
+            if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+            if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
+            if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+        
+            const response = await fetch(url);
+            const data = await response.json();
+            if (response.ok) {
+              setCancelamentosPJ(data.cancelamentos.PJ || 0);
+              setCancelamentosPF(data.cancelamentos.PF || 0);
+            } else {
+              console.error('Erro:', data.error);
             }
-          };
+          } catch (error) {
+            console.error('Erro ao buscar churn tipo pessoa:', error);
+          }
+        };
+        
 
-          const fetchChurn3Meses = async () => {
-            try {
-              const response = await fetch(`http://38.224.145.3:3007/churn-mensal-3meses?ano=${anoSelecionado}&mes=${mesSelecionado}`);
-              const data = await response.json();
-          
-              if (response.ok) {
-                // Converter número do mês para nome
-                const nomesMeses = [
-                  'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-                  'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-                ];
-          
-                const dadosFormatados = data.map(item => ({
-                  mes: `${nomesMeses[item.mes - 1]}/${item.ano.toString().slice(-2)}`,
-                  churn: item.churn_mensal
-                }));
-          
-                setChurnUltimosMeses(dadosFormatados);
-              } else {
-                console.error('Erro ao buscar últimos 3 meses:', data.error);
-              }
-            } catch (error) {
-              console.error('Erro ao buscar churn últimos meses:', error);
+        const fetchChurn3Meses = async () => {
+          try {
+            let url = `http://38.224.145.3:3007/churn-mensal-3meses?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+            
+            if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+            if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
+            if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+        
+            const response = await fetch(url);
+            const data = await response.json();
+        
+            if (response.ok) {
+              const nomesMeses = [
+                'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+                'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+              ];
+        
+              const dadosFormatados = data.map(item => ({
+                mes: `${nomesMeses[item.mes - 1]}/${item.ano.toString().slice(-2)}`,
+                churn: item.churn_mensal
+              }));
+        
+              setChurnUltimosMeses(dadosFormatados);
+            } else {
+              console.error('Erro ao buscar últimos 3 meses:', data.error);
             }
-          };
-
-          const fetchChurnPorBairro = async () => {
-            try {
-              const response = await fetch(`http://38.224.145.3:3007/churn-bairro?ano=${anoSelecionado}&mes=${mesSelecionado}`);
-              const data = await response.json();
-              if (response.ok) {
-                setChurnPorBairro(data);
-              } else {
-                console.error('Erro ao buscar churn por bairro:', data.error);
-              }
-            } catch (error) {
-              console.error('Erro na requisição de churn por bairro:', error);
-            }
-          };
-
+          } catch (error) {
+            console.error('Erro ao buscar churn últimos meses:', error);
+          }
+        };
+        
 
           const fetchChurnPorCidade = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3007/churn-cidade?ano=${anoSelecionado}&mes=${mesSelecionado}`);
+              let url = `http://38.224.145.3:3007/churn-cidade?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+              if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+      
+              const response = await fetch(url);
               const data = await response.json();
-              if (response.ok) {
-                setChurnPorCidade(data);
-              } else {
-                console.error('Erro ao buscar churn por cidade:', data.error);
-              }
-            } catch (error) {
-              console.error('Erro na requisição de churn por cidade:', error);
-            }
+              if (response.ok) setChurnPorCidade(data);
+            } catch (error) { console.error('Erro:', error); }
           };
+      
+          const fetchChurnPorBairro = async () => {
+            try {
+              let url = `http://38.224.145.3:3007/churn-bairro?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+              if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+              if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+      
+              const response = await fetch(url);
+              const data = await response.json();
+              if (response.ok) setChurnPorBairro(data);
+            } catch (error) { console.error('Erro:', error); }
+          };
+
 
           const fetchDowngradeAtendimentos = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3007/atendimentos_tipo_downgrade`);
+              let url = `http://38.224.145.3:3007/atendimentos_tipo_downgrade?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+              if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+              if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
+              if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+          
+              const response = await fetch(url);
               const data = await response.json();
+          
               if (response.ok) {
                 const nomesMeses = [
                   'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
                   'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
                 ];
           
-                const ultimos3Meses = data.meses.slice(-3).map(item => ({
+                const ultimos12Meses = data.meses.map(item => ({
                   mes: `${nomesMeses[item.mes - 1]}/${item.ano.toString().slice(-2)}`,
                   total: item.total_atendimentos
                 }));
           
-                setDowngradeAtendimentos(ultimos3Meses);
+                setDowngradeAtendimentos(ultimos12Meses);
               } else {
                 console.error('Erro na requisição downgrade:', data.error);
               }
             } catch (error) {
-              console.error('Erro ao buscar atendimentos downgrade:', error);
+              console.error('Erro ao buscar atendimentos tipo downgrade:', error);
             }
           };
+          
 
+        const fetchMotivosCancelamento = async () => {
+                    try {
+                      let url = `http://38.224.145.3:3007/motivos_cancelamentos?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+                      if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+                      if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
 
-          const fetchMotivosCancelamento = async () => {
-            try {
-              const response = await fetch(`http://38.224.145.3:3007/motivos_cancelamentos?ano=${anoSelecionado}&mes=${mesSelecionado}`);
-              const data = await response.json();
-              if (response.ok) {
-                setMotivosCancelamentos(data.motivos);
-              } else {
-                console.error('Erro ao buscar motivos:', data.error);
-              }
-            } catch (error) {
-              console.error('Erro na requisição de motivos de cancelamento:', error);
-            }
-          };
-
-          const fetchAtendimentosTipo257 = async () => {
-            if (!anoSelecionado || !mesSelecionado) return;
-          
-            // Array para os últimos 3 meses retroativos
-            const meses = [];
-            const nomesMeses = [
-              'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-              'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-            ];
-          
-            let dataBase = new Date(anoSelecionado, mesSelecionado - 1, 1); // Mês base
-            for (let i = 2; i >= 0; i--) {
-              const data = new Date(dataBase.getFullYear(), dataBase.getMonth() - i, 1);
-              const mes = data.getMonth() + 1;
-              const ano = data.getFullYear();
-          
-              meses.push({
-                mes,
-                ano,
-                label: `${nomesMeses[mes - 1]}/${ano.toString().slice(-2)}`
-              });
-            }
-          
-            try {
-              const responses = await Promise.all(meses.map(async ({ mes, ano, label }) => {
-                const response = await fetch(`http://38.224.145.3:3007/atendimentos_tipo?mes=${mes}&ano=${ano}`);
-                const data = await response.json();
-          
-                if (response.ok && data.meses.length > 0) {
-                  return {
-                    mes: label,
-                    total: data.meses[0].total_atendimentos
+                      const response = await fetch(url);
+                      const data = await response.json();
+                      if (response.ok) {
+                        setMotivosCancelamentos(data.motivos);
+                      
+                      } else {
+                        console.error('Erro ao buscar motivos:', data.error);
+                      }
+                    } catch (error) {
+                      console.error('Erro na requisição de motivos de cancelamento:', error);
+                    }
                   };
-                } else {
-                  return null;
-                }
-              }));
-          
-              const filtrado = responses.filter(r => r !== null);
-              setAtendimentosTipo257(filtrado);
-            } catch (error) {
-              console.error('Erro ao buscar atendimentos tipo 257:', error);
-            }
-          };
-          const fetchValorCancelamentoMensal = async () => {
-            try {
-              const response = await fetch(`http://38.224.145.3:3007/valor-cancelamento-mensal?ano=${anoSelecionado}&mes=${mesSelecionado}`);
-              const data = await response.json();
-              if (response.ok) {
-                setValorMensalCancelamento(parseFloat(data.valor_total_perdido));
-              } else {
-                console.error('Erro ao buscar valor mensal:', data.error);
-              }
-            } catch (error) {
-              console.error('Erro na requisição valor mensal:', error);
-            }
-          };
+
+                 
+                  const fetchReversaoCancelamento = async () => {
+                    try {
+                      let url = `http://38.224.145.3:3007/atendimentos_tipo?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+                      if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+                     
+                    
+                  
+                      const response = await fetch(url);
+                      const data = await response.json();
+                  
+                      if (response.ok) {
+                        const nomesMeses = [
+                          'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+                          'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+                        ];
+                  
+                        const ultimos12Meses = data.meses.map(item => ({
+                          mes: `${nomesMeses[item.mes - 1]}/${item.ano.toString().slice(-2)}`,
+                          total: item.total_atendimentos
+                        }));
+                  
+                        setAtendimentosTipo257(ultimos12Meses);
+                      } else {
+                        console.error('Erro na requisição downgrade:', data.error);
+                      }
+                    } catch (error) {
+                      console.error('Erro ao buscar atendimentos tipo downgrade:', error);
+                    }
+                  };  
+
+
+                  const fetchValorCancelamentoMensal = async () => {
+                    try {
+                      let url = `http://38.224.145.3:3007/valor-cancelamento-mensal?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+                      
+                      if (cidadeSelecionada) {
+                        url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+                      }
+                      if (bairroSelecionado) {
+                        url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
+                      }
+                      if (motivoSelecionado) {
+                        url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+                      }
+                  
+                      const response = await fetch(url);
+                      const data = await response.json();
+                      
+                      if (response.ok) {
+                        setValorMensalCancelamento(parseFloat(data.valor_total_perdido));
+                      } else {
+                        console.error('Erro ao buscar valor mensal:', data.error);
+                      }
+                    } catch (error) {
+                      console.error('Erro na requisição valor mensal:', error);
+                    }
+                  };
+                  
           
           const fetchValorCancelamentoAnual = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3007/valor-cancelamento-anual?ano=${anoSelecionado}`);
+              let url = `http://38.224.145.3:3007/valor-cancelamento-anual?ano=${anoSelecionado}`;
+              if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+              if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
+              if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+          
+              const response = await fetch(url);
               const data = await response.json();
               if (response.ok) {
                 setValorAnualCancelamento(parseFloat(data.valor_total_perdido));
@@ -239,12 +299,20 @@ function DashboardChurnGerencial() {
               console.error('Erro na requisição valor anual:', error);
             }
           };
+          
 
 
           const fetchChurnAnual = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3007/churn-mensal-12meses?ano=${anoSelecionado}&mes=${mesSelecionado}`);
+              let url = `http://38.224.145.3:3007/churn-mensal-12meses?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+              
+              if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+              if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
+              if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+          
+              const response = await fetch(url);
               const data = await response.json();
+          
               if (response.ok) {
                 const nomesMeses = [
                   'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
@@ -253,7 +321,8 @@ function DashboardChurnGerencial() {
           
                 const dadosFormatados = data.map(item => ({
                   mes: `${nomesMeses[item.mes - 1]}/${item.ano.toString().slice(-2)}`,
-                  churn: item.churn_mensal
+                  churn: item.churn_mensal,
+                  total_cancelamentos: item.total_cancelamentos // <<< ADICIONAR AQUI
                 }));
           
                 setChurnAnual(dadosFormatados);
@@ -264,11 +333,22 @@ function DashboardChurnGerencial() {
               console.error('Erro na requisição de churn anual:', error);
             }
           };
+          
+          
 
 
           const fetchClientesHabilitados = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3007/total-clientes-habilitados-ultimos-12-meses?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+              let url = `http://38.224.145.3:3007/total-clientes-habilitados-ultimos-12-meses?mes=${mesSelecionado}&ano=${anoSelecionado}`;
+          
+              if (cidadeSelecionada) {
+                url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+              }
+              if (bairroSelecionado) {
+                url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
+              }
+          
+              const response = await fetch(url);
               const data = await response.json();
           
               if (response.ok && data.total_clientes_habilitados) {
@@ -290,6 +370,7 @@ function DashboardChurnGerencial() {
               console.error('Erro ao buscar habilitações:', error);
             }
           };
+          
           
           
           const fetchCancelamentosDetalhados = async () => {
@@ -353,6 +434,7 @@ function DashboardChurnGerencial() {
 
 
           const fetchAll = async () => {
+            await fetchLimiteMeta();
             await fetchChurnMensal();
             await fetchChurnTipoPessoa();
             await fetchChurn3Meses();
@@ -360,7 +442,7 @@ function DashboardChurnGerencial() {
             await fetchChurnPorCidade();
             await fetchDowngradeAtendimentos();
             await fetchMotivosCancelamento();
-            await fetchAtendimentosTipo257();
+            await fetchReversaoCancelamento();
             await fetchValorCancelamentoMensal();
             await fetchValorCancelamentoAnual();
             await fetchChurnAnual();
@@ -382,7 +464,7 @@ function DashboardChurnGerencial() {
 
     }
     
-    }, [anoSelecionado, mesSelecionado]);
+    },  [anoSelecionado, mesSelecionado, cidadeSelecionada, bairroSelecionado, motivoSelecionado]  );
 
   
     const anos = Array.from({ length: currentYear - 2018 + 1 }, (_, i) => 2018 + i);
@@ -483,15 +565,46 @@ function DashboardChurnGerencial() {
                     </div>
 
                     <div  className='div-gerencial-body1'>
+
                     <div className='card1-div-gerencial-body1'>
-                        <h1 className='h1-div-gerencial-body2'>Churn</h1>
-                        <h1 className='h2-div-gerencial-body1'>
-                            {churnMensal !== null ? `${churnMensal} ` : 'Carregando...'}
-                        </h1>
-                        </div>
+                            <h1 className='h1-div-gerencial-body2'>Churn</h1>
+                            <h1 className='h2-div-gerencial-body1'>
+                              {churnMensal !== null ? `${churnMensal} ` : 'Carregando...'}
+                            </h1>
+                          </div>
 
                             <div className='card2-div-gerencial-body1'>
-                                <h1 className='h1-div-gerencial-body2'>Limite de Meta</h1>
+                            <h1 className='h1-div-gerencial-body2'>Limite de Meta</h1>
+
+                              <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                  <Pie
+                                    data={[
+                                      { name: 'Meta Atingida', value: limiteMeta.porcentagem_batida },
+                                      { name: 'Restante', value: limiteMeta.porcentagem_restante }
+                                    ]}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={70}
+                                    outerRadius={100}
+                                    paddingAngle={2}
+                                    dataKey="value"
+                                    label={({ name, value }) => `${name} ${value.toFixed(2)}%`}
+                                  >
+                                    {[
+                                      limiteMeta.porcentagem_batida,
+                                      limiteMeta.porcentagem_restante
+                                    ].map((_, index) => (
+                                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                  </Pie>
+                                  <Tooltip />
+                                </PieChart>
+                              </ResponsiveContainer>
+
+
+                                
+        
                             </div>
                     </div>
 
@@ -500,7 +613,7 @@ function DashboardChurnGerencial() {
 
                     <div className='card1-div-gerencial-body1'>
                                 <h1 className='h1-div-gerencial-body2'>Projeção</h1>
-                                <h1 className='h2-div-gerencial-body1'>{statusMeta}</h1>
+                                <h1 className='h2-div-gerencial-body1'>{statusMeta.toLocaleUpperCase()}</h1>
                             </div>
 
                             <div className='card3-div-gerencial-body1'>
@@ -532,28 +645,37 @@ function DashboardChurnGerencial() {
                         </tr>
                     </thead>
                     <tbody>
-                    {churnPorBairro.map((item, index) => (
-                              <tr
-                                className='link-tabela-bairros'
-                                key={index}
-                                onClick={() =>
-                                  setBairroSelecionado(prev => prev === item.bairro_nome ? null : item.bairro_nome)
-                                }
-                                style={{
-                                  cursor: 'pointer',
-                                  backgroundColor: bairroSelecionado === item.bairro_nome ? '#f2f2f2' : 'white'
-                                }}
-                              >
-                                <td className='h2-tabela-bairros-gerencial'>{item.bairro_nome}</td>
-                                <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
-                                <td className='h2-tabela-bairros-gerencial'>{item.total_clientes_ativos}</td>
-                                <td className='h2-tabela-bairros-gerencial'>{item.pct_pedido}%</td>
-                                <td className='h2-tabela-bairros-gerencial'>{item.pct_automatico}%</td>
-                                <td className='h2-tabela-bairros-gerencial'>{item.churn_rate}</td>
-                              </tr>
-                            ))}
+                      {churnPorBairro
+                        .filter(item => 
+                          (!cidadeSelecionada || item.cidade_nome === cidadeSelecionada) &&
+                          (!motivoSelecionado || cancelamentosDetalhados.some(cancel => 
+                            cancel.bairro === item.bairro_nome && cancel.motivo_cancelamento === motivoSelecionado
+                          ))
+                        )
+                        .map((item, index) => (
+                          <tr
+                            key={index}
+                            className='link-tabela-bairros'
+                            onClick={() => {
+                              setBairroSelecionado(prev => prev === item.bairro_nome ? null : item.bairro_nome);
+                              setCidadeSelecionada(item.cidade_nome);
+                            }}
+                            style={{
+                              cursor: 'pointer',
+                              backgroundColor: bairroSelecionado === item.bairro_nome ? '#f2f2f2' : 'white'
+                            }}
+                          >
+                            <td className='h2-tabela-bairros-gerencial'>{item.bairro_nome}</td>
+                            <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
+                            <td className='h2-tabela-bairros-gerencial'>{item.total_clientes_ativos}</td>
+                            <td className='h2-tabela-bairros-gerencial'>{item.pct_pedido}%</td>
+                            <td className='h2-tabela-bairros-gerencial'>{item.pct_automatico}%</td>
+                            <td className='h2-tabela-bairros-gerencial'>{item.churn_rate}%</td>
+                          </tr>
+                        ))}
+                  </tbody>
 
-                    </tbody>
+
                     </table>
                 </div>
                 </div>
@@ -577,35 +699,43 @@ function DashboardChurnGerencial() {
                         </tr>
                     </thead>
                     <tbody>
-                            {churnPorCidade.map((item, index) => (
-                              <tr
-                                className='link-tabela-bairros'
-                                key={index}
-                                onClick={() =>
-                                  setCidadeSelecionada(prev => prev === item.cidade_nome ? null : item.cidade_nome)
-                                }
-                                style={{
-                                  cursor: 'pointer',
-                                  backgroundColor: cidadeSelecionada === item.cidade_nome ? '#f2f2f2' : 'white'
-                                }}
-                              >
-                                <td className='h2-tabela-bairros-gerencial'>{item.cidade_nome}</td>
-                                <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
-                                <td className='h2-tabela-bairros-gerencial'>{item.total_clientes_ativos}</td>
-                                <td className='h2-tabela-bairros-gerencial'>{item.perc_cancelamento_pedido}%</td>
-                                <td className='h2-tabela-bairros-gerencial'>{item.perc_cancelamento_automatico}%</td>
-                                <td className='h2-tabela-bairros-gerencial'>{item.churn_rate}%</td>
-                              </tr>
-                            ))}
-                          </tbody>
+                        {churnPorCidade
+                          .filter(item => 
+                            (!bairroSelecionado || churnPorBairro.find(b => b.bairro_nome === bairroSelecionado && b.cidade_nome === item.cidade_nome)) &&
+                            (!motivoSelecionado || cancelamentosDetalhados.some(cancel => 
+                              cancel.cidade_nome === item.cidade_nome && cancel.motivo_cancelamento === motivoSelecionado
+                            ))
+                          )
+                          .map((item, index) => (
+                            <tr
+                              key={index}
+                              className='link-tabela-bairros'
+                              onClick={() => {
+                                setCidadeSelecionada(prev => prev === item.cidade_nome ? null : item.cidade_nome);
+                                setBairroSelecionado(null); // Quando clicar na cidade, reseta bairro
+                              }}
+                              style={{
+                                cursor: 'pointer',
+                                backgroundColor: cidadeSelecionada === item.cidade_nome ? '#f2f2f2' : 'white'
+                              }}
+                            >
+                              <td className='h2-tabela-bairros-gerencial'>{item.cidade_nome}</td>
+                              <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
+                              <td className='h2-tabela-bairros-gerencial'>{item.total_clientes_ativos}</td>
+                              <td className='h2-tabela-bairros-gerencial'>{item.perc_cancelamento_pedido}%</td>
+                              <td className='h2-tabela-bairros-gerencial'>{item.perc_cancelamento_automatico}%</td>
+                              <td className='h2-tabela-bairros-gerencial'>{item.churn_rate}%</td>
+                            </tr>
+                          ))}
+                      </tbody>
+
                     </table>
                                 </div>
                         </div>
 
                         <div  className='div-gerencial-body2'>
-                       
-                            <div className='card-div-gerencial-body2'>
-                            <h1 className='h1-div-gerencial-gerencial'>Upgrade de Planos</h1>
+                               <div className='card-div-gerencial-body2'>
+                            <h1 className='h1-div-gerencial-gerencial'>Downgrade de Planos</h1>
                                 
                             {downgradeAtendimentos.length > 0 ? (
                                 <div style={{ marginTop: 30 }}>
@@ -643,6 +773,7 @@ function DashboardChurnGerencial() {
 
                             </div>
                               
+                    
                         </div>
 
 
@@ -660,23 +791,35 @@ function DashboardChurnGerencial() {
                         </tr>
                     </thead>
                     <tbody>
-                          {motivosCancelamentos.map((item, index) => (
-                            <tr 
-                              className='link-tabela-bairros' 
-                              key={index}
-                              onClick={() =>
-                                setMotivoSelecionado(prev => prev === item.descricao ? null : item.descricao)
-                              }
-                              style={{ 
-                                cursor: 'pointer',
-                                backgroundColor: motivoSelecionado === item.descricao ? '#f2f2f2' : 'white'
-                              }}
-                            >
-                              <td className='h2-tabela-bairros-gerencial'>{item.descricao}</td>
-                              <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
-                            </tr>
-                          ))}
-                        </tbody>
+  {motivosCancelamentos
+    .filter(item => {
+      if (bairroSelecionado || cidadeSelecionada) {
+        return cancelamentosDetalhados.some(cancelamento =>
+          (!bairroSelecionado || cancelamento.bairro === bairroSelecionado) &&
+          (!cidadeSelecionada || cancelamento.cidade_nome === cidadeSelecionada) &&
+          cancelamento.motivo_cancelamento === item.descricao
+        );
+      }
+      return true; // se não tiver filtro, mostra todos os motivos
+    })
+    .map((item, index) => (
+      <tr
+        key={index}
+        className="link-tabela-bairros"
+        onClick={() =>
+          setMotivoSelecionado(prev => prev === item.descricao ? null : item.descricao)
+        }
+        style={{
+          cursor: 'pointer',
+          backgroundColor: motivoSelecionado === item.descricao ? '#f2f2f2' : 'white'
+        }}
+      >
+        <td className="h2-tabela-bairros-gerencial">{item.descricao}</td>
+        <td className="h2-tabela-bairros-gerencial">{item.total_cancelamentos}</td>
+      </tr>
+    ))}
+</tbody>
+
 
                     </table>
                 </div>
@@ -691,36 +834,39 @@ function DashboardChurnGerencial() {
                        <h1 className='h1-div-gerencial-gerencial'>Reversão de Cancelamento</h1>
                            
                        {atendimentosTipo257.length > 0 ? (
-                           <div style={{ marginTop: 30 }}>
-                               <ResponsiveContainer width="90%" height={270}>
-                               <BarChart data={atendimentosTipo257}     onClick={(data) => {
-                                                            if (data && data.activeLabel) {
-                                                              const [mesTexto, anoCurto] = data.activeLabel.split('/');
-                                                              const mesesNomes = [
-                                                                'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-                                                                'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-                                                              ];
-                                                              const mesIndex = mesesNomes.indexOf(mesTexto);
-                                                              if (mesIndex !== -1) {
-                                                                setMesSelecionado(mesIndex + 1);
-                                                                setAnoSelecionado(parseInt('20' + anoCurto)); // Ex: '25' vira 2025
-                                                              }
-                                                            }
-                                                          }}
-                                                        >
-                                   <CartesianGrid strokeDasharray="2 2" />
-                                   <XAxis dataKey="mes" tick={{ fill: '#fff' }} fontWeight='bold' />
-                                   <YAxis tick={{ fill: '#fff' }} />
-                                   <Tooltip />
-                                   <Bar dataKey="total"  fill="#F45742">
-                                   <LabelList dataKey="total" position="insideTop" fill="#fff" fontWeight='bold' />
-                                   </Bar>
-                               </BarChart>
-                               </ResponsiveContainer>
-                           </div>
-                           ) : (
-                           <p>Carregando atendimentos tipo downgrade...</p>
-                           )}
+                      <div style={{ marginTop: 30 }}>
+                        <ResponsiveContainer width="90%" height={270}>
+                          <BarChart data={atendimentosTipo257}
+                            onClick={(data) => {
+                              if (data && data.activeLabel) {
+                                const [mesTexto, anoCurto] = data.activeLabel.split('/');
+                                const mesesNomes = [
+                                  'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+                                  'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+                                ];
+                                const mesIndex = mesesNomes.indexOf(mesTexto);
+                                if (mesIndex !== -1) {
+                                  setMesSelecionado(mesIndex + 1);
+                                  setAnoSelecionado(parseInt('20' + anoCurto)); // Ex: 25 -> 2025
+                                }
+                              }
+                            }}
+                          >
+                            <CartesianGrid strokeDasharray="2 2" />
+                            <XAxis dataKey="mes" tick={{ fill: '#fff' }} fontWeight='bold' />
+                            <YAxis tick={{ fill: '#fff' }} />
+                            <Tooltip />
+                            <Bar dataKey="total" fill="#F45742">
+                              <LabelList dataKey="total" position="insideTop" fill="#fff" fontWeight='bold' />
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : (
+                      <p>Carregando atendimentos tipo 257...</p>
+                    )}
+
+
 
 
                        </div>
@@ -744,40 +890,65 @@ function DashboardChurnGerencial() {
                 <div  className='div-gerencial-body3'>
                        
                 <div className='card-div-gerencial-body2'>
-                    <h1 className='h1-div-gerencial-gerencial'>Churn porcentagem anual</h1>
+                  <h1 className='h1-div-gerencial-gerencial'>Churn porcentagem anual</h1>
 
-                    {churnAnual.length > 0 ? (
-                        <div style={{ marginTop: 30 }}>
-                        <ResponsiveContainer width="95%" height={270}>
-                            <BarChart data={churnAnual}      onClick={(data) => {
-                                                            if (data && data.activeLabel) {
-                                                              const [mesTexto, anoCurto] = data.activeLabel.split('/');
-                                                              const mesesNomes = [
-                                                                'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-                                                                'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-                                                              ];
-                                                              const mesIndex = mesesNomes.indexOf(mesTexto);
-                                                              if (mesIndex !== -1) {
-                                                                setMesSelecionado(mesIndex + 1);
-                                                                setAnoSelecionado(parseInt('20' + anoCurto)); // Ex: '25' vira 2025
-                                                              }
-                                                            }
-                                                          }}
-                                                        >
-                            <CartesianGrid strokeDasharray="2 2" />
-                            <XAxis dataKey="mes" tick={{ fill: '#fff' }} fontWeight='bold' />
-                            <YAxis tick={{ fill: '#fff' }} />
-                            <Tooltip />
-                            <Bar dataKey="churn" fill="#F45742">
-                                <LabelList dataKey="churn" position="insideTop" fill="#fff" fontWeight='bold' />
-                            </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                        </div>
-                    ) : (
-                        <p>Carregando churn anual...</p>
-                    )}
+                  {churnAnual.length > 0 ? (
+                    <div style={{ marginTop: 30 }}>
+                      <ResponsiveContainer width="95%" height={270}>
+                        <BarChart
+                          data={churnAnual}
+                          onClick={(data) => {
+                            if (data && data.activeLabel) {
+                              const [mesTexto, anoCurto] = data.activeLabel.split('/');
+                              const mesesNomes = [
+                                'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+                                'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+                              ];
+                              const mesIndex = mesesNomes.indexOf(mesTexto);
+                              if (mesIndex !== -1) {
+                                setMesSelecionado(mesIndex + 1);
+                                setAnoSelecionado(parseInt('20' + anoCurto)); // Ex: '25' vira 2025
+                              }
+                            }
+                          }}
+                        >
+                          <CartesianGrid strokeDasharray="2 2" />
+                          <XAxis dataKey="mes" tick={{ fill: '#fff' }} fontWeight='bold' />
+                          <YAxis tick={{ fill: '#fff' }} />
+                          <Tooltip
+                            formatter={(value, name, props) => {
+                              if (props.dataKey === 'churn') {
+                                return [`${value}%`, 'Churn (%)'];
+                              }
+                              return value;
+                            }}
+                            labelFormatter={(label) => `Mês: ${label}`}
+                            contentStyle={{ backgroundColor: '#333', borderRadius: '10px', color: '#fff' }}
+                          />
+                          <Bar dataKey="churn" fill="#F45742">
+                            <LabelList
+                              dataKey="churn"
+                              position="centerTop"
+                              fill="#fff"
+                              fontWeight="bold"
+                              formatter={(value) => `${value}%`}
+                            />
+                              <LabelList
+                              dataKey="total_cancelamentos"
+                              position="insideBottom"
+                              fill="#fff"
+                              fontWeight="bold"
+                              formatter={(value) => `${value}`}
+                            />
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
                     </div>
+                  ) : (
+                    <p>Carregando churn anual...</p>
+                  )}
+                </div>
+
 
                         </div>
 

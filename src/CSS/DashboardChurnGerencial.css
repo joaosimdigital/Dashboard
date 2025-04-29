@@ -113,6 +113,8 @@
     font-family: Normal;
     font-size: 20px;
     margin-top: 0px;
+    width: 100%;
+    text-align: center;
     margin-bottom: 0px;
    
    
@@ -139,6 +141,7 @@
 .card2-div-gerencial-body1{
     width: 95%;
     background-color: white;
+    flex-direction: column;
     border-radius: 5px;
     height: 290px;
     margin-top: 10px;
