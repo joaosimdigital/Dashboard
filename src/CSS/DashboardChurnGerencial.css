@@ -237,6 +237,7 @@
     height: 100px;
     background-color: black;
     width: 95%;
+    padding: 0px 10px;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -405,3 +406,47 @@
     border-radius: 10px;
     background-color: white;
   }
+
+
+.botao-limparfiltros{
+  width: 120px;
+  height: 35px;
+  background-color: white;
+  color: orangered;
+  border: 1px solid orangered;
+  font-family: Bold;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.botao-limparfiltros:hover{
+  background-color: orangered;
+  color: white;
+  border: 1px solid white;
+}
+
+
+.loading-overlay{
+  z-index: 99;
+  height: 3px;
+  border-radius: 5px;
+  width: 100%;
+  background-color: white;
+  border: 1px solid orangered;
+  position: fixed;
+  top: 0px;
+  align-self: center;
+  margin-right: 10px;
+}
+
+.loading-progress{
+  height: 100%;
+  background-color: orangered;
+  animation: loadAnimation 2s infinite;
+}
+
+@keyframes loadAnimation {
+  0% { width: 0%; }
+  50% { width: 50%; }
+  100% { width: 100%; }
+}
