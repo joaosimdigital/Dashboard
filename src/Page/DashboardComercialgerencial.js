@@ -22,6 +22,7 @@ function DashboardComercialgerencial() {
     const [dadosVendas, setDadosVendas] = useState([]);
     const [rankingvendas, setRankingVendas] = useState([]);
     const [dadosVendasDetalhes, setDadosVendasDetalhes] = useState([]);
+    const [bairros, setBairros] = useState([]);
   
     useEffect(() => {
         const fetchDadosRS = async () => {
@@ -181,7 +182,15 @@ function DashboardComercialgerencial() {
             }
           };
 
-          
+          const fetchBairros = async () => {
+            try {
+              const response = await fetch(`http://38.224.145.3:3008/top-bairros?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+              const data = await response.json();
+              setBairros(data.top_bairros);
+            } catch (error) {
+              console.error('Erro ao buscar top bairros:', error);
+            }
+          };
       
 
         // Função que chama ambos os endpoints
@@ -200,6 +209,7 @@ function DashboardComercialgerencial() {
           fetchVendas();
           fetchVendedores();
           fetchVendasDetalhes();
+          fetchBairros();
         };
     
         // Executa imediatamente
@@ -373,28 +383,28 @@ function DashboardComercialgerencial() {
 
 
     <div className="div-tabela1-comercial1">
-      <h1 className="h1-div-tabela1-comercial">Top 10<h1  className="h2-div-tabela1-comercial">Vendedores Mês</h1></h1>
-      
+      <h1 className="h1-div-tabela1-comercial">Top 10
+        <h1 className="h2-div-tabela1-comercial">Bairros com Mais Vendas</h1>
+      </h1>
 
       <div className="scroll-wrapper">
-      <table className="tabela-div-tabela1-comercial">
-      <thead>
-        <tr>
-          <th className="titulo-tabela-div-tabela1-comercial">Vendedor</th>
-          <th className="titulo-tabela-div-tabela1-comercial">Total Vendas</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rankingvendas.map((item, index) => (
-          <tr key={index}>
-            <td className="subtitulo-tabela-div-tabela1-comercial">{item.vendedor}</td>
-            <td className="subtitulo-tabela-div-tabela1-comercial">{item.total_vendas}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-    </div>
-
+        <table className="tabela-div-tabela1-comercial">
+          <thead>
+            <tr>
+              <th className="titulo-tabela-div-tabela1-comercial">Bairro</th>
+              <th className="titulo-tabela-div-tabela1-comercial">Total Vendas</th>
+            </tr>
+          </thead>
+          <tbody>
+            {bairros.map((item, index) => (
+              <tr key={index}>
+                <td className="subtitulo-tabela-div-tabela1-comercial">{item.bairro}</td>
+                <td className="subtitulo-tabela-div-tabela1-comercial">{item.total_vendas}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
 
         </div>
@@ -456,6 +466,8 @@ function DashboardComercialgerencial() {
             <th className="titulo-tabela-div-tabela1-comercial">Nome</th>
             <th className="titulo-tabela-div-tabela1-comercial">Descrição</th>
             <th className="titulo-tabela-div-tabela1-comercial">Vendedor</th>
+            <th className="titulo-tabela-div-tabela1-comercial">Cidade</th>
+            <th className="titulo-tabela-div-tabela1-comercial">Bairro</th>
             <th className="titulo-tabela-div-tabela1-comercial">Valor (R$)</th>
           </tr>
         </thead>
@@ -465,6 +477,8 @@ function DashboardComercialgerencial() {
               <td className="subtitulo-tabela-div-tabela1-comercial">{item.empresa}</td>
               <td className="subtitulo-tabela-div-tabela1-comercial">{item.nome_plano}</td>
               <td className="subtitulo-tabela-div-tabela1-comercial">{item.vendedor}</td>
+              <td className="subtitulo-tabela-div-tabela1-comercial">{item.cidade}</td>
+              <td className="subtitulo-tabela-div-tabela1-comercial">{item.bairro}</td>
               <td className="subtitulo-tabela-div-tabela1-comercial">{item.valor_venda.toFixed(2)}</td>
             </tr>
           ))}
