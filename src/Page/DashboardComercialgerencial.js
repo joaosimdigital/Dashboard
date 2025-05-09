@@ -384,7 +384,7 @@ function DashboardComercialgerencial() {
 
     <div className="div-tabela1-comercial1">
       <h1 className="h1-div-tabela1-comercial">Top 10
-        <h1 className="h2-div-tabela1-comercial">Bairros com Mais Vendas</h1>
+        <h1 className="h2-div-tabela1-comercial">Bairros Vendas Mês</h1>
       </h1>
 
       <div className="scroll-wrapper">
