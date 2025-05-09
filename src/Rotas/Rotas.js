@@ -11,6 +11,7 @@ import DashboardClientesTV from '../Page/DashboardClientesTV';
 import DashboardOsTicket from '../Page/DashboardOsTicket';
 import DashboardChurnGerencial from '../Page/DashboardChurnGerencial';
 import DashboardCancelamentosClone from '../Page/DashboardCancelamentosClone';
+import DashboardComercialgerencial from '../Page/DashboardComercialgerencial';
 
 const Rotas = () => {
   return (
@@ -24,6 +25,7 @@ const Rotas = () => {
         <Route path='/clientestv1' element={<DashboardClientes />} />
         <Route path='/osticket' element={<DashboardOsTicket />} />
         <Route path='/dashboardchurngerencial' element={<DashboardChurnGerencial />} />
+        <Route path='/dashboardcomercialgerencial' element={<DashboardComercialgerencial />} />
       </Routes>
     </Router>
   );
