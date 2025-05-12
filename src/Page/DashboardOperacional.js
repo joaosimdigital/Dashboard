@@ -32,7 +32,7 @@ export default function DashboardOperacional() {
       { name: 'Caxias', days: 1 },
       { name: 'Continente', days: 4 },
       { name: 'Norte', days: 4 },
-      { name: 'Sul', days: 4 },
+      { name: 'Sul', days: 3 },
       { name: 'Centro', days: 4 },
     ]);
 
