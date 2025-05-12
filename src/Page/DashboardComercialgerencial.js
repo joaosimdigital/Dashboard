@@ -262,6 +262,15 @@ function DashboardComercialgerencial() {
                 </select>
       </div>
 
+        <div className='div-body-opcao1'>
+        <h1 className='h1-body-opcao'>Tipo</h1>
+            <select
+                className='button-body-opcao'>
+                <option value="">Selecione um mês</option>
+            
+                </select>
+      </div>
+
       <button
   className="botao-limparfiltros"
 >
