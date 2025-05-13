@@ -7,6 +7,7 @@ import '../CSS/DashboardComercialgerencial.css'
 
 function DashboardComercialgerencial() {
     const [totalCadastrosRS, setTotalCadastrosRS] = useState(0);
+    const [tipoPessoa, setTipoPessoa] = useState('');
     const [totalCadastrosSC, setTotalCadastrosSC] = useState(0);
     const [totalCadastrosHojeRS, setTotalCadastrosHojeRS] = useState(0);
     const [totalCadastrosHojeSC, setTotalCadastrosHojeSC] = useState(0);
@@ -27,7 +28,7 @@ function DashboardComercialgerencial() {
     useEffect(() => {
         const fetchDadosRS = async () => {
           try {
-            const response = await fetch(`http://38.224.145.3:3008/cadastros-rs?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+            const response = await fetch(`http://38.224.145.3:3008/cadastros-rs?mes=${mesSelecionado}&ano=${anoSelecionado}&tipo_pessoa=${tipoPessoa}`);
             const data = await response.json();
             setTotalCadastrosRS(data.total_cadastros);
           } catch (error) {
@@ -37,7 +38,7 @@ function DashboardComercialgerencial() {
     
         const fetchDadosSC = async () => {
           try {
-            const response = await fetch(`http://38.224.145.3:3008/cadastros-sc?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+            const response = await fetch(`http://38.224.145.3:3008/cadastros-sc?mes=${mesSelecionado}&ano=${anoSelecionado}&tipo_pessoa=${tipoPessoa}`);
             const data = await response.json();
             setTotalCadastrosSC(data.total_cadastros);
           } catch (error) {
@@ -67,7 +68,7 @@ function DashboardComercialgerencial() {
 
           const fetchUpgrade = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3008/upgrade?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3008/upgrade?mes=${mesSelecionado}&ano=${anoSelecionado}&tipo_pessoa=${tipoPessoa}`);
               const data = await response.json();
               setTotalAtendimentos(data.total_atendimentos);
             } catch (error) {
@@ -76,14 +77,14 @@ function DashboardComercialgerencial() {
           };
 
           const fetchAguardandoInstalacao = async () => {
-            const response = await fetch(`http://38.224.145.3:3008/aguardandoinstalacao?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+            const response = await fetch(`http://38.224.145.3:3008/aguardandoinstalacao?mes=${mesSelecionado}&ano=${anoSelecionado}&tipo_pessoa=${tipoPessoa}`);
             const data = await response.json();
             setTotalAguardandoInstalacao(data.total_cadastros); // mostra total com status 6
           };
 
           const fetchTicketMedio = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3008/ticket-medio?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3008/ticket-medio?mes=${mesSelecionado}&ano=${anoSelecionado}&tipo_pessoa=${tipoPessoa}`);
               const data = await response.json();
               setTicketMedio(data.ticket_medio);
             } catch (error) {
@@ -93,7 +94,7 @@ function DashboardComercialgerencial() {
           
           const fetchFaturamento = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3008/faturamento-mensal?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3008/faturamento-mensal?mes=${mesSelecionado}&ano=${anoSelecionado}&tipo_pessoa=${tipoPessoa}`);
               const data = await response.json();
               setFaturamento(data.faturamento);
             } catch (error) {
@@ -104,7 +105,7 @@ function DashboardComercialgerencial() {
 
           const fetchRanking = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3008/ranking-high-ticket?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3008/ranking-high-ticket?mes=${mesSelecionado}&ano=${anoSelecionado}&tipo_pessoa=${tipoPessoa}`);
               const data = await response.json(); 
               setRanking(data.ranking_high_ticket);
             } catch (error) {
@@ -115,7 +116,7 @@ function DashboardComercialgerencial() {
 
           const fetchPlanos = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3008/planos-mais-vendidos?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3008/planos-mais-vendidos?mes=${mesSelecionado}&ano=${anoSelecionado}&tipo_pessoa=${tipoPessoa}`);
               const data = await response.json();
               setPlanos(data.planos_mais_vendidos);
             } catch (error) {
@@ -125,7 +126,7 @@ function DashboardComercialgerencial() {
 
           const fetchRankingVendas = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3008/top-vendas-ranking?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3008/top-vendas-ranking?mes=${mesSelecionado}&ano=${anoSelecionado}&tipo_pessoa=${tipoPessoa}`);
               const data = await response.json();
               setRankingVendas(data.ranking_top_vendas);
             } catch (error) {
@@ -136,7 +137,7 @@ function DashboardComercialgerencial() {
 
           const fetchVendas = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3008/vendas-anuais?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3008/vendas-anuais?mes=${mesSelecionado}&ano=${anoSelecionado}&tipo_pessoa=${tipoPessoa}`);
               const data = await response.json();
       
               const mesesNomes = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
@@ -155,7 +156,7 @@ function DashboardComercialgerencial() {
 
           const fetchVendedores = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3008/top-vendedores-mensais?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3008/top-vendedores-mensais?mes=${mesSelecionado}&ano=${anoSelecionado}&tipo_pessoa=${tipoPessoa}`);
               const data = await response.json();
       
               const dadosFormatados = data.vendedores_top_mes.map(item => ({
@@ -174,7 +175,7 @@ function DashboardComercialgerencial() {
 
           const fetchVendasDetalhes = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3008/lista-vendas-detalhadas?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3008/lista-vendas-detalhadas?mes=${mesSelecionado}&ano=${anoSelecionado}&tipo_pessoa=${tipoPessoa}`);
               const data = await response.json();
               setDadosVendasDetalhes(data.vendas);
             } catch (error) {
@@ -184,7 +185,7 @@ function DashboardComercialgerencial() {
 
           const fetchBairros = async () => {
             try {
-              const response = await fetch(`http://38.224.145.3:3008/top-bairros?mes=${mesSelecionado}&ano=${anoSelecionado}`);
+              const response = await fetch(`http://38.224.145.3:3008/top-bairros?mes=${mesSelecionado}&ano=${anoSelecionado}&tipo_pessoa=${tipoPessoa}`);
               const data = await response.json();
               setBairros(data.top_bairros);
             } catch (error) {
@@ -219,8 +220,16 @@ function DashboardComercialgerencial() {
         const interval = setInterval(atualizarTudo, 1000);
     
         return () => clearInterval(interval);
-      }, [mesSelecionado, anoSelecionado]);
+      }, [mesSelecionado, anoSelecionado, tipoPessoa]);
       
+
+      const limparFiltros = () => {
+  const now = new Date();
+  setMesSelecionado(now.getMonth() + 1);
+  setAnoSelecionado(now.getFullYear());
+  setTipoPessoa('');
+};
+
 
   return (
     <div style={{backgroundColor: 'white', alignItems: 'center', display: 'flex', flexDirection: 'column', width: '100%'}}>
@@ -264,16 +273,19 @@ function DashboardComercialgerencial() {
 
         <div className='div-body-opcao1'>
         <h1 className='h1-body-opcao'>Tipo</h1>
-            <select
-                className='button-body-opcao'>
-                <option value="">Selecione um mês</option>
-            
-                </select>
+           <select
+              className='button-body-opcao'
+              value={tipoPessoa}
+              onChange={(e) => setTipoPessoa(e.target.value)}
+            >
+              <option value="">Todos</option>
+              <option value="pj">PJ</option>
+              <option value="pf">PF</option>
+            </select>
+
       </div>
 
-      <button
-  className="botao-limparfiltros"
->
+<button className="botao-limparfiltros" onClick={limparFiltros}>
   Limpar Filtros
 </button>
 
@@ -475,6 +487,7 @@ function DashboardComercialgerencial() {
             <th className="titulo-tabela-div-tabela1-comercial">Nome</th>
             <th className="titulo-tabela-div-tabela1-comercial">Descrição</th>
             <th className="titulo-tabela-div-tabela1-comercial">Vendedor</th>
+               <th className="titulo-tabela-div-tabela1-comercial">Tipo</th>
             <th className="titulo-tabela-div-tabela1-comercial">Cidade</th>
             <th className="titulo-tabela-div-tabela1-comercial">Bairro</th>
             <th className="titulo-tabela-div-tabela1-comercial">Valor (R$)</th>
@@ -486,6 +499,7 @@ function DashboardComercialgerencial() {
               <td className="subtitulo-tabela-div-tabela1-comercial">{item.empresa}</td>
               <td className="subtitulo-tabela-div-tabela1-comercial">{item.nome_plano}</td>
               <td className="subtitulo-tabela-div-tabela1-comercial">{item.vendedor}</td>
+               <td className="subtitulo-tabela-div-tabela1-comercial">{item.tipo_pessoa}</td>
               <td className="subtitulo-tabela-div-tabela1-comercial">{item.cidade}</td>
               <td className="subtitulo-tabela-div-tabela1-comercial">{item.bairro}</td>
               <td className="subtitulo-tabela-div-tabela1-comercial">{item.valor_venda.toFixed(2)}</td>
