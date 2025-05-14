@@ -22,9 +22,17 @@ function DashboardComercialgerencial() {
     const [dadosVendedores, setDadosVendedores] = useState([]);
     const [dadosVendas, setDadosVendas] = useState([]);
     const [rankingvendas, setRankingVendas] = useState([]);
+     const [loading, setLoading] = useState(false);
     const [dadosVendasDetalhes, setDadosVendasDetalhes] = useState([]);
     const [bairros, setBairros] = useState([]);
-  
+
+
+  /*const fetchAll = async (showLoading = false) => {
+          if (showLoading) {
+            setLoading(true);
+            setProgress(0);
+          } */
+
     useEffect(() => {
         const fetchDadosRS = async () => {
           try {
@@ -386,14 +394,14 @@ function DashboardComercialgerencial() {
       <thead>
         <tr>
           <th className="titulo-tabela-div-tabela1-comercial">Plano</th>
-          <th className="titulo-tabela-div-tabela1-comercial">Total Vendas</th>
+          <th className="titulo-tabela-div-tabela1-comercial1">Total Vendas</th>
         </tr>
       </thead>
       <tbody>
         {planos.map((item, index) => (
           <tr key={index}>
             <td className="subtitulo-tabela-div-tabela1-comercial">{item.plano}</td>
-            <td className="subtitulo-tabela-div-tabela1-comercial">{item.total_vendas}</td>
+            <td className="subtitulo-tabela-div-tabela1-comercial1">{item.total_vendas}</td>
           </tr>
         ))}
       </tbody>
@@ -413,14 +421,14 @@ function DashboardComercialgerencial() {
           <thead>
             <tr>
               <th className="titulo-tabela-div-tabela1-comercial">Bairro</th>
-              <th className="titulo-tabela-div-tabela1-comercial">Total Vendas</th>
+              <th className="titulo-tabela-div-tabela1-comercial1">Total Vendas</th>
             </tr>
           </thead>
           <tbody>
             {bairros.map((item, index) => (
               <tr key={index}>
                 <td className="subtitulo-tabela-div-tabela1-comercial">{item.bairro}</td>
-                <td className="subtitulo-tabela-div-tabela1-comercial">{item.total_vendas}</td>
+                <td className="subtitulo-tabela-div-tabela1-comercial1">{item.total_vendas}</td>
               </tr>
             ))}
           </tbody>
@@ -490,7 +498,7 @@ function DashboardComercialgerencial() {
                <th className="titulo-tabela-div-tabela1-comercial">Tipo</th>
             <th className="titulo-tabela-div-tabela1-comercial">Cidade</th>
             <th className="titulo-tabela-div-tabela1-comercial">Bairro</th>
-            <th className="titulo-tabela-div-tabela1-comercial">Valor (R$)</th>
+            <th className="titulo-tabela-div-tabela1-comercial1">Valor (R$)</th>
           </tr>
         </thead>
         <tbody>
@@ -502,7 +510,7 @@ function DashboardComercialgerencial() {
                <td className="subtitulo-tabela-div-tabela1-comercial">{item.tipo_pessoa}</td>
               <td className="subtitulo-tabela-div-tabela1-comercial">{item.cidade}</td>
               <td className="subtitulo-tabela-div-tabela1-comercial">{item.bairro}</td>
-              <td className="subtitulo-tabela-div-tabela1-comercial">{item.valor_venda.toFixed(2)}</td>
+              <td className="subtitulo-tabela-div-tabela1-comercial1">{item.valor_venda.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>
@@ -510,6 +518,11 @@ function DashboardComercialgerencial() {
     </div>
     </div>
 
+           {loading && (
+                <div className="loading-overlay">
+                  <div className="loading-progress"></div>
+                </div>
+              )}
 
     </div>
   )
