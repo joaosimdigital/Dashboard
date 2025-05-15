@@ -25,6 +25,20 @@ function DashboardComercialgerencial() {
      const [loading, setLoading] = useState(false);
     const [dadosVendasDetalhes, setDadosVendasDetalhes] = useState([]);
     const [bairros, setBairros] = useState([]);
+      const hoje = new Date();
+
+  // Pega o ano e mês atual
+  const ano = hoje.getFullYear();
+  const mes = hoje.getMonth(); // Janeiro = 0
+
+  // Último dia do mês atual
+  const ultimoDiaMes = new Date(ano, mes + 1, 0).getDate();
+
+  // Dia de hoje
+  const diaHoje = hoje.getDate();
+
+  // Dias restantes até o fim do mês
+  const diasRestantes = ultimoDiaMes - diaHoje;
 
 
   /*const fetchAll = async (showLoading = false) => {
@@ -350,7 +364,7 @@ function DashboardComercialgerencial() {
             </div>
         </div>
 
-        <h1 className='status-dias-dashboard'>Faltam 24 dias para batermos a meta!</h1>
+        <h1 className='status-dias-dashboard'>Faltam {diasRestantes} dias para batermos a meta!</h1>
 
 
         <div className="div-tabela1-comercial">
