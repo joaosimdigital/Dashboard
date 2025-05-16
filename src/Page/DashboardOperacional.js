@@ -180,7 +180,7 @@ export default function DashboardOperacional() {
 
                             <div className='div-meta-card-dados-principais'>
                                 <h1 className='h1-meta-card-dados-principais'>Meta Mês</h1>
-                                <h1  className='h2-meta-card-dados-principais'>810</h1>
+                                <h1  className='h2-meta-card-dados-principais'>840</h1>
                             </div>
 
                             </div>
