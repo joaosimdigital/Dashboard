@@ -30,13 +30,13 @@ export default function DashboardOperacional() {
 
      const [regionsData, setRegionsData] = useState([
       { name: 'Caxias', days: 1 },
-      { name: 'Continente', days: 4 },
-      { name: 'Norte', days: 4 },
-      { name: 'Sul', days: 3 },
-      { name: 'Centro', days: 4 },
+      { name: 'Continente', days: 6 },
+      { name: 'Norte', days: 6 },
+      { name: 'Sul', days: 5 },
+      { name: 'Centro', days: 6 },
     ]);
 
-        const total1 = 810;
+        const total1 = 840;
         const total2 = 1200;
       
         // Obtém o ano e mês atual

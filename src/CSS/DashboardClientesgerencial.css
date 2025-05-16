@@ -1,0 +1,108 @@
+@font-face {
+    font-family: 'Bold'; 
+    src: url('..//Fontes/Poppins-Bold.ttf') format('opentype');
+  }
+
+  @font-face {
+    font-family: 'Normal'; 
+    src: url('../Fontes//Poppins-Regular.ttf') format('opentype'); 
+  }
+
+
+
+
+.head-gerencial-body-geral{
+    height: 150px;
+    background-color: black;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+
+.div-body-select-geral{
+    width: 95%;  
+    padding: 20px 40px;
+    display: flex;
+    background-color: black;
+}
+
+.card-body-geral-dados{
+    width: 90%; 
+    margin-bottom: 30px;
+    margin-top: 10px;
+    padding: 0px 0px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.header-titulo-card-body-geral-dados{
+    width: 100%;
+    background-color: #383838;
+    color: white;
+    height: 60px;
+    align-items: center;
+    display: flex;
+    margin-bottom: 0px;
+    padding: 0px 10px;
+    margin-top: 0px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-family: Bold;
+}
+
+.card-geral-dados{
+    padding: 0px 10px;
+    width: 100%;
+    display: flex;
+    height: 375px;
+    background-color: #857F7F;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    margin-top: 0px;
+}
+
+
+.card1-div--geral-dados{
+       width:60%;
+    display: flex;
+    margin: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: aqua;
+}
+
+
+
+.card2-div--geral-dados,
+.card3-div--geral-dados,
+.card4-div--geral-dados{
+    width: 40%;
+    display: flex;
+    margin: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+.h1-card2-div--geral-dados{
+    font-family: Normal;
+    color: white;
+    margin-bottom: 0px;
+    font-size: 25px;
+}
+
+.h2-card2-div--geral-dados{
+     font-family: Bold;
+    color: white;
+    margin-top: 0px;
+    font-size: 60px;
+    margin-bottom: 0px;
+}

@@ -12,6 +12,7 @@ import DashboardOsTicket from '../Page/DashboardOsTicket';
 import DashboardChurnGerencial from '../Page/DashboardChurnGerencial';
 import DashboardCancelamentosClone from '../Page/DashboardCancelamentosClone';
 import DashboardComercialgerencial from '../Page/DashboardComercialgerencial';
+import DashboardClientesgerencial from '../Page/DashboardClientesgerencial';
 
 const Rotas = () => {
   return (
@@ -26,6 +27,7 @@ const Rotas = () => {
         <Route path='/osticket' element={<DashboardOsTicket />} />
         <Route path='/dashboardchurngerencial' element={<DashboardChurnGerencial />} />
         <Route path='/dashboardcomercialgerencial' element={<DashboardComercialgerencial />} />
+         <Route path='/geral' element={<DashboardClientesgerencial />} />  
       </Routes>
     </Router>
   );
