@@ -24,7 +24,7 @@
 
 .div-body-select-geral{
     width: 95%;  
-    padding: 20px 40px;
+    padding:0px 40px;
     display: flex;
     background-color: black;
 }
@@ -75,7 +75,9 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-color: aqua;
+    background-color: white;
+    border-radius: 10px;
+
 }
 
 
@@ -105,4 +107,12 @@
     margin-top: 0px;
     font-size: 60px;
     margin-bottom: 0px;
+}
+
+.h1-card1-div--geral-dados{
+    width: 90%;
+    text-align: start;
+    font-family: Bold;
+    font-size: 18px;
+    margin-bottom: 20px;
 }
