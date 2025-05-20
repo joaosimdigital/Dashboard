@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList, PieChart, Pie, Cell } from 'recharts';
+import {datageral} from '../Data/geralDashboard'
+
 
 import logobranca from '../Images/logobrnaca.png'
 import '../CSS/DashboardChurnGerencial.css'
@@ -12,6 +14,8 @@ const formatValorCompacto = (valor) => {
   if (valor >= 1_000) return `${(valor / 1_000).toFixed(1)}K`;
   return valor.toFixed(0);
 };
+
+console.log(datageral)
 
 function DashboardClientesgerencial() {
       const [vendasUltimosMeses, setVendasUltimosMeses] = useState([]);
@@ -38,12 +42,135 @@ function DashboardClientesgerencial() {
       const [cancelamentosMes, setCancelamentosMes] = useState([]);
           const [totalCancelamentoMesPorcentos, setTotalCancelamentoMesPorcentos] = useState(0);
       const [cancelamentosMesPorcentos, setCancelamentosMesPorcentos] = useState([]);
+       const [cancelamentosPedido, setCancelamentosPedido] = useState(0);
+             const [cancelamentosMesPedidos, setCancelamentosMesPedidos] = useState([]);
+                    const [cancelamentosAutomatico, setCancelamentosAutomatico] = useState(0);
+             const [cancelamentosMesAutomatico, setCancelamentosMesAutomatico] = useState([]);
+             const [totalAtendimentos, setTotalAtendimentos] = useState(0);
+            const [totalAtendimentosUltimos, setTotalAtendimentosUltimos] = useState([]);
+
+              
+   const nomesMeses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+
+function getMesAtual() {
+  const hoje = new Date();
+  const mes = nomesMeses[hoje.getMonth()];
+  return `${mes}/25`;
+}
+
+
+      function getMesAtual() {
+        const hoje = new Date();
+        const mes = nomesMeses[hoje.getMonth()];
+        return `${mes}/25`;
+      }
+
+
+
+
+     const mesAtual = getMesAtual();
+
+        const metaSelecionada = datageral.find(item =>
+          item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+          item.base?.trim().toLowerCase() === 'geral' &&
+          item.indicador?.trim().toLowerCase() === 'meta de número clientes ativos'
+        );
+
+
+        const incrementoSelecionado = datageral?.find(item =>
+              item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+              item.base?.trim().toLowerCase() === 'geral' &&
+              item.indicador?.trim().toLowerCase() === 'incremento de clientes na base'
+            );
+
+        const crescimentoSelecionado = datageral?.find(item =>
+              item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+              item.base?.trim().toLowerCase() === 'geral' &&
+              item.indicador?.trim().toLowerCase() === '% de crescimento ao mês passado'
+            );
+
+        
+            const faturamentoSelecionado = datageral?.find(item =>
+                item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+                item.base?.trim().toLowerCase() === 'geral' &&
+                item.indicador?.trim().toLowerCase() === 'faturamento mensal'
+              );
+
+        const ticketSelecionado = datageral?.find(item =>
+              item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+              item.base?.trim().toLowerCase() === 'geral' &&
+              item.indicador?.trim().toLowerCase() === 'ticket médio geral'
+            );
+
+
+        const novosClientesSelecionado = datageral?.find(item =>
+            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+            item.base?.trim().toLowerCase() === 'geral' &&
+            item.indicador?.trim().toLowerCase() === 'meta de novos clientes (ativação)'
+          );
+
+
+        const novasVendasSelecionado = datageral?.find(item =>
+            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+            item.base?.trim().toLowerCase() === 'geral' &&
+            item.indicador?.trim().toLowerCase() === 'meta de novas vendas geral'
+          );
+
+
+          const novasVendasB2CSelecionado = datageral?.find(item =>
+          item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+          item.base?.trim().toLowerCase() === 'geral' &&
+          item.indicador?.trim().toLowerCase() === 'meta de novas vendas b2c'
+        );
+
+        const novasVendasB2BSelecionado = datageral?.find(item =>
+          item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+          item.base?.trim().toLowerCase() === 'geral' &&
+          item.indicador?.trim().toLowerCase() === 'meta de novas vendas b2b'
+        );
+
+
+        const cancelamentosBaseSelecionado = datageral?.find(item =>
+            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+            item.base?.trim().toLowerCase() === 'geral' &&
+            item.indicador?.trim().toLowerCase() === 'número de cancelamentos (base)'
+          );
+
+          const cancelamentosSolicitacaoSelecionado = datageral?.find(item =>
+            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+            item.base?.trim().toLowerCase() === 'geral' &&
+            item.indicador?.trim().toLowerCase() === 'cancelamentos (por solicitação)'
+          );
+
+          const cancelamentosInadimplenciaSelecionado = datageral?.find(item =>
+            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+            item.base?.trim().toLowerCase() === 'geral' &&
+            item.indicador?.trim().toLowerCase() === 'cancelamentos (inadimplencia)'
+          );
+
+
+          const retencaoCSSelecionado = datageral?.find(item =>
+            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+            item.base?.trim().toLowerCase() === 'geral' &&
+            item.indicador?.trim().toLowerCase() === 'meta de taxa de retenção cs'
+          );
+
+            // Gera automaticamente os meses até o mês atual de 2025
+            const mesesDisponiveis = (() => {
+              const hoje = new Date();
+              const ano = hoje.getFullYear();
+
+              if (ano !== 2025) return []; // Segurança: só mostra se ano for 2025
+
+              const mesAtualIndex = hoje.getMonth();
+              return nomesMeses.slice(0, mesAtualIndex + 1).map(m => `${m}/25`);
+            })();
 
 
   useEffect(() => {
    const fetchClientesAtivos = async () => {
       try {
-        const response = await fetch('http://localhost:3009/clientestotal-ultimos4meses');
+        const response = await fetch('http://38.224.145.3:3009/clientestotal-ultimos4meses');
         const data = await response.json();
 
         const dados = data.dados.map(item => ({
@@ -68,7 +195,7 @@ function DashboardClientesgerencial() {
 
     const fetchTotalClientes = async () => {
       try {
-        const response = await fetch('http://localhost:3009/clientestotal-ultimomes');
+        const response = await fetch('http://38.224.145.3:3009/clientestotal-ultimomes');
         const data = await response.json();
         setTotalClientesUltimoMes(parseInt(data.total_clientes, 10));
       } catch (error) {
@@ -79,7 +206,7 @@ function DashboardClientesgerencial() {
 
        const fetchClientesVendas = async () => {
       try {
-        const response = await fetch('http://localhost:3009/totalclientes4meses');
+        const response = await fetch('http://38.224.145.3:3009/totalclientes4meses');
         const data = await response.json();
 
         const formatado = data.meses.map(item => ({
@@ -96,7 +223,7 @@ function DashboardClientesgerencial() {
 
      const fetchTotal = async () => {
       try {
-        const response = await fetch('http://localhost:3009/totalclientes-mesatual');
+        const response = await fetch('http://38.224.145.3:3009/totalclientes-mesatual');
         const data = await response.json();
         setTotalClientes(data.total_clientes);
       } catch (error) {
@@ -107,7 +234,7 @@ function DashboardClientesgerencial() {
 
     const fetchCrescimento = async () => {
   try {
-    const response = await fetch('http://localhost:3009/clientestotal-crescimento');
+    const response = await fetch('http://38.224.145.3:3009/clientestotal-crescimento');
     const data = await response.json();
 
     // Remove o primeiro item (com crescimento null)
@@ -125,7 +252,7 @@ function DashboardClientesgerencial() {
 
        const fetchCrescimentoMesAtual = async () => {
       try {
-        const response = await fetch('http://localhost:3009/clientestotal-crescimento-mesatual');
+        const response = await fetch('http://38.224.145.3:3009/clientestotal-crescimento-mesatual');
         const data = await response.json();
 
         setCrescimento(data.crescimento);
@@ -138,7 +265,7 @@ function DashboardClientesgerencial() {
 
     const fetchValorPago = async () => {
   try {
-    const response = await fetch('http://localhost:3009/valortotalpago-mespassado');
+    const response = await fetch('http://38.224.145.3:3009/valortotalpago-mespassado');
     const data = await response.json();
 
     const valorNumerico = data.total_pago_mes_passado || 0;
@@ -151,7 +278,7 @@ function DashboardClientesgerencial() {
 
    const fetchFaturamento = async () => {
       try {
-        const response = await fetch('http://localhost:3009/valortotalpago-ultimos4meses');
+        const response = await fetch('http://38.224.145.3:3009/valortotalpago-ultimos4meses');
         const data = await response.json();
 
         setDadosReal(data.ultimos_4_meses || []);
@@ -163,7 +290,7 @@ function DashboardClientesgerencial() {
 
      const fetchNovosClientes = async () => {
   try {
-    const response = await fetch('http://localhost:3009/total-clientes-ultimos4meses');
+    const response = await fetch('http://38.224.145.3:3009/total-clientes-ultimos4meses');
     const data = await response.json();
 
     const dadosFormatados = data.meses.map((item) => ({
@@ -179,7 +306,7 @@ function DashboardClientesgerencial() {
 
     const fetchTotalClientesNovos = async () => {
       try {
-        const response = await fetch('http://localhost:3009/total-clientes-mespassado');
+        const response = await fetch('http://38.224.145.3:3009/total-clientes-mespassado');
         const data = await response.json();
 
         setTotal(data.total_clientes);
@@ -192,7 +319,7 @@ function DashboardClientesgerencial() {
 
      const fetchTicketMedio = async () => {
       try {
-        const response = await fetch('http://localhost:3009/ticket-medio-mespassado');
+        const response = await fetch('http://38.224.145.3:3009/ticket-medio-mespassado');
         const data = await response.json();
 
         setTicketMedio(parseFloat(data.ticket_medio));
@@ -206,7 +333,7 @@ function DashboardClientesgerencial() {
 
     const fetchTicketMedioUltimos = async () => {
       try {
-        const response = await fetch('http://localhost:3009/ticket-medio-ultimos4meses');
+        const response = await fetch('http://38.224.145.3:3009/ticket-medio-ultimos4meses');
         const data = await response.json();
 
         const formatado = data.ticket_medio_ultimos_4_meses.map(item => ({
@@ -223,7 +350,7 @@ function DashboardClientesgerencial() {
 
       const fetchCadastros = async () => {
       try {
-        const response = await fetch('http://localhost:3009/cadastrostotal-mespassado');
+        const response = await fetch('http://38.224.145.3:3009/cadastrostotal-mespassado');
         const data = await response.json();
 
         setTotalCadastros(parseInt(data.total_cadastros));
@@ -235,7 +362,7 @@ function DashboardClientesgerencial() {
 
       const fetchCadastrosNovo = async () => {
       try {
-        const response = await fetch('http://localhost:3009/cadastrostotal-ultimos4meses');
+        const response = await fetch('http://38.224.145.3:3009/cadastrostotal-ultimos4meses');
         const data = await response.json();
 
         const adaptado = data.cadastros_ultimos_4_meses.map(item => ({
@@ -251,7 +378,7 @@ function DashboardClientesgerencial() {
 
       const fetchCadastrosPFUltimos = async () => {
       try {
-        const response = await fetch('http://localhost:3009/cadastrospf-ultimos4meses');
+        const response = await fetch('http://38.224.145.3:3009/cadastrospf-ultimos4meses');
         const data = await response.json();
 
         // Corrige nome incorreto (retorno está como total_cadastros_pj)
@@ -269,7 +396,7 @@ function DashboardClientesgerencial() {
 
       const fetchCadastrosPJUltimos = async () => {
       try {
-        const response = await fetch('http://localhost:3009/cadastrospj-ultimos4meses');
+        const response = await fetch('http://38.224.145.3:3009/cadastrospj-ultimos4meses');
         const data = await response.json();
 
         // Corrige nome incorreto (retorno está como total_cadastros_pj)
@@ -286,7 +413,7 @@ function DashboardClientesgerencial() {
 
        const fetchCadastrosPJ = async () => {
       try {
-        const response = await fetch('http://localhost:3009/cadastrospj-mespassado');
+        const response = await fetch('http://38.224.145.3:3009/cadastrospj-mespassado');
         const data = await response.json();
 
         setTotalPJ(parseInt(data.total_cadastros_pf));
@@ -298,7 +425,7 @@ function DashboardClientesgerencial() {
 
       const fetchCadastrosPF = async () => {
       try {
-        const response = await fetch('http://localhost:3009/cadastrospf-mespassado');
+        const response = await fetch('http://38.224.145.3:3009/cadastrospf-mespassado');
         const data = await response.json();
 
         setTotalPF(parseInt(data.total_cadastros_pf));
@@ -309,7 +436,7 @@ function DashboardClientesgerencial() {
 
      const fetchChurnData = async () => {
       try {
-        const response = await fetch('http://localhost:3009/churn-mensal');
+        const response = await fetch('http://38.224.145.3:3009/churn-mensal');
         if (!response.ok) {
           throw new Error('Erro na resposta da API');
         }
@@ -323,7 +450,7 @@ function DashboardClientesgerencial() {
 
       const buscarCancelamentos = async () => {
       try {
-        const resposta = await fetch('http://localhost:3009/churn-mensal-ultimos');
+        const resposta = await fetch('http://38.224.145.3:3009/churn-mensal-ultimos');
         if (!resposta.ok) throw new Error('Erro na requisição');
         const dados = await resposta.json();
 
@@ -346,7 +473,7 @@ function DashboardClientesgerencial() {
 
      const fetchChurnDataporcentos = async () => {
       try {
-        const response = await fetch('http://localhost:3009/churn-mensal');
+        const response = await fetch('http://38.224.145.3:3009/churn-mensal');
         if (!response.ok) {
           throw new Error('Erro na resposta da API');
         }
@@ -360,7 +487,7 @@ function DashboardClientesgerencial() {
 
       const buscarCancelamentosporcentos = async () => {
       try {
-        const resposta = await fetch('http://localhost:3009/churn-mensal-ultimos');
+        const resposta = await fetch('http://38.224.145.3:3009/churn-mensal-ultimos');
         if (!resposta.ok) throw new Error('Erro na requisição');
         const dados = await resposta.json();
 
@@ -381,6 +508,121 @@ function DashboardClientesgerencial() {
     };
 
 
+    const buscarCancelamentosPedido = async () => {
+      try {
+        const resposta = await fetch('http://38.224.145.3:3009/cancelamentos-por-pedido-mes-passado');
+        if (!resposta.ok) throw new Error('Erro ao buscar dados');
+        const dados = await resposta.json();
+
+        setCancelamentosPedido(dados.total_cancelamentos_pedido);
+      } catch (erro) {
+        console.error('Erro ao buscar cancelamentos por pedido do cliente:', erro);
+      }
+    };
+
+    const buscarCancelamentosUltimos = async () => {
+      try {
+        const resposta = await fetch('http://38.224.145.3:3009/cancelamentos-por-pedido-ultimos-4-meses');
+        if (!resposta.ok) throw new Error('Erro na API');
+        const dados = await resposta.json();
+
+        const nomesMeses = [
+          '', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+          'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+        ];
+
+        // Formata para: { mes: 'Abr/25', total_cancelamentos_mes: ... }
+        const dadosFormatados = dados.map(item => ({
+          mes: `${nomesMeses[item.mes]}/${item.ano.toString().slice(-2)}`,
+          total_cancelamentos_mes: item.total_cancelamentos_pedido
+        }));
+
+        setCancelamentosMesPedidos(dadosFormatados);
+      } catch (erro) {
+        console.error('Erro ao buscar cancelamentos por pedido:', erro);
+      }
+    };
+
+
+    
+    const buscarCancelamentosautomatico = async () => {
+      try {
+        const resposta = await fetch('http://38.224.145.3:3009/cancelamentos-por-automatico-mes-passado');
+        if (!resposta.ok) throw new Error('Erro ao buscar dados');
+        const dados = await resposta.json();
+
+        setCancelamentosAutomatico(dados.total_cancelamentos_pedido);
+      } catch (erro) {
+        console.error('Erro ao buscar cancelamentos por pedido do cliente:', erro);
+      }
+    };
+
+    const buscarCancelamentosUltimosAutomatico = async () => {
+      try {
+        const resposta = await fetch('http://38.224.145.3:3009/cancelamentos-por-automatico-ultimos-4-meses');
+        if (!resposta.ok) throw new Error('Erro na API');
+        const dados = await resposta.json();
+
+        const nomesMeses = [
+          '', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+          'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+        ];
+
+        // Formata para: { mes: 'Abr/25', total_cancelamentos_mes: ... }
+        const dadosFormatados = dados.map(item => ({
+          mes: `${nomesMeses[item.mes]}/${item.ano.toString().slice(-2)}`,
+          total_cancelamentos_mes: item.total_cancelamentos_pedido
+        }));
+
+        setCancelamentosMesAutomatico(dadosFormatados);
+      } catch (erro) {
+        console.error('Erro ao buscar cancelamentos por pedido:', erro);
+      }
+    };
+
+
+
+     const buscarAtendimentos = async () => {
+      try {
+        const resposta = await fetch('http://38.224.145.3:3009/atendimentos-tipo-mes-passado');
+        if (!resposta.ok) throw new Error('Erro ao buscar atendimentos');
+        const dados = await resposta.json();
+
+        setTotalAtendimentos(dados.percentual_sucesso);
+      } catch (erro) {
+        console.error('Erro ao carregar os atendimentos:', erro);
+      }
+    };
+
+    const buscarAtendimentosUltimos = async () => {
+      try {
+        const resposta = await fetch('http://38.224.145.3:3009/atendimentos-tipo-ultimos-4-meses');
+        if (!resposta.ok) throw new Error('Erro na requisição');
+        const dados = await resposta.json();
+
+        const nomesMeses = [
+          '', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+          'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+        ];
+
+        const dadosFormatados = dados.map(item => ({
+          mes: `${nomesMeses[item.mes]}/${item.ano.toString().slice(-2)}`,
+          percentual_sucesso: parseFloat(item.percentual_sucesso)
+        }));
+
+
+        setTotalAtendimentosUltimos(dadosFormatados);
+      } catch (erro) {
+        console.error('Erro ao carregar dados de atendimentos tipo 257:', erro);
+      }
+    };
+
+    buscarAtendimentosUltimos();
+    buscarAtendimentos();
+    buscarCancelamentosUltimosAutomatico();
+    buscarCancelamentosautomatico();
+    buscarCancelamentosUltimos();
+    buscarCancelamentosPedido();
     fetchChurnDataporcentos();
     buscarCancelamentosporcentos();
     buscarCancelamentos();
@@ -405,12 +647,6 @@ function DashboardClientesgerencial() {
     fetchClientesAtivos();
   }, []);
 
-    const churnUltimosMeses = [
-  { mes: 'Fev/25', churn: 3.89 },
-  { mes: 'Mar/25', churn: 5.12 },
-  { mes: 'Abr/25', churn: 4.01 },
-  { mes: 'Mai/25', churn: 3.45 }
-];
 
 
   return (
@@ -425,12 +661,17 @@ function DashboardClientesgerencial() {
                 
                 <div className='div-body-select-geral'>
 
-                       <div className='div-body-opcao1'>
-        <h1 className='h1-body-opcao'>Mês</h1>
-        <select
-          className='button-body-opcao'>
-        </select>
-      </div>
+               <div className='div-body-opcao1'>
+                <h1 className='h1-body-opcao'>Mês</h1>
+                <select className='button-body-opcao' defaultValue={getMesAtual()}>
+                  {mesesDisponiveis.map((mes) => (
+                    <option key={mes} value={mes}>
+                      {mes}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
 
                    <div className='div-body-opcao1'>
         <h1 className='h1-body-opcao'>Estado</h1>
@@ -475,12 +716,13 @@ function DashboardClientesgerencial() {
 
                      <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>25000</h1>
+                        <h1  className='h2-card2-div--geral-dados'>{metaSelecionada ? metaSelecionada.meta : '—'}</h1>
+                        
                     </div>
 
                          <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>26000</h1>
+                         <h1  className='h2-card2-div--geral-dados'>{metaSelecionada ? metaSelecionada.super_meta : '—'}</h1>
                     </div>
 
 
@@ -523,12 +765,12 @@ function DashboardClientesgerencial() {
 
                      <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>25000</h1>
+                        <h1   className='h2-card2-div--geral-dados'> {incrementoSelecionado ? incrementoSelecionado.meta : '—'}</h1>
                     </div>
 
                          <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>26000</h1>
+                        <h1   className='h2-card2-div--geral-dados'> {incrementoSelecionado ? incrementoSelecionado.super_meta : '—'}</h1>
                     </div>
 
 
@@ -582,12 +824,12 @@ function DashboardClientesgerencial() {
 
                      <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>25000</h1>
+                        <h1   className='h2-card2-div--geral-dados'> {crescimentoSelecionado ? (parseFloat(crescimentoSelecionado.meta) * 100).toFixed(2) + '%' : '—'}</h1>
                     </div>
 
                          <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>26000</h1>
+                        <h1   className='h2-card2-div--geral-dados'> {crescimentoSelecionado ? (parseFloat(crescimentoSelecionado.super_meta) * 100).toFixed(2) + '%' : '—'}</h1>
                     </div>
 
 
@@ -646,12 +888,12 @@ function DashboardClientesgerencial() {
 
                      <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>25000</h1>
+                        <h1   className='h2-card2-div--geral-dados'> {faturamentoSelecionado ? faturamentoSelecionado.meta : '—'}</h1>
                     </div>
 
                          <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>26000</h1>
+                        <h1   className='h2-card2-div--geral-dados'> {faturamentoSelecionado ? faturamentoSelecionado.super_meta : '—'}</h1>
                     </div>
 
 
@@ -709,12 +951,12 @@ function DashboardClientesgerencial() {
 
                      <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>25000</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{ticketSelecionado ? ticketSelecionado.meta : '—'}</h1>
                     </div>
 
                          <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>26000</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{ticketSelecionado ? ticketSelecionado.super_meta : '—'}</h1>
                     </div>
 
 
@@ -769,12 +1011,12 @@ function DashboardClientesgerencial() {
 
                      <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>25000</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{novosClientesSelecionado ? novosClientesSelecionado.meta : '—'}</h1>
                     </div>
 
                          <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>26000</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{novosClientesSelecionado ? novosClientesSelecionado.super_meta : '—'}</h1>
                     </div>
 
 
@@ -829,12 +1071,12 @@ function DashboardClientesgerencial() {
 
                      <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>25000</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{novasVendasSelecionado ? novasVendasSelecionado.meta : '—'}</h1>
                     </div>
 
                          <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>26000</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{novasVendasSelecionado ? novasVendasSelecionado.super_meta : '—'}</h1>
                     </div>
 
 
@@ -894,12 +1136,12 @@ function DashboardClientesgerencial() {
 
                      <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>25000</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{novasVendasB2CSelecionado ? novasVendasB2CSelecionado.meta : '—'}</h1>
                     </div>
 
                          <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>26000</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{novasVendasB2CSelecionado ? novasVendasB2CSelecionado.super_meta : '—'}</h1>
                     </div>
 
 
@@ -958,12 +1200,12 @@ function DashboardClientesgerencial() {
 
                      <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>25000</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{novasVendasB2BSelecionado ? novasVendasB2BSelecionado.meta : '—'}</h1>
                     </div>
 
                          <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>26000</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{novasVendasB2BSelecionado ? novasVendasB2BSelecionado.super_meta : '—'}</h1>
                     </div>
 
 
@@ -1022,12 +1264,12 @@ function DashboardClientesgerencial() {
 
                      <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>25000</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{cancelamentosBaseSelecionado ? cancelamentosBaseSelecionado.meta : '—'}</h1>
                     </div>
 
                          <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>26000</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{cancelamentosBaseSelecionado ? cancelamentosBaseSelecionado.super_meta : '—'}</h1>
                     </div>
 
 
@@ -1099,6 +1341,192 @@ function DashboardClientesgerencial() {
                 </div>
 
 
+                    <div className='card-body-geral-dados'>
+                    <h1 className='header-titulo-card-body-geral-dados'>CANCELAMENTOS POR SOLICITAÇÃO</h1>
+
+                    <div className='card-geral-dados'>
+
+                            
+                        <div className='card1-div--geral-dados'>
+                                <h1 className='h1-card1-div--geral-dados'>Comparativo</h1>
+                   {cancelamentosMesPedidos.length > 0 ? (
+        <ResponsiveContainer width="90%" height={270}>
+          <BarChart data={cancelamentosMesPedidos}>
+            <CartesianGrid strokeDasharray="2 2" />
+            <XAxis dataKey="mes" tick={{ fill: '#fff' }} />
+            <YAxis tick={{ fill: '#fff' }} />
+            <Tooltip
+              formatter={(value) =>
+                typeof value === 'number'
+                  ? value.toLocaleString('pt-BR')
+                  : value
+              }
+            />
+            <Bar dataKey="total_cancelamentos_mes" fill="#F45742">
+              <LabelList
+                dataKey="total_cancelamentos_mes"
+                position="inside"
+                fill="#fff"
+                formatter={(value) =>
+                  typeof value === 'number'
+                    ? value.toLocaleString('pt-BR')
+                    : ''
+                }
+              />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <p style={{ color: '#fff' }}>Carregando dados...</p>
+      )}
+
+                        </div>
+
+                    <div  className='card2-div--geral-dados'>
+                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
+                        <h1  className='h2-card2-div--geral-dados'>{cancelamentosPedido}</h1>
+                    </div>
+
+
+                     <div   className='card3-div--geral-dados'>
+                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{cancelamentosSolicitacaoSelecionado ? cancelamentosSolicitacaoSelecionado.meta : '—'}</h1>
+                    </div>
+
+                         <div   className='card3-div--geral-dados'>
+                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{cancelamentosSolicitacaoSelecionado ? cancelamentosSolicitacaoSelecionado.super_meta : '—'}</h1>
+                    </div>
+
+
+
+                    </div>
+                </div>
+
+
+              <div className='card-body-geral-dados'>
+                    <h1 className='header-titulo-card-body-geral-dados'>CANCELAMENTOS POR INADIMPLÊNCIA</h1>
+
+                    <div className='card-geral-dados'>
+
+                            
+                        <div className='card1-div--geral-dados'>
+                                <h1 className='h1-card1-div--geral-dados'>Comparativo</h1>
+                   {cancelamentosMesAutomatico.length > 0 ? (
+        <ResponsiveContainer width="90%" height={270}>
+          <BarChart data={cancelamentosMesAutomatico}>
+            <CartesianGrid strokeDasharray="2 2" />
+            <XAxis dataKey="mes" tick={{ fill: '#fff' }} />
+            <YAxis tick={{ fill: '#fff' }} />
+            <Tooltip
+              formatter={(value) =>
+                typeof value === 'number'
+                  ? value.toLocaleString('pt-BR')
+                  : value
+              }
+            />
+            <Bar dataKey="total_cancelamentos_mes" fill="#F45742">
+              <LabelList
+                dataKey="total_cancelamentos_mes"
+                position="inside"
+                fill="#fff"
+                formatter={(value) =>
+                  typeof value === 'number'
+                    ? value.toLocaleString('pt-BR')
+                    : ''
+                }
+              />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <p style={{ color: '#fff' }}>Carregando dados...</p>
+      )}
+
+                        </div>
+
+                    <div  className='card2-div--geral-dados'>
+                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
+                        <h1  className='h2-card2-div--geral-dados'>{cancelamentosAutomatico}</h1>
+                    </div>
+
+
+                     <div   className='card3-div--geral-dados'>
+                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{cancelamentosInadimplenciaSelecionado ? cancelamentosInadimplenciaSelecionado.meta : '—'}</h1>
+                    </div>
+
+                         <div   className='card3-div--geral-dados'>
+                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{cancelamentosInadimplenciaSelecionado ? cancelamentosInadimplenciaSelecionado.super_meta : '—'}</h1>
+                    </div>
+
+
+
+                    </div>
+                </div>
+
+
+               <div className='card-body-geral-dados'>
+                    <h1 className='header-titulo-card-body-geral-dados'>RETENÇÃO DE CLIENTES (CS)</h1>
+
+                    <div className='card-geral-dados'>
+
+                            
+                      <div className='card1-div--geral-dados'>
+  <h1 className='h1-card1-div--geral-dados'>Comparativo</h1>
+
+  {totalAtendimentosUltimos.length > 0 ? (
+    <ResponsiveContainer width="90%" height={270}>
+      <BarChart data={totalAtendimentosUltimos}>
+        <CartesianGrid strokeDasharray="2 2" />
+        <XAxis dataKey="mes" tick={{ fill: '#fff' }} />
+        <YAxis tick={{ fill: '#fff' }} unit="%" />
+        <Tooltip
+          formatter={(value) =>
+            typeof value === 'number'
+              ? `${value.toFixed(2)}%`
+              : value
+          }
+        />
+        <Bar dataKey="percentual_sucesso" fill="#F45742">
+          <LabelList
+            dataKey="percentual_sucesso"
+            position="inside"
+            fill="#fff"
+            formatter={(value) => `${value}%`}
+          />
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  ) : (
+    <p style={{ color: '#fff' }}>Carregando dados...</p>
+  )}
+</div>
+                    <div  className='card2-div--geral-dados'>
+                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
+                        <h1  className='h2-card2-div--geral-dados'>{totalAtendimentos}%</h1>
+                    </div>
+
+
+                     <div   className='card3-div--geral-dados'>
+                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{retencaoCSSelecionado
+      ? (parseFloat(retencaoCSSelecionado.meta) * 100).toFixed(2) + '%'
+      : '—'}</h1>
+                    </div>
+
+                         <div   className='card3-div--geral-dados'>
+                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{retencaoCSSelecionado
+      ? (parseFloat(retencaoCSSelecionado.super_meta) * 100).toFixed(2) + '%'
+      : '—'}</h1>
+                    </div>
+
+
+
+                    </div>
+                </div>
 
     </div>
   )
