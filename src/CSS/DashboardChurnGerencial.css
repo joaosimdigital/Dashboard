@@ -450,3 +450,19 @@
   50% { width: 50%; }
   100% { width: 100%; }
 }
+
+
+.h3-card2-div--geral-dados{
+  width: 100px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Bold;
+  color: gray;
+  font-size: 15px;
+  border-radius: 5px;
+  position: absolute;
+  margin-top: 200px;
+  background-color: white;
+}

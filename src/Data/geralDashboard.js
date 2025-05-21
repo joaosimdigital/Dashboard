@@ -1004,8 +1004,8 @@ export const datageral = [
     "data": "mai/25",
     "base": "GERAL",
     "indicador": "Faturamento mensal",
-    "super_meta": "R$ 3.354.158,34",
-    "meta": "R$ 3.339.267,27"
+    "super_meta": "3.354M",
+    "meta": "3.3M"
   },
   {
     "data": "mai/25",

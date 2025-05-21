@@ -15,6 +15,15 @@ const formatValorCompacto = (valor) => {
   return valor.toFixed(0);
 };
 
+const nomesMeses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+
+function getMesAtual() {
+  const hoje = new Date();
+  const mes = nomesMeses[hoje.getMonth()];
+  return `${mes}/25`;
+}
+
+
 console.log(datageral)
 
 function DashboardClientesgerencial() {
@@ -48,25 +57,10 @@ function DashboardClientesgerencial() {
              const [cancelamentosMesAutomatico, setCancelamentosMesAutomatico] = useState([]);
              const [totalAtendimentos, setTotalAtendimentos] = useState(0);
             const [totalAtendimentosUltimos, setTotalAtendimentosUltimos] = useState([]);
-
-              
-   const nomesMeses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
-
-function getMesAtual() {
-  const hoje = new Date();
-  const mes = nomesMeses[hoje.getMonth()];
-  return `${mes}/25`;
-}
-
-
-      function getMesAtual() {
-        const hoje = new Date();
-        const mes = nomesMeses[hoje.getMonth()];
-        return `${mes}/25`;
-      }
-
-
-
+            const [metaChurn, setMetaChurn] = useState(null);
+const [superMetaChurn, setSuperMetaChurn] = useState(null);
+const [mesSelecionado, setMesSelecionado] = useState(getMesAtual());
+const [estadoSelecionado, setEstadoSelecionado] = useState('Todos');
 
      const mesAtual = getMesAtual();
 
@@ -76,6 +70,11 @@ function getMesAtual() {
           item.indicador?.trim().toLowerCase() === 'meta de número clientes ativos'
         );
 
+         const metaChurnSelecionada = datageral.find(item =>
+    item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'meta de churn (base final do mês)'
+  );
 
         const incrementoSelecionado = datageral?.find(item =>
               item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
@@ -156,62 +155,55 @@ function getMesAtual() {
           );
 
             // Gera automaticamente os meses até o mês atual de 2025
-            const mesesDisponiveis = (() => {
-              const hoje = new Date();
-              const ano = hoje.getFullYear();
-
-              if (ano !== 2025) return []; // Segurança: só mostra se ano for 2025
-
-              const mesAtualIndex = hoje.getMonth();
-              return nomesMeses.slice(0, mesAtualIndex + 1).map(m => `${m}/25`);
-            })();
+const mesesDisponiveis = (() => {
+  const hoje = new Date();
+  const ano = hoje.getFullYear();
+  if (ano !== 2025) return [];
+  const mesAtualIndex = hoje.getMonth();
+  return nomesMeses.slice(0, mesAtualIndex + 1).map(m => `${m}/25`);
+})();
 
 
   useEffect(() => {
-   const fetchClientesAtivos = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/clientestotal-ultimos4meses');
-        const data = await response.json();
+  
+    const fetchClientesAtivos = async () => {
+  try {
+    const response = await fetch('http://localhost:3009/clientestotal-ultimos4meses');
+    const data = await response.json();
 
-        const dados = data.dados.map(item => ({
-          mes: item.mes,
-          total: item.total_contratos_ate_primeira_data,
-        }));
+    const mesAtual = new Date();
+    const mesAtualFormatado = `${String(mesAtual.getMonth() + 1).padStart(2, '0')}/${mesAtual.getFullYear()}`;
 
-        setClientesAtivosMeses(dados);
+    let valorMesAtual = 0;
 
-        // Último mês (o mais recente na lista)
-        if (dados.length > 0) {
-          const ultimo = dados[dados.length - 1];
-          setTotalClientesUltimoMes(ultimo.total);
-        }
-
-      } catch (error) {
-        console.error('Erro ao buscar clientes ativos dos últimos 4 meses:', error);
+    const dadosFiltrados = data.dados.filter(item => {
+      if (item.mes === mesAtualFormatado) {
+        valorMesAtual = item.total_contratos_ate_primeira_data;
+        return false; // exclui do gráfico
       }
-    };
+      return true; // mantém no gráfico
+    }).map(item => ({
+      mes: item.mes,
+      total: item.total_contratos_ate_primeira_data,
+    }));
 
+    setClientesAtivosMeses(dadosFiltrados);
+    setTotalClientesUltimoMes(valorMesAtual);
 
-
-    const fetchTotalClientes = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/clientestotal-ultimomes');
-        const data = await response.json();
-        setTotalClientesUltimoMes(parseInt(data.total_clientes, 10));
-      } catch (error) {
-        console.error('Erro ao buscar total de clientes do último mês:', error);
-      }
-    };
+  } catch (error) {
+    console.error('Erro ao buscar clientes ativos dos últimos 4 meses:', error);
+  }
+};
 
 
        const fetchClientesVendas = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/totalclientes4meses');
+        const response = await fetch('http://localhost:3009/clientes-entrantes-reais-ultimos4meses');
         const data = await response.json();
 
-        const formatado = data.meses.map(item => ({
+        const formatado = data.dados.map(item => ({
           mes: `${String(item.mes).padStart(2, '0')}/${item.ano}`,  // Ex: "03/2025"
-          total_clientes: item.total_clientes
+          total_clientes: item.clientes_reais
         }));
 
         setVendasUltimosMeses(formatado);
@@ -223,9 +215,9 @@ function getMesAtual() {
 
      const fetchTotal = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/totalclientes-mesatual');
+        const response = await fetch('http://localhost:3009/clientes-entrantes-reais');
         const data = await response.json();
-        setTotalClientes(data.total_clientes);
+        setTotalClientes(data.clientes_reais);
       } catch (error) {
         console.error('Erro ao buscar total de clientes do mês atual:', error);
       }
@@ -234,13 +226,13 @@ function getMesAtual() {
 
     const fetchCrescimento = async () => {
   try {
-    const response = await fetch('http://38.224.145.3:3009/clientestotal-crescimento');
+    const response = await fetch('http://localhost:3009/clientestotal-crescimento');
     const data = await response.json();
 
     // Remove o primeiro item (com crescimento null)
-    const dadosFiltrados = data.clientes_acumulados.slice(1).map(item => ({
+    const dadosFiltrados = data.dados.slice(0).map(item => ({
       mes: item.mes,
-      crescimento: item.crescimento
+      crescimento: item.crescimento_percentual
     }));
 
     setDados(dadosFiltrados);
@@ -252,10 +244,10 @@ function getMesAtual() {
 
        const fetchCrescimentoMesAtual = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/clientestotal-crescimento-mesatual');
+        const response = await fetch('http://localhost:3009/clientestotal-crescimento-mesatual');
         const data = await response.json();
 
-        setCrescimento(data.crescimento);
+        setCrescimento(data.dados.crescimento_percentual);
       
       } catch (error) {
         console.error('Erro ao buscar crescimento do mês atual:', error);
@@ -265,7 +257,7 @@ function getMesAtual() {
 
     const fetchValorPago = async () => {
   try {
-    const response = await fetch('http://38.224.145.3:3009/valortotalpago-mespassado');
+    const response = await fetch('http://localhost:3009/valortotalpago-mespassado');
     const data = await response.json();
 
     const valorNumerico = data.total_pago_mes_passado || 0;
@@ -278,7 +270,7 @@ function getMesAtual() {
 
    const fetchFaturamento = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/valortotalpago-ultimos4meses');
+        const response = await fetch('http://localhost:3009/valortotalpago-ultimos4meses');
         const data = await response.json();
 
         setDadosReal(data.ultimos_4_meses || []);
@@ -290,12 +282,12 @@ function getMesAtual() {
 
      const fetchNovosClientes = async () => {
   try {
-    const response = await fetch('http://38.224.145.3:3009/total-clientes-ultimos4meses');
+    const response = await fetch('http://localhost:3009/total-clientes-habilitados-ultimos4meses');
     const data = await response.json();
 
-    const dadosFormatados = data.meses.map((item) => ({
+    const dadosFormatados = data.dados.map((item) => ({
       mes: `${String(item.mes).padStart(2, '0')}/${item.ano}`,
-      total_clientes: parseInt(item.total_clientes)
+      total_clientes: parseInt(item.total_clientes_habilitados)
     }));
 
     setDadosNovosClientes(dadosFormatados);
@@ -306,10 +298,10 @@ function getMesAtual() {
 
     const fetchTotalClientesNovos = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/total-clientes-mespassado');
+        const response = await fetch('http://localhost:3009/total-clientes-habilitados-mespassado');
         const data = await response.json();
 
-        setTotal(data.total_clientes);
+        setTotal(data.total_clientes_habilitados);
         
       } catch (error) {
         console.error('Erro ao buscar total de clientes do mês passado:', error);
@@ -319,7 +311,7 @@ function getMesAtual() {
 
      const fetchTicketMedio = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/ticket-medio-mespassado');
+        const response = await fetch('http://localhost:3009/ticket-medio-mespassado');
         const data = await response.json();
 
         setTicketMedio(parseFloat(data.ticket_medio));
@@ -333,7 +325,7 @@ function getMesAtual() {
 
     const fetchTicketMedioUltimos = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/ticket-medio-ultimos4meses');
+        const response = await fetch('http://localhost:3009/ticket-medio-ultimos4meses');
         const data = await response.json();
 
         const formatado = data.ticket_medio_ultimos_4_meses.map(item => ({
@@ -350,7 +342,7 @@ function getMesAtual() {
 
       const fetchCadastros = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/cadastrostotal-mespassado');
+        const response = await fetch('http://localhost:3009/cadastrostotal-mespassado');
         const data = await response.json();
 
         setTotalCadastros(parseInt(data.total_cadastros));
@@ -362,7 +354,7 @@ function getMesAtual() {
 
       const fetchCadastrosNovo = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/cadastrostotal-ultimos4meses');
+        const response = await fetch('http://localhost:3009/cadastrostotal-ultimos4meses');
         const data = await response.json();
 
         const adaptado = data.cadastros_ultimos_4_meses.map(item => ({
@@ -378,7 +370,7 @@ function getMesAtual() {
 
       const fetchCadastrosPFUltimos = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/cadastrospf-ultimos4meses');
+        const response = await fetch('http://localhost:3009/cadastrospf-ultimos4meses');
         const data = await response.json();
 
         // Corrige nome incorreto (retorno está como total_cadastros_pj)
@@ -396,7 +388,7 @@ function getMesAtual() {
 
       const fetchCadastrosPJUltimos = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/cadastrospj-ultimos4meses');
+        const response = await fetch('http://localhost:3009/cadastrospj-ultimos4meses');
         const data = await response.json();
 
         // Corrige nome incorreto (retorno está como total_cadastros_pj)
@@ -413,7 +405,7 @@ function getMesAtual() {
 
        const fetchCadastrosPJ = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/cadastrospj-mespassado');
+        const response = await fetch('http://localhost:3009/cadastrospj-mespassado');
         const data = await response.json();
 
         setTotalPJ(parseInt(data.total_cadastros_pf));
@@ -425,7 +417,7 @@ function getMesAtual() {
 
       const fetchCadastrosPF = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/cadastrospf-mespassado');
+        const response = await fetch('http://localhost:3009/cadastrospf-mespassado');
         const data = await response.json();
 
         setTotalPF(parseInt(data.total_cadastros_pf));
@@ -436,7 +428,7 @@ function getMesAtual() {
 
      const fetchChurnData = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/churn-mensal');
+        const response = await fetch('http://localhost:3009/churn-mensal');
         if (!response.ok) {
           throw new Error('Erro na resposta da API');
         }
@@ -450,7 +442,7 @@ function getMesAtual() {
 
       const buscarCancelamentos = async () => {
       try {
-        const resposta = await fetch('http://38.224.145.3:3009/churn-mensal-ultimos');
+        const resposta = await fetch('http://localhost:3009/churn-mensal-ultimos');
         if (!resposta.ok) throw new Error('Erro na requisição');
         const dados = await resposta.json();
 
@@ -473,7 +465,7 @@ function getMesAtual() {
 
      const fetchChurnDataporcentos = async () => {
       try {
-        const response = await fetch('http://38.224.145.3:3009/churn-mensal');
+        const response = await fetch('http://localhost:3009/churn-mensal');
         if (!response.ok) {
           throw new Error('Erro na resposta da API');
         }
@@ -487,7 +479,7 @@ function getMesAtual() {
 
       const buscarCancelamentosporcentos = async () => {
       try {
-        const resposta = await fetch('http://38.224.145.3:3009/churn-mensal-ultimos');
+        const resposta = await fetch('http://localhost:3009/churn-mensal-ultimos');
         if (!resposta.ok) throw new Error('Erro na requisição');
         const dados = await resposta.json();
 
@@ -510,7 +502,7 @@ function getMesAtual() {
 
     const buscarCancelamentosPedido = async () => {
       try {
-        const resposta = await fetch('http://38.224.145.3:3009/cancelamentos-por-pedido-mes-passado');
+        const resposta = await fetch('http://localhost:3009/cancelamentos-por-pedido-mes-passado');
         if (!resposta.ok) throw new Error('Erro ao buscar dados');
         const dados = await resposta.json();
 
@@ -522,7 +514,7 @@ function getMesAtual() {
 
     const buscarCancelamentosUltimos = async () => {
       try {
-        const resposta = await fetch('http://38.224.145.3:3009/cancelamentos-por-pedido-ultimos-4-meses');
+        const resposta = await fetch('http://localhost:3009/cancelamentos-por-pedido-ultimos-4-meses');
         if (!resposta.ok) throw new Error('Erro na API');
         const dados = await resposta.json();
 
@@ -547,7 +539,7 @@ function getMesAtual() {
     
     const buscarCancelamentosautomatico = async () => {
       try {
-        const resposta = await fetch('http://38.224.145.3:3009/cancelamentos-por-automatico-mes-passado');
+        const resposta = await fetch('http://localhost:3009/cancelamentos-por-automatico-mes-passado');
         if (!resposta.ok) throw new Error('Erro ao buscar dados');
         const dados = await resposta.json();
 
@@ -559,7 +551,7 @@ function getMesAtual() {
 
     const buscarCancelamentosUltimosAutomatico = async () => {
       try {
-        const resposta = await fetch('http://38.224.145.3:3009/cancelamentos-por-automatico-ultimos-4-meses');
+        const resposta = await fetch('http://localhost:3009/cancelamentos-por-automatico-ultimos-4-meses');
         if (!resposta.ok) throw new Error('Erro na API');
         const dados = await resposta.json();
 
@@ -584,7 +576,7 @@ function getMesAtual() {
 
      const buscarAtendimentos = async () => {
       try {
-        const resposta = await fetch('http://38.224.145.3:3009/atendimentos-tipo-mes-passado');
+        const resposta = await fetch('http://localhost:3009/atendimentos-tipo-mes-passado');
         if (!resposta.ok) throw new Error('Erro ao buscar atendimentos');
         const dados = await resposta.json();
 
@@ -596,7 +588,7 @@ function getMesAtual() {
 
     const buscarAtendimentosUltimos = async () => {
       try {
-        const resposta = await fetch('http://38.224.145.3:3009/atendimentos-tipo-ultimos-4-meses');
+        const resposta = await fetch('http://localhost:3009/atendimentos-tipo-ultimos-4-meses');
         if (!resposta.ok) throw new Error('Erro na requisição');
         const dados = await resposta.json();
 
@@ -617,37 +609,49 @@ function getMesAtual() {
       }
     };
 
-    buscarAtendimentosUltimos();
-    buscarAtendimentos();
-    buscarCancelamentosUltimosAutomatico();
-    buscarCancelamentosautomatico();
-    buscarCancelamentosUltimos();
-    buscarCancelamentosPedido();
-    fetchChurnDataporcentos();
-    buscarCancelamentosporcentos();
-    buscarCancelamentos();
-    fetchChurnData();
-    fetchCadastrosPJUltimos();
-    fetchCadastrosPFUltimos();
-    fetchCadastrosPF();   
-    fetchCadastrosPJ();
-    fetchCadastrosNovo();
-    fetchCadastros();
-    fetchTicketMedioUltimos();
-    fetchTicketMedio();
-    fetchTotalClientesNovos();
-    fetchNovosClientes();
-    fetchFaturamento();
-    fetchValorPago();
-    fetchCrescimentoMesAtual();
-    fetchCrescimento();
-    fetchTotal();
-    fetchTotalClientes();
-    fetchClientesVendas();
+     const atualizarPeriodicamente = () => {
     fetchClientesAtivos();
-  }, []);
+    fetchClientesVendas();
+    fetchTotal();
+    fetchCrescimento();
+    fetchCrescimentoMesAtual();
+    fetchValorPago();
+    fetchFaturamento();
+    fetchNovosClientes();
+    fetchTotalClientesNovos();
+    fetchTicketMedio();
+    fetchTicketMedioUltimos();
+    fetchCadastros();
+    fetchCadastrosNovo();
+    fetchCadastrosPF();
+    fetchCadastrosPJ();
+    fetchCadastrosPFUltimos();
+    fetchCadastrosPJUltimos();
+    fetchChurnData();
+    fetchChurnDataporcentos();
+    buscarCancelamentos();
+    buscarCancelamentosporcentos();
+    buscarCancelamentosPedido();
+    buscarCancelamentosUltimos();
+    buscarCancelamentosautomatico();
+    buscarCancelamentosUltimosAutomatico();
+    buscarAtendimentos();
+    buscarAtendimentosUltimos();
+  };
+
+  // Executa imediatamente na primeira renderização
+  atualizarPeriodicamente();
+
+  const intervalo = setInterval(atualizarPeriodicamente, 10000); // 60 segundos
+
+  return () => clearInterval(intervalo); // limpeza quando o componente desmontar
+}, []);
 
 
+  const handleLimparFiltros = () => {
+  setMesSelecionado(getMesAtual());
+  setEstadoSelecionado('Todos');
+};
 
   return (
     <div style={{backgroundColor: 'white', alignItems: 'center', display: 'flex', flexDirection: 'column', width: '100%'}}>
@@ -663,22 +667,41 @@ function getMesAtual() {
 
                <div className='div-body-opcao1'>
                 <h1 className='h1-body-opcao'>Mês</h1>
-                <select className='button-body-opcao' defaultValue={getMesAtual()}>
+                <select
+                  className='button-body-opcao'
+                  value={mesSelecionado}
+                  onChange={(e) => setMesSelecionado(e.target.value)}
+                >
                   {mesesDisponiveis.map((mes) => (
                     <option key={mes} value={mes}>
                       {mes}
                     </option>
                   ))}
                 </select>
+
               </div>
 
 
-                   <div className='div-body-opcao1'>
-        <h1 className='h1-body-opcao'>Estado</h1>
-        <select
-          className='button-body-opcao'>
-        </select>
-      </div>
+               <div className='div-body-opcao1'>
+                  <h1 className='h1-body-opcao'>Estado</h1>
+                  <select className='button-body-opcao' defaultValue="Todos">
+                    <option value="Todos">Todos</option>
+                    <option value="SC">SC</option>
+                    <option value="RS">RS</option>
+                  </select>
+                </div>
+
+                
+                <div className='div-body-opcao1'>
+                <button
+                    className="botao-limparfiltros"
+                   onClick={handleLimparFiltros}
+                  >
+                    Limpar Filtros
+                  </button>
+                  </div>
+
+
                 </div>
                 
 
@@ -717,16 +740,25 @@ function getMesAtual() {
                      <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Meta</h1>
                         <h1  className='h2-card2-div--geral-dados'>{metaSelecionada ? metaSelecionada.meta : '—'}</h1>
+
+                        <h2 className='h3-card2-div--geral-dados'>
+                   1
+                  </h2>
                         
                     </div>
 
                          <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
                          <h1  className='h2-card2-div--geral-dados'>{metaSelecionada ? metaSelecionada.super_meta : '—'}</h1>
+                         
+                      <h2 className='h3-card2-div--geral-dados'>
+                   1
+                  </h2>
+
+
                     </div>
 
-
-
+                 
                     </div>
                 </div>
 
@@ -865,7 +897,7 @@ function getMesAtual() {
                                         <Bar dataKey="total_pago" fill="#F45742">
                                        <LabelList
                                                 dataKey="total_pago"
-                                                position="insideTop"
+                                               position="inside"
                                                 fill="#fff"
                                                 formatter={formatValorCompacto}
                                                 fontWeight="bold"
@@ -926,8 +958,9 @@ function getMesAtual() {
             <Bar dataKey="ticket_medio" fill="#F45742">
               <LabelList
                 dataKey="ticket_medio"
-                position="insideTop"
+               position="inside"
                 fill="#fff"
+                fontSize={14}
                 formatter={(value) =>
                   typeof value === 'number'
                     ? value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -1327,12 +1360,12 @@ function getMesAtual() {
 
                      <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>25000</h1>
+                        <h1   className='h2-card2-div--geral-dados'>{metaChurnSelecionada?.meta ? `${(parseFloat(metaChurnSelecionada.meta) * 100).toFixed(2)}%` : '—'}</h1>
                     </div>
 
                          <div   className='card3-div--geral-dados'>
                         <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>26000</h1>
+                                  <h1   className='h2-card2-div--geral-dados'>{metaChurnSelecionada?.meta ? `${(parseFloat(metaChurnSelecionada.super_meta) * 100).toFixed(2)}%` : '—'}</h1>
                     </div>
 
 
