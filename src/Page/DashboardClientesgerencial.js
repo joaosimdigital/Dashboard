@@ -76,6 +76,8 @@ const [cancelamentosSolicitacaoSelecionado, setCancelamentosSolicitacaoSeleciona
 const [cancelamentosInadimplenciaSelecionado, setCancelamentosInadimplenciaSelecionado] = useState(null);
 const [retencaoCSSelecionado, setRetencaoCSSelecionado] = useState(null);
 const estadoParam = estadoSelecionado !== 'Todos' ? `&estado=${estadoSelecionado}` : '';
+const [loading, setLoading] = useState(false);
+
 
 
 
@@ -853,36 +855,42 @@ const buscarCancelamentosAutomaticoUltimos = async (mes, ano) => {
 
 
 
-     const atualizarPeriodicamente = () => {
-      buscarCancelamentosPedidoUltimos(mes, ano)
-      fetchTicketMedioUltimos(mes,ano)
-      fetchFaturamento(mes, ano);
-      fetchCrescimentoMesAtual(mes, ano)
-   fetchClientesAtivos(mes, ano);
-   fetchCrescimento(mes,ano);
-  fetchClientesVendas(mes, ano);
-  fetchTotal(mes, ano);
-  fetchValorPago(mes, ano);
-  fetchNovosClientes(mes, ano);
-  fetchTotalClientesNovos(mes, ano);
-  fetchTicketMedio(mes, ano);
-  fetchCadastros(mes, ano);
-  fetchCadastrosPF(mes, ano);
-  fetchCadastrosPJ(mes, ano);
-  fetchChurnData(mes, ano);
-  fetchChurnDataporcentos(mes, ano);
-  buscarCancelamentosPedido(mes, ano);
-  buscarCancelamentosautomatico(mes, ano);
-  buscarAtendimentos(mes, ano);
-  buscarAtendimentosUltimos(mes, ano);
-  fetchCadastrosNovo(mes, ano)
-  fetchCadastrosPJUltimos(mes, ano)
-  fetchCadastrosPFUltimos(mes, ano)
-  buscarCancelamentosporcentos(mes, ano)
-  buscarCancelamentos(mes, ano)
-  buscarCancelamentosAutomaticoUltimos(mes,ano)
-  fetchClientesAtivosMesSelecionado(mes, ano)
-  };
+    const atualizarPeriodicamente = async () => {
+  setLoading(true);
+  try {
+    await buscarCancelamentosPedidoUltimos(mes, ano);
+    await fetchTicketMedioUltimos(mes, ano);
+    await fetchFaturamento(mes, ano);
+    await fetchCrescimentoMesAtual(mes, ano);
+    await fetchClientesAtivos(mes, ano);
+    await fetchCrescimento(mes, ano);
+    await fetchClientesVendas(mes, ano);
+    await fetchTotal(mes, ano);
+    await fetchValorPago(mes, ano);
+    await fetchNovosClientes(mes, ano);
+    await fetchTotalClientesNovos(mes, ano);
+    await fetchTicketMedio(mes, ano);
+    await fetchCadastros(mes, ano);
+    await fetchCadastrosPF(mes, ano);
+    await fetchCadastrosPJ(mes, ano);
+    await fetchChurnData(mes, ano);
+    await fetchChurnDataporcentos(mes, ano);
+    await buscarCancelamentosPedido(mes, ano);
+    await buscarCancelamentosautomatico(mes, ano);
+    await buscarAtendimentos(mes, ano);
+    await buscarAtendimentosUltimos(mes, ano);
+    await fetchCadastrosNovo(mes, ano);
+    await fetchCadastrosPJUltimos(mes, ano);
+    await fetchCadastrosPFUltimos(mes, ano);
+    await buscarCancelamentosporcentos(mes, ano);
+    await buscarCancelamentos(mes, ano);
+    await buscarCancelamentosAutomaticoUltimos(mes, ano);
+    await fetchClientesAtivosMesSelecionado(mes, ano);
+  } catch (error) {
+    console.error('Erro ao atualizar os dados do dashboard:', error);
+  }
+  setLoading(false);
+};
 
   // Executa imediatamente na primeira renderização
   atualizarPeriodicamente();
@@ -2061,6 +2069,12 @@ const buscarCancelamentosAutomaticoUltimos = async (mes, ano) => {
 
                     </div>
                 </div>
+
+                   {loading && (
+                <div className="loading-overlay">
+                  <div className="loading-progress"></div>
+                </div>
+              )}
 
     </div>
   )

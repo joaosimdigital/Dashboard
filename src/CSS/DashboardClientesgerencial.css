@@ -9,6 +9,33 @@
   }
 
 
+  
+.loading-overlay{
+  z-index: 99;
+  height: 3px;
+  border-radius: 5px;
+  width: 100%;
+  background-color: white;
+  border: 1px solid orangered;
+  position: fixed;
+  top: 0px;
+  align-self: center;
+  margin-right: 10px;
+}
+
+.loading-progress{
+  height: 100%;
+  background-color: orangered;
+  animation: loadAnimation 2s infinite;
+}
+
+@keyframes loadAnimation {
+  0% { width: 0%; }
+  50% { width: 50%; }
+  100% { width: 100%; }
+}
+
+
 
 
 .head-gerencial-body-geral{
