@@ -62,13 +62,14 @@ const [superMetaChurn, setSuperMetaChurn] = useState(null);
 const [mesSelecionado, setMesSelecionado] = useState(getMesAtual());
 const [estadoSelecionado, setEstadoSelecionado] = useState('Todos');
 
+
      const mesAtual = getMesAtual();
 
-        const metaSelecionada = datageral.find(item =>
-          item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-          item.base?.trim().toLowerCase() === 'geral' &&
-          item.indicador?.trim().toLowerCase() === 'meta de número clientes ativos'
-        );
+      const metaSelecionada = datageral.find(item =>
+            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+            item.base?.trim().toLowerCase() === 'geral' &&
+            item.indicador?.trim().toLowerCase() === 'meta de número clientes ativos'
+          );
 
          const metaChurnSelecionada = datageral.find(item =>
     item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
@@ -742,8 +743,10 @@ const mesesDisponiveis = (() => {
                         <h1  className='h2-card2-div--geral-dados'>{metaSelecionada ? metaSelecionada.meta : '—'}</h1>
 
                         <h2 className='h3-card2-div--geral-dados'>
-                   1
-                  </h2>
+                        {metaSelecionada
+                          ? `${((totalClientesUltimoMes / parseFloat(metaSelecionada.meta)) * 100).toFixed(2)}%`
+                          : '—'}
+                      </h2>
                         
                     </div>
 
@@ -751,8 +754,10 @@ const mesesDisponiveis = (() => {
                         <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
                          <h1  className='h2-card2-div--geral-dados'>{metaSelecionada ? metaSelecionada.super_meta : '—'}</h1>
                          
-                      <h2 className='h3-card2-div--geral-dados'>
-                   1
+                    <h2 className='h3-card2-div--geral-dados'>
+                    {metaSelecionada
+                      ? `${((totalClientesUltimoMes / parseFloat(metaSelecionada.super_meta)) * 100).toFixed(2)}%`
+                      : '—'}
                   </h2>
 
 
@@ -789,23 +794,34 @@ const mesesDisponiveis = (() => {
                             )}
                         </div>
 
-                    <div  className='card2-div--geral-dados'>
-                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>{totalClientes}</h1>
-                    </div>
+                  <div className='card2-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Total</h1>
+                    <h1 className='h2-card2-div--geral-dados'>{totalClientes}</h1>
+                  </div>
 
+                  <div className='card3-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+                    <h1 className='h2-card2-div--geral-dados'>
+                      {incrementoSelecionado ? incrementoSelecionado.meta : '—'}
+                    </h1>
+                    <h2 className='h3-card2-div--geral-dados'>
+                      {incrementoSelecionado
+                        ? `${((totalClientes / parseFloat(incrementoSelecionado.meta)) * 100).toFixed(2)}%`
+                        : '—'}
+                    </h2>
+                  </div>
 
-                     <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'> {incrementoSelecionado ? incrementoSelecionado.meta : '—'}</h1>
-                    </div>
-
-                         <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'> {incrementoSelecionado ? incrementoSelecionado.super_meta : '—'}</h1>
-                    </div>
-
-
+                  <div className='card3-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+                    <h1 className='h2-card2-div--geral-dados'>
+                      {incrementoSelecionado ? incrementoSelecionado.super_meta : '—'}
+                    </h1>
+                    <h2 className='h3-card2-div--geral-dados'>
+                      {incrementoSelecionado
+                        ? `${((totalClientes / parseFloat(incrementoSelecionado.super_meta)) * 100).toFixed(2)}%`
+                        : '—'}
+                    </h2>
+                  </div>
 
                     </div>
                 </div>
@@ -848,21 +864,34 @@ const mesesDisponiveis = (() => {
 
                         </div>
 
-                    <div  className='card2-div--geral-dados'>
-                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>{crescimento}%</h1>
-                    </div>
+                 <div className='card2-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Total</h1>
+                    <h1 className='h2-card2-div--geral-dados'>{crescimento}%</h1>
+                  </div>
 
+                  <div className='card3-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+                    <h1 className='h2-card2-div--geral-dados'>
+                      {crescimentoSelecionado ? (parseFloat(crescimentoSelecionado.meta) * 100).toFixed(2) + '%' : '—'}
+                    </h1>
+                    <h2 className='h3-card2-div--geral-dados'>
+                      {crescimentoSelecionado
+                        ? `${((parseFloat(crescimento) / (parseFloat(crescimentoSelecionado.meta) * 100)) * 100).toFixed(2)}%`
+                        : '—'}
+                    </h2>
+                  </div>
 
-                     <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'> {crescimentoSelecionado ? (parseFloat(crescimentoSelecionado.meta) * 100).toFixed(2) + '%' : '—'}</h1>
-                    </div>
-
-                         <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'> {crescimentoSelecionado ? (parseFloat(crescimentoSelecionado.super_meta) * 100).toFixed(2) + '%' : '—'}</h1>
-                    </div>
+                  <div className='card3-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+                    <h1 className='h2-card2-div--geral-dados'>
+                      {crescimentoSelecionado ? (parseFloat(crescimentoSelecionado.super_meta) * 100).toFixed(2) + '%' : '—'}
+                    </h1>
+                    <h2 className='h3-card2-div--geral-dados'>
+                      {crescimentoSelecionado
+                        ? `${((parseFloat(crescimento) / (parseFloat(crescimentoSelecionado.super_meta) * 100)) * 100).toFixed(2)}%`
+                        : '—'}
+                    </h2>
+                  </div>
 
 
 
@@ -912,21 +941,45 @@ const mesesDisponiveis = (() => {
 
                         </div>
 
-                    <div  className='card2-div--geral-dados'>
-                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>{valorAbreviado}</h1>
-                    </div>
+                   <div className='card2-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Total</h1>
+                    <h1 className='h2-card2-div--geral-dados'>{valorAbreviado}</h1>
+                  </div>
 
+                  <div className='card3-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+                    <h1 className='h2-card2-div--geral-dados'>
+                      {faturamentoSelecionado ? faturamentoSelecionado.meta : '—'}
+                    </h1>
+                    <h2 className='h3-card2-div--geral-dados'>
+                      {faturamentoSelecionado && faturamentoSelecionado.meta
+                        ? `${(
+                            (parseFloat(valorAbreviado.replace(/[^\d,-]/g, '').replace(',', '.')) /
+                              parseFloat(faturamentoSelecionado.meta.replace(/[^\d,-]/g, '').replace(',', '.'))) *
+                            100
+                          ).toFixed(2)}%`
+                        : '—'}
+                    </h2>
+                  </div>
 
-                     <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'> {faturamentoSelecionado ? faturamentoSelecionado.meta : '—'}</h1>
-                    </div>
+                  <div className='card3-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+                    <h1 className='h2-card2-div--geral-dados'>
+                      {faturamentoSelecionado ? faturamentoSelecionado.super_meta : '—'}
+                    </h1>
+                 
 
-                         <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'> {faturamentoSelecionado ? faturamentoSelecionado.super_meta : '—'}</h1>
-                    </div>
+                  <h2 className='h3-card2-div--geral-dados'>
+                      {faturamentoSelecionado && faturamentoSelecionado.meta
+                        ? `${(
+                            (parseFloat(valorAbreviado.replace(/[^\d,-]/g, '').replace(',', '.')) /
+                              parseFloat(faturamentoSelecionado.super_meta.replace(/[^\d,-]/g, '').replace(',', '.'))) *
+                            10000
+                          ).toFixed(2)}%`
+                        : '—'}
+                    </h2>
+
+                  </div>
 
 
 
@@ -976,21 +1029,43 @@ const mesesDisponiveis = (() => {
 
                         </div>
 
-                    <div  className='card2-div--geral-dados'>
-                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>R$ {ticketMedio}</h1>
-                    </div>
+                    <div className='card2-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Total</h1>
+                    <h1 className='h2-card2-div--geral-dados'>R$ {ticketMedio}</h1>
+                  </div>
 
+                  <div className='card3-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+                    <h1 className='h2-card2-div--geral-dados'>
+                      {ticketSelecionado ? ticketSelecionado.meta : '—'}
+                    </h1>
+                    <h2 className='h3-card2-div--geral-dados'>
+                      {ticketSelecionado
+                        ? `${(
+                            (parseFloat(ticketMedio) /
+                              parseFloat(ticketSelecionado.meta.replace(/[^\d,-]/g, '').replace(',', '.'))) *
+                            100
+                          ).toFixed(1)}%`
+                        : '—'}
+                    </h2>
+                  </div>
 
-                     <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{ticketSelecionado ? ticketSelecionado.meta : '—'}</h1>
-                    </div>
+                  <div className='card3-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+                    <h1 className='h2-card2-div--geral-dados'>
+                      {ticketSelecionado ? ticketSelecionado.super_meta : '—'}
+                    </h1>
+                    <h2 className='h3-card2-div--geral-dados'>
+                      {ticketSelecionado
+                        ? `${(
+                            (parseFloat(ticketMedio) /
+                              parseFloat(ticketSelecionado.super_meta.replace(/[^\d,-]/g, '').replace(',', '.'))) *
+                            100
+                          ).toFixed(1)}%`
+                        : '—'}
+                    </h2>
+                  </div>
 
-                         <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{ticketSelecionado ? ticketSelecionado.super_meta : '—'}</h1>
-                    </div>
 
 
 
@@ -1036,21 +1111,38 @@ const mesesDisponiveis = (() => {
 
                         </div>
 
-                    <div  className='card2-div--geral-dados'>
-                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>{totalclientesnovos}</h1>
-                    </div>
+                 <div className='card2-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Total</h1>
+                    <h1 className='h2-card2-div--geral-dados'>{totalclientesnovos}</h1>
+                  </div>
 
+                <div className='card3-div--geral-dados'>
+                  <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+                  <h1 className='h2-card2-div--geral-dados'>
+                    {novosClientesSelecionado ? novosClientesSelecionado.meta : '—'}
+                  </h1>
+                  <h2 className='h3-card2-div--geral-dados'>
+                    {novosClientesSelecionado
+                      ? `${(
+                          (totalclientesnovos / parseFloat(novosClientesSelecionado.meta)) * 100
+                        ).toFixed(1)}%`
+                      : '—'}
+                  </h2>
+                </div>
 
-                     <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{novosClientesSelecionado ? novosClientesSelecionado.meta : '—'}</h1>
-                    </div>
-
-                         <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{novosClientesSelecionado ? novosClientesSelecionado.super_meta : '—'}</h1>
-                    </div>
+                <div className='card3-div--geral-dados'>
+                  <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+                  <h1 className='h2-card2-div--geral-dados'>
+                    {novosClientesSelecionado ? novosClientesSelecionado.super_meta : '—'}
+                  </h1>
+                  <h2 className='h3-card2-div--geral-dados'>
+                    {novosClientesSelecionado
+                      ? `${(
+                          (totalclientesnovos / parseFloat(novosClientesSelecionado.super_meta)) * 100
+                        ).toFixed(1)}%`
+                      : '—'}
+                  </h2>
+                </div>
 
 
 
@@ -1096,21 +1188,38 @@ const mesesDisponiveis = (() => {
 
                         </div>
 
-                    <div  className='card2-div--geral-dados'>
-                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>{totalCadastros}</h1>
-                    </div>
+               <div className='card2-div--geral-dados'>
+                <h1 className='h1-card2-div--geral-dados'>Total</h1>
+                <h1 className='h2-card2-div--geral-dados'>{totalCadastros}</h1>
+              </div>
 
+              <div className='card3-div--geral-dados'>
+                <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+                <h1 className='h2-card2-div--geral-dados'>
+                  {novasVendasSelecionado ? novasVendasSelecionado.meta : '—'}
+                </h1>
+                <h2 className='h3-card2-div--geral-dados'>
+                  {novasVendasSelecionado
+                    ? `${(
+                        (totalCadastros / parseFloat(novasVendasSelecionado.meta)) * 100
+                      ).toFixed(1)}%`
+                    : '—'}
+                </h2>
+              </div>
 
-                     <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{novasVendasSelecionado ? novasVendasSelecionado.meta : '—'}</h1>
-                    </div>
-
-                         <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{novasVendasSelecionado ? novasVendasSelecionado.super_meta : '—'}</h1>
-                    </div>
+              <div className='card3-div--geral-dados'>
+                <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+                <h1 className='h2-card2-div--geral-dados'>
+                  {novasVendasSelecionado ? novasVendasSelecionado.super_meta : '—'}
+                </h1>
+                <h2 className='h3-card2-div--geral-dados'>
+                  {novasVendasSelecionado
+                    ? `${(
+                        (totalCadastros / parseFloat(novasVendasSelecionado.super_meta)) * 100
+                      ).toFixed(1)}%`
+                    : '—'}
+                </h2>
+              </div>
 
 
 
@@ -1161,21 +1270,38 @@ const mesesDisponiveis = (() => {
 
                         </div>
 
-                    <div  className='card2-div--geral-dados'>
-                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>{totalPF}</h1>
-                    </div>
+                <div className='card2-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Total</h1>
+  <h1 className='h2-card2-div--geral-dados'>{totalPF}</h1>
+</div>
 
+<div className='card3-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+  <h1 className='h2-card2-div--geral-dados'>
+    {novasVendasB2CSelecionado ? novasVendasB2CSelecionado.meta : '—'}
+  </h1>
+  <h2 className='h3-card2-div--geral-dados'>
+    {novasVendasB2CSelecionado
+      ? `${(
+          (totalPF / parseFloat(novasVendasB2CSelecionado.meta)) * 100
+        ).toFixed(1)}%`
+      : '—'}
+  </h2>
+</div>
 
-                     <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{novasVendasB2CSelecionado ? novasVendasB2CSelecionado.meta : '—'}</h1>
-                    </div>
-
-                         <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{novasVendasB2CSelecionado ? novasVendasB2CSelecionado.super_meta : '—'}</h1>
-                    </div>
+<div className='card3-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+  <h1 className='h2-card2-div--geral-dados'>
+    {novasVendasB2CSelecionado ? novasVendasB2CSelecionado.super_meta : '—'}
+  </h1>
+  <h2 className='h3-card2-div--geral-dados'>
+    {novasVendasB2CSelecionado
+      ? `${(
+          (totalPF / parseFloat(novasVendasB2CSelecionado.super_meta)) * 100
+        ).toFixed(1)}%`
+      : '—'}
+  </h2>
+</div>
 
 
 
@@ -1225,21 +1351,38 @@ const mesesDisponiveis = (() => {
 
                         </div>
 
-                    <div  className='card2-div--geral-dados'>
-                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>{totalPJ}</h1>
-                    </div>
+              <div className='card2-div--geral-dados'>
+                <h1 className='h1-card2-div--geral-dados'>Total</h1>
+                <h1 className='h2-card2-div--geral-dados'>{totalPJ}</h1>
+              </div>
 
+              <div className='card3-div--geral-dados'>
+                <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+                <h1 className='h2-card2-div--geral-dados'>
+                  {novasVendasB2BSelecionado ? novasVendasB2BSelecionado.meta : '—'}
+                </h1>
+                <h2 className='h3-card2-div--geral-dados'>
+                  {novasVendasB2BSelecionado
+                    ? `${(
+                        (totalPJ / parseFloat(novasVendasB2BSelecionado.meta)) * 100
+                      ).toFixed(1)}%`
+                    : '—'}
+                </h2>
+              </div>
 
-                     <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{novasVendasB2BSelecionado ? novasVendasB2BSelecionado.meta : '—'}</h1>
-                    </div>
-
-                         <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{novasVendasB2BSelecionado ? novasVendasB2BSelecionado.super_meta : '—'}</h1>
-                    </div>
+              <div className='card3-div--geral-dados'>
+                <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+                <h1 className='h2-card2-div--geral-dados'>
+                  {novasVendasB2BSelecionado ? novasVendasB2BSelecionado.super_meta : '—'}
+                </h1>
+                <h2 className='h3-card2-div--geral-dados'>
+                  {novasVendasB2BSelecionado
+                    ? `${(
+                        (totalPJ / parseFloat(novasVendasB2BSelecionado.super_meta)) * 100
+                      ).toFixed(1)}%`
+                    : '—'}
+                </h2>
+              </div>
 
 
 
@@ -1289,21 +1432,41 @@ const mesesDisponiveis = (() => {
 
                         </div>
 
-                    <div  className='card2-div--geral-dados'>
-                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>{totalCancelamentoMes}</h1>
-                    </div>
+                 <div className='card2-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Total</h1>
+                    <h1 className='h2-card2-div--geral-dados'>{totalCancelamentoMes}</h1>
+                  </div>
 
+                  <div className='card3-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+                    <h1 className='h2-card2-div--geral-dados'>
+                      {cancelamentosBaseSelecionado ? cancelamentosBaseSelecionado.meta : '—'}
+                    </h1>
+                    <h2 className='h3-card2-div--geral-dados'>
+                      {cancelamentosBaseSelecionado
+                        ? `${(
+                            (totalCancelamentoMes / parseFloat(cancelamentosBaseSelecionado.meta)) *
+                            100
+                          ).toFixed(1)}%`
+                        : '—'}
+                    </h2>
+                  </div>
 
-                     <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{cancelamentosBaseSelecionado ? cancelamentosBaseSelecionado.meta : '—'}</h1>
-                    </div>
-
-                         <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{cancelamentosBaseSelecionado ? cancelamentosBaseSelecionado.super_meta : '—'}</h1>
-                    </div>
+                  <div className='card3-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+                    <h1 className='h2-card2-div--geral-dados'>
+                      {cancelamentosBaseSelecionado ? cancelamentosBaseSelecionado.super_meta : '—'}
+                    </h1>
+                    <h2 className='h3-card2-div--geral-dados'>
+                      {cancelamentosBaseSelecionado
+                        ? `${(
+                            (totalCancelamentoMes /
+                              parseFloat(cancelamentosBaseSelecionado.super_meta)) *
+                            100
+                          ).toFixed(1)}%`
+                        : '—'}
+                    </h2>
+                  </div>
 
 
 
@@ -1352,21 +1515,46 @@ const mesesDisponiveis = (() => {
 
                         </div>
 
-                    <div  className='card2-div--geral-dados'>
-                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>{totalCancelamentoMesPorcentos}%</h1>
-                    </div>
+                <div className='card2-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Total</h1>
+  <h1 className='h2-card2-div--geral-dados'>{totalCancelamentoMesPorcentos}%</h1>
+</div>
 
+<div className='card3-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+  <h1 className='h2-card2-div--geral-dados'>
+    {metaChurnSelecionada?.meta
+      ? `${(parseFloat(metaChurnSelecionada.meta) * 100).toFixed(2)}%`
+      : '—'}
+  </h1>
+  <h2 className='h3-card2-div--geral-dados'>
+    {metaChurnSelecionada?.meta
+      ? `${(
+          (parseFloat(totalCancelamentoMesPorcentos) /
+            (parseFloat(metaChurnSelecionada.meta) * 100)) *
+          100
+        ).toFixed(1)}%`
+      : '—'}
+  </h2>
+</div>
 
-                     <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{metaChurnSelecionada?.meta ? `${(parseFloat(metaChurnSelecionada.meta) * 100).toFixed(2)}%` : '—'}</h1>
-                    </div>
-
-                         <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                                  <h1   className='h2-card2-div--geral-dados'>{metaChurnSelecionada?.meta ? `${(parseFloat(metaChurnSelecionada.super_meta) * 100).toFixed(2)}%` : '—'}</h1>
-                    </div>
+<div className='card3-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+  <h1 className='h2-card2-div--geral-dados'>
+    {metaChurnSelecionada?.super_meta
+      ? `${(parseFloat(metaChurnSelecionada.super_meta) * 100).toFixed(2)}%`
+      : '—'}
+  </h1>
+  <h2 className='h3-card2-div--geral-dados'>
+    {metaChurnSelecionada?.super_meta
+      ? `${(
+          (parseFloat(totalCancelamentoMesPorcentos) /
+            (parseFloat(metaChurnSelecionada.super_meta) * 100)) *
+          100
+        ).toFixed(1)}%`
+      : '—'}
+  </h2>
+</div>
 
 
 
@@ -1415,22 +1603,40 @@ const mesesDisponiveis = (() => {
 
                         </div>
 
-                    <div  className='card2-div--geral-dados'>
-                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>{cancelamentosPedido}</h1>
-                    </div>
+                 <div className='card2-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Total</h1>
+                    <h1 className='h2-card2-div--geral-dados'>{cancelamentosPedido}</h1>
+                  </div>
 
+                  <div className='card3-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+                    <h1 className='h2-card2-div--geral-dados'>
+                      {cancelamentosSolicitacaoSelecionado ? cancelamentosSolicitacaoSelecionado.meta : '—'}
+                    </h1>
+                    <h2 className='h3-card2-div--geral-dados'>
+                      {cancelamentosSolicitacaoSelecionado
+                        ? `${(
+                            (cancelamentosPedido / parseFloat(cancelamentosSolicitacaoSelecionado.meta)) *
+                            100
+                          ).toFixed(1)}%`
+                        : '—'}
+                    </h2>
+                  </div>
 
-                     <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{cancelamentosSolicitacaoSelecionado ? cancelamentosSolicitacaoSelecionado.meta : '—'}</h1>
-                    </div>
-
-                         <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{cancelamentosSolicitacaoSelecionado ? cancelamentosSolicitacaoSelecionado.super_meta : '—'}</h1>
-                    </div>
-
+                  <div className='card3-div--geral-dados'>
+                    <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+                    <h1 className='h2-card2-div--geral-dados'>
+                      {cancelamentosSolicitacaoSelecionado ? cancelamentosSolicitacaoSelecionado.super_meta : '—'}
+                    </h1>
+                    <h2 className='h3-card2-div--geral-dados'>
+                      {cancelamentosSolicitacaoSelecionado
+                        ? `${(
+                            (cancelamentosPedido / parseFloat(cancelamentosSolicitacaoSelecionado.super_meta)) *
+                            100
+                          ).toFixed(1)}%`
+                        : '—'}
+                    </h2>
+                  </div>
 
 
                     </div>
@@ -1478,21 +1684,43 @@ const mesesDisponiveis = (() => {
 
                         </div>
 
-                    <div  className='card2-div--geral-dados'>
-                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>{cancelamentosAutomatico}</h1>
-                    </div>
+                <div className='card2-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Total</h1>
+  <h1 className='h2-card2-div--geral-dados'>{cancelamentosAutomatico}</h1>
+</div>
 
+<div className='card3-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+  <h1 className='h2-card2-div--geral-dados'>
+    {cancelamentosInadimplenciaSelecionado ? cancelamentosInadimplenciaSelecionado.meta : '—'}
+  </h1>
+  <h2 className='h3-card2-div--geral-dados'>
+    {cancelamentosInadimplenciaSelecionado
+      ? `${(
+          (cancelamentosAutomatico / parseFloat(cancelamentosInadimplenciaSelecionado.meta)) *
+          100
+        ).toFixed(1)}%`
+      : '—'}
+  </h2>
+</div>
 
-                     <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{cancelamentosInadimplenciaSelecionado ? cancelamentosInadimplenciaSelecionado.meta : '—'}</h1>
-                    </div>
-
-                         <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{cancelamentosInadimplenciaSelecionado ? cancelamentosInadimplenciaSelecionado.super_meta : '—'}</h1>
-                    </div>
+<div className='card3-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+  <h1 className='h2-card2-div--geral-dados'>
+    {cancelamentosInadimplenciaSelecionado
+      ? cancelamentosInadimplenciaSelecionado.super_meta
+      : '—'}
+  </h1>
+  <h2 className='h3-card2-div--geral-dados'>
+    {cancelamentosInadimplenciaSelecionado
+      ? `${(
+          (cancelamentosAutomatico /
+            parseFloat(cancelamentosInadimplenciaSelecionado.super_meta)) *
+          100
+        ).toFixed(1)}%`
+      : '—'}
+  </h2>
+</div>
 
 
 
@@ -1536,25 +1764,47 @@ const mesesDisponiveis = (() => {
     <p style={{ color: '#fff' }}>Carregando dados...</p>
   )}
 </div>
-                    <div  className='card2-div--geral-dados'>
-                        <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>{totalAtendimentos}%</h1>
-                    </div>
+                  <div className='card2-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Total</h1>
+  <h1 className='h2-card2-div--geral-dados'>{totalAtendimentos}%</h1>
+</div>
 
-
-                     <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{retencaoCSSelecionado
+<div className='card3-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+  <h1 className='h2-card2-div--geral-dados'>
+    {retencaoCSSelecionado
       ? (parseFloat(retencaoCSSelecionado.meta) * 100).toFixed(2) + '%'
-      : '—'}</h1>
-                    </div>
+      : '—'}
+  </h1>
+  <h2 className='h3-card2-div--geral-dados'>
+    {retencaoCSSelecionado
+      ? `${(
+          (parseFloat(totalAtendimentos) /
+            (parseFloat(retencaoCSSelecionado.meta) * 100)) *
+          100
+        ).toFixed(1)}%`
+      : '—'}
+  </h2>
+</div>
 
-                         <div   className='card3-div--geral-dados'>
-                        <h1  className='h1-card2-div--geral-dados'>Super Meta</h1>
-                        <h1   className='h2-card2-div--geral-dados'>{retencaoCSSelecionado
+<div className='card3-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+  <h1 className='h2-card2-div--geral-dados'>
+    {retencaoCSSelecionado
       ? (parseFloat(retencaoCSSelecionado.super_meta) * 100).toFixed(2) + '%'
-      : '—'}</h1>
-                    </div>
+      : '—'}
+  </h1>
+  <h2 className='h3-card2-div--geral-dados'>
+    {retencaoCSSelecionado
+      ? `${(
+          (parseFloat(totalAtendimentos) /
+            (parseFloat(retencaoCSSelecionado.super_meta) * 100)) *
+          100
+        ).toFixed(1)}%`
+      : '—'}
+  </h2>
+</div>
+
 
 
 
