@@ -59,101 +59,153 @@ function DashboardClientesgerencial() {
             const [totalAtendimentosUltimos, setTotalAtendimentosUltimos] = useState([]);
             const [metaChurn, setMetaChurn] = useState(null);
 const [superMetaChurn, setSuperMetaChurn] = useState(null);
-const [mesSelecionado, setMesSelecionado] = useState(getMesAtual());
 const [estadoSelecionado, setEstadoSelecionado] = useState('Todos');
+const [clientesAtivosSelecionado, setClientesAtivosSelecionado] = useState(null);
+const [metaSelecionada, setMetaSelecionada] = useState(null);
+const [metaChurnSelecionada, setMetaChurnSelecionada] = useState(null);
+const [incrementoSelecionado, setIncrementoSelecionado] = useState(null);
+const [crescimentoSelecionado, setCrescimentoSelecionado] = useState(null);
+const [faturamentoSelecionado, setFaturamentoSelecionado] = useState(null);
+const [ticketSelecionado, setTicketSelecionado] = useState(null);
+const [novosClientesSelecionado, setNovosClientesSelecionado] = useState(null);
+const [novasVendasSelecionado, setNovasVendasSelecionado] = useState(null);
+const [novasVendasB2CSelecionado, setNovasVendasB2CSelecionado] = useState(null);
+const [novasVendasB2BSelecionado, setNovasVendasB2BSelecionado] = useState(null);
+const [cancelamentosBaseSelecionado, setCancelamentosBaseSelecionado] = useState(null);
+const [cancelamentosSolicitacaoSelecionado, setCancelamentosSolicitacaoSelecionado] = useState(null);
+const [cancelamentosInadimplenciaSelecionado, setCancelamentosInadimplenciaSelecionado] = useState(null);
+const [retencaoCSSelecionado, setRetencaoCSSelecionado] = useState(null);
+const estadoParam = estadoSelecionado !== 'Todos' ? `&estado=${estadoSelecionado}` : '';
+
+
+
+const [mesSelecionado, setMesSelecionado] = useState(() => {
+  const hoje = new Date();
+  const nomesMeses = [
+    'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+    'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+  ];
+  return `${nomesMeses[hoje.getMonth()]}/25`;
+});
+
+
+function extrairMesAno(mesSelecionado) {
+  const [mesAbrev, anoStr] = mesSelecionado.split('/');
+  const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+  const mes = nomesMeses.findIndex(m => m.toLowerCase() === mesAbrev.toLowerCase()) + 1;
+  const ano = parseInt(`20${anoStr}`);
+  return { mes, ano };
+}
 
 
      const mesAtual = getMesAtual();
 
-      const metaSelecionada = datageral.find(item =>
-            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-            item.base?.trim().toLowerCase() === 'geral' &&
-            item.indicador?.trim().toLowerCase() === 'meta de número clientes ativos'
-          );
+useEffect(() => {
+  if (!mesSelecionado || !datageral.length) return;
 
-         const metaChurnSelecionada = datageral.find(item =>
-    item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
+  const [mesStr, anoStr] = mesSelecionado.split('/');
+  const chave = `${mesStr.toLowerCase()}/${anoStr}`;
+
+  const meta = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'meta de número clientes ativos'
+  );
+
+  const metaChurn = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
     item.base?.trim().toLowerCase() === 'geral' &&
     item.indicador?.trim().toLowerCase() === 'meta de churn (base final do mês)'
   );
 
-        const incrementoSelecionado = datageral?.find(item =>
-              item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-              item.base?.trim().toLowerCase() === 'geral' &&
-              item.indicador?.trim().toLowerCase() === 'incremento de clientes na base'
-            );
+  const incremento = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'incremento de clientes na base'
+  );
 
-        const crescimentoSelecionado = datageral?.find(item =>
-              item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-              item.base?.trim().toLowerCase() === 'geral' &&
-              item.indicador?.trim().toLowerCase() === '% de crescimento ao mês passado'
-            );
+  const crescimento = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === '% de crescimento ao mês passado'
+  );
 
-        
-            const faturamentoSelecionado = datageral?.find(item =>
-                item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-                item.base?.trim().toLowerCase() === 'geral' &&
-                item.indicador?.trim().toLowerCase() === 'faturamento mensal'
-              );
+  const faturamento = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'faturamento mensal'
+  );
 
-        const ticketSelecionado = datageral?.find(item =>
-              item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-              item.base?.trim().toLowerCase() === 'geral' &&
-              item.indicador?.trim().toLowerCase() === 'ticket médio geral'
-            );
+  const ticket = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'ticket médio geral'
+  );
 
+  const novosClientes = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'meta de novos clientes (ativação)'
+  );
 
-        const novosClientesSelecionado = datageral?.find(item =>
-            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-            item.base?.trim().toLowerCase() === 'geral' &&
-            item.indicador?.trim().toLowerCase() === 'meta de novos clientes (ativação)'
-          );
+  const novasVendas = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'meta de novas vendas geral'
+  );
 
+  const novasVendasB2C = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'meta de novas vendas b2c'
+  );
 
-        const novasVendasSelecionado = datageral?.find(item =>
-            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-            item.base?.trim().toLowerCase() === 'geral' &&
-            item.indicador?.trim().toLowerCase() === 'meta de novas vendas geral'
-          );
+  const novasVendasB2B = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'meta de novas vendas b2b'
+  );
 
+  const cancelamentosBase = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'número de cancelamentos (base)'
+  );
 
-          const novasVendasB2CSelecionado = datageral?.find(item =>
-          item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-          item.base?.trim().toLowerCase() === 'geral' &&
-          item.indicador?.trim().toLowerCase() === 'meta de novas vendas b2c'
-        );
+  const cancelamentosSolicitacao = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'cancelamentos (por solicitação)'
+  );
 
-        const novasVendasB2BSelecionado = datageral?.find(item =>
-          item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-          item.base?.trim().toLowerCase() === 'geral' &&
-          item.indicador?.trim().toLowerCase() === 'meta de novas vendas b2b'
-        );
+  const cancelamentosInadimplencia = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'cancelamentos (inadimplencia)'
+  );
 
+  const retencaoCS = datageral.find(item =>
+    item.data?.trim().toLowerCase() === chave &&
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'meta de taxa de retenção cs'
+  );
 
-        const cancelamentosBaseSelecionado = datageral?.find(item =>
-            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-            item.base?.trim().toLowerCase() === 'geral' &&
-            item.indicador?.trim().toLowerCase() === 'número de cancelamentos (base)'
-          );
+  setMetaChurnSelecionada(metaChurn || null);
+  setIncrementoSelecionado(incremento || null);
+  setCrescimentoSelecionado(crescimento || null);
+  setFaturamentoSelecionado(faturamento || null);
+  setTicketSelecionado(ticket || null);
+  setNovosClientesSelecionado(novosClientes || null);
+  setNovasVendasSelecionado(novasVendas || null);
+  setNovasVendasB2CSelecionado(novasVendasB2C || null);
+  setNovasVendasB2BSelecionado(novasVendasB2B || null);
+  setCancelamentosBaseSelecionado(cancelamentosBase || null);
+  setCancelamentosSolicitacaoSelecionado(cancelamentosSolicitacao || null);
+  setCancelamentosInadimplenciaSelecionado(cancelamentosInadimplencia || null);
+  setRetencaoCSSelecionado(retencaoCS || null);
+   setMetaSelecionada(meta || null);
+}, [mesSelecionado, datageral]);
 
-          const cancelamentosSolicitacaoSelecionado = datageral?.find(item =>
-            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-            item.base?.trim().toLowerCase() === 'geral' &&
-            item.indicador?.trim().toLowerCase() === 'cancelamentos (por solicitação)'
-          );
-
-          const cancelamentosInadimplenciaSelecionado = datageral?.find(item =>
-            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-            item.base?.trim().toLowerCase() === 'geral' &&
-            item.indicador?.trim().toLowerCase() === 'cancelamentos (inadimplencia)'
-          );
-
-
-          const retencaoCSSelecionado = datageral?.find(item =>
-            item.data?.trim().toLowerCase() === mesAtual.toLowerCase() &&
-            item.base?.trim().toLowerCase() === 'geral' &&
-            item.indicador?.trim().toLowerCase() === 'meta de taxa de retenção cs'
-          );
 
             // Gera automaticamente os meses até o mês atual de 2025
 const mesesDisponiveis = (() => {
@@ -166,23 +218,39 @@ const mesesDisponiveis = (() => {
 
 
   useEffect(() => {
+     const { mes, ano } = extrairMesAno(mesSelecionado);
   
     const fetchClientesAtivos = async () => {
   try {
-    const response = await fetch('http://38.224.145.3:3009/clientestotal-ultimos4meses');
+    if (!mesSelecionado) return;
+
+    const nomesMeses = [
+      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const [mesStr, anoStr] = mesSelecionado.split('/');
+    const mesIndex = nomesMeses.findIndex(m => m.toLowerCase() === mesStr.toLowerCase());
+    const mes = mesIndex + 1;
+    const ano = parseInt(`20${anoStr}`);
+
+    const response = await fetch(`http://localhost:3009/clientestotal-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!response.ok) throw new Error('Erro na requisição');
+
     const data = await response.json();
 
-    const mesAtual = new Date();
-    const mesAtualFormatado = `${String(mesAtual.getMonth() + 1).padStart(2, '0')}/${mesAtual.getFullYear()}`;
-
+    const mesFormatado = `${String(mes).padStart(2, '0')}/${ano}`;
     let valorMesAtual = 0;
 
+    console.log('Mes selecionado:', mesFormatado);
+    console.log('Dados recebidos:', data.dados);
+
     const dadosFiltrados = data.dados.filter(item => {
-      if (item.mes === mesAtualFormatado) {
+      if (item.mes === mesFormatado) {
         valorMesAtual = item.total_contratos_ate_primeira_data;
-        return false; // exclui do gráfico
+        return false;
       }
-      return true; // mantém no gráfico
+      return true;
     }).map(item => ({
       mes: item.mes,
       total: item.total_contratos_ate_primeira_data,
@@ -196,41 +264,106 @@ const mesesDisponiveis = (() => {
   }
 };
 
-
-       const fetchClientesVendas = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/clientes-entrantes-reais-ultimos4meses');
-        const data = await response.json();
-
-        const formatado = data.dados.map(item => ({
-          mes: `${String(item.mes).padStart(2, '0')}/${item.ano}`,  // Ex: "03/2025"
-          total_clientes: item.clientes_reais
-        }));
-
-        setVendasUltimosMeses(formatado);
-      } catch (error) {
-        console.error('Erro ao buscar clientes dos últimos 4 meses:', error);
-      }
-    };
-
-
-     const fetchTotal = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/clientes-entrantes-reais');
-        const data = await response.json();
-        setTotalClientes(data.clientes_reais);
-      } catch (error) {
-        console.error('Erro ao buscar total de clientes do mês atual:', error);
-      }
-    };
-
-
-    const fetchCrescimento = async () => {
+    const fetchClientesAtivosMesSelecionado = async () => {
   try {
-    const response = await fetch('http://38.224.145.3:3009/clientestotal-crescimento');
+    if (!mesSelecionado) return;
+
+    const nomesMeses = [
+      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const [mesStr, anoStr] = mesSelecionado.split('/');
+    const mesIndex = nomesMeses.findIndex(m => m.toLowerCase() === mesStr.toLowerCase());
+    const mes = mesIndex + 1;
+    const ano = parseInt(`20${anoStr}`);
+
+    const response = await fetch(`http://localhost:3009/clientestotal-mes?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!response.ok) throw new Error('Erro ao buscar dados do mês');
+
+    const data = await response.json();
+    setClientesAtivosSelecionado(data.total_contratos_ate_primeira_data);
+  } catch (error) {
+    console.error('Erro ao buscar total de clientes ativos do mês selecionado:', error);
+  }
+};
+
+
+    const fetchClientesVendas = async () => {
+  try {
+    if (!mesSelecionado) return;
+
+    const nomesMeses = [
+      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const [mesStr, anoStr] = mesSelecionado.split('/');
+    const mesIndex = nomesMeses.findIndex(m => m.toLowerCase() === mesStr.toLowerCase());
+    const mes = mesIndex + 1;
+    const ano = parseInt(`20${anoStr}`);
+
+    const response = await fetch(`http://localhost:3009/clientes-entrantes-reais-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!response.ok) throw new Error('Erro na requisição');
+
     const data = await response.json();
 
-    // Remove o primeiro item (com crescimento null)
+    const formatado = data.dados.map(item => ({
+      mes: `${String(item.mes).padStart(2, '0')}/${item.ano}`,
+      total_clientes: item.clientes_reais
+    }));
+
+    setVendasUltimosMeses(formatado);
+  } catch (error) {
+    console.error('Erro ao buscar clientes dos últimos 4 meses:', error);
+  }
+};
+
+
+   const fetchTotal = async () => {
+  try {
+    if (!mesSelecionado) return;
+
+    const nomesMeses = [
+      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const [mesStr, anoStr] = mesSelecionado.split('/');
+    const mesIndex = nomesMeses.findIndex(m => m.toLowerCase() === mesStr.toLowerCase());
+    const mes = mesIndex + 1;
+    const ano = parseInt(`20${anoStr}`);
+
+    const response = await fetch(`http://localhost:3009/clientes-entrantes-reais?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!response.ok) throw new Error('Erro na requisição');
+
+    const data = await response.json();
+    setTotalClientes(data.clientes_reais);
+  } catch (error) {
+    console.error('Erro ao buscar total de clientes do mês atual:', error);
+  }
+};
+
+
+ const fetchCrescimento = async () => {
+  try {
+    if (!mesSelecionado) return;
+
+    const nomesMeses = [
+      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const [mesStr, anoStr] = mesSelecionado.split('/');
+    const mesIndex = nomesMeses.findIndex(m => m.toLowerCase() === mesStr.toLowerCase());
+    const mes = mesIndex + 1;
+    const ano = parseInt(`20${anoStr}`);
+
+    const response = await fetch(`http://localhost:3009/clientestotal-crescimento?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!response.ok) throw new Error('Erro na requisição');
+
+    const data = await response.json();
+
     const dadosFiltrados = data.dados.slice(0).map(item => ({
       mes: item.mes,
       crescimento: item.crescimento_percentual
@@ -243,47 +376,94 @@ const mesesDisponiveis = (() => {
 };
 
 
-       const fetchCrescimentoMesAtual = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/clientestotal-crescimento-mesatual');
-        const data = await response.json();
 
-        setCrescimento(data.dados.crescimento_percentual);
-      
-      } catch (error) {
-        console.error('Erro ao buscar crescimento do mês atual:', error);
-      }
-    };
-
-
-    const fetchValorPago = async () => {
+const fetchCrescimentoMesAtual = async () => {
   try {
-    const response = await fetch('http://38.224.145.3:3009/valortotalpago-mespassado');
+    if (!mesSelecionado) return;
+
+    const nomesMeses = [
+      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const [mesStr, anoStr] = mesSelecionado.split('/');
+    const mesIndex = nomesMeses.findIndex(m => m.toLowerCase() === mesStr.toLowerCase());
+    const mes = mesIndex + 1;
+    const ano = parseInt(`20${anoStr}`);
+
+    const response = await fetch(`http://localhost:3009/clientestotal-crescimento-mesatual?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!response.ok) throw new Error('Erro na requisição');
+
     const data = await response.json();
 
-    const valorNumerico = data.total_pago_mes_passado || 0;
-    setValorAbreviado(formatValorCompacto(valorNumerico));
+    // Pega o último mês da lista (mais recente)
+    const ultimoMes = data.dados[data.dados.length - 1];
+
+    setCrescimento(ultimoMes?.crescimento_percentual ?? null);
   } catch (error) {
-    console.error('Erro ao buscar valor total pago do mês passado:', error);
+    console.error('Erro ao buscar crescimento do mês selecionado:', error);
   }
 };
 
 
-   const fetchFaturamento = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/valortotalpago-ultimos4meses');
-        const data = await response.json();
 
-        setDadosReal(data.ultimos_4_meses || []);
-      } catch (error) {
-        console.error('Erro ao buscar dados de faturamento:', error);
-      }
-    };
-
-
-     const fetchNovosClientes = async () => {
+const fetchValorPago = async () => {
   try {
-    const response = await fetch('http://38.224.145.3:3009/total-clientes-habilitados-ultimos4meses');
+    if (!mesSelecionado) return;
+
+    const nomesMeses = [
+      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const [mesStr, anoStr] = mesSelecionado.split('/');
+    const mesIndex = nomesMeses.findIndex(m => m.toLowerCase() === mesStr.toLowerCase());
+    const mes = mesIndex + 1;
+    const ano = parseInt(`20${anoStr}`);
+
+    const response = await fetch(`http://localhost:3009/valortotalpago-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!response.ok) throw new Error('Erro na requisição');
+
+    const data = await response.json();
+
+    const valorNumerico = data.total_pago_mes || 0;
+    setValorAbreviado(formatValorCompacto(valorNumerico));
+  } catch (error) {
+    console.error('Erro ao buscar valor total pago do mês selecionado:', error);
+  }
+};
+
+
+
+ const fetchFaturamento = async () => {
+  try {
+    if (!mesSelecionado) return;
+
+    const nomesMeses = [
+      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const [mesStr, anoStr] = mesSelecionado.split('/');
+    const mesIndex = nomesMeses.findIndex(m => m.toLowerCase() === mesStr.toLowerCase());
+    const mes = mesIndex + 1;
+    const ano = parseInt(`20${anoStr}`);
+
+    const response = await fetch(`http://localhost:3009/valortotalpago-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!response.ok) throw new Error('Erro na requisição');
+
+    const data = await response.json();
+    setDadosReal(data.ultimos_4_meses || []);
+  } catch (error) {
+    console.error('Erro ao buscar dados de faturamento selecionado:', error);
+  }
+};
+
+
+
+const fetchNovosClientes = async (mes, ano) => {
+  try {
+    const response = await fetch(`http://localhost:3009/total-clientes-habilitados-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
     const data = await response.json();
 
     const dadosFormatados = data.dados.map((item) => ({
@@ -293,351 +473,415 @@ const mesesDisponiveis = (() => {
 
     setDadosNovosClientes(dadosFormatados);
   } catch (error) {
-    console.error('Erro ao buscar dados de novos clientes:', error);
+    console.error('Erro ao buscar dados de novos clientes dos últimos meses:', error);
   }
 };
 
-    const fetchTotalClientesNovos = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/total-clientes-habilitados-mespassado');
-        const data = await response.json();
-
-        setTotal(data.total_clientes_habilitados);
-        
-      } catch (error) {
-        console.error('Erro ao buscar total de clientes do mês passado:', error);
-      }
-    };
 
 
-     const fetchTicketMedio = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/ticket-medio-mesatual');
-        const data = await response.json();
+ const fetchTotalClientesNovos = async (mes, ano) => {
+  try {
+    const response = await fetch(`http://localhost:3009/total-clientes-habilitados-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
+    const data = await response.json();
 
-        setTicketMedio(parseFloat(data.ticket_medio));
-
-      } catch (error) {
-        console.error('Erro ao buscar ticket médio do mês passado:', error);
-      }
-    };
-    
+    setTotal(parseInt(data.total_clientes_habilitados));
+  } catch (error) {
+    console.error('Erro ao buscar total de clientes habilitados do mês anterior:', error);
+  }
+};
 
 
-    const fetchTicketMedioUltimos = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/ticket-medio-ultimos4meses');
-        const data = await response.json();
+    const fetchTicketMedio = async (mes, ano) => {
+  try {
+    const response = await fetch(`http://localhost:3009/ticket-medio-mesatual?mes=${mes}&ano=${ano}${estadoParam}`);
+    const data = await response.json();
 
-        const formatado = data.ticket_medio_ultimos_4_meses.map(item => ({
-          mes: item.mes,
-          ticket_medio: parseFloat(item.ticket_medio)
-        }));
-
-        setDadosTicketMedio(formatado);
-      } catch (error) {
-        console.error('Erro ao buscar ticket médio:', error);
-      }
-    };
-
-
-      const fetchCadastros = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/cadastrostotal-mespassado');
-        const data = await response.json();
-
-        setTotalCadastros(parseInt(data.total_cadastros));
-      } catch (error) {
-        console.error('Erro ao buscar total de cadastros do mês passado:', error);
-      }
-    };
-
-
-      const fetchCadastrosNovo = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/cadastrostotal-ultimos4meses');
-        const data = await response.json();
-
-        const adaptado = data.cadastros_ultimos_4_meses.map(item => ({
-          mes: item.mes,
-          total_clientes: parseInt(item.total_cadastros)
-        }));
-
-        sethCadastrosNovo(adaptado);
-      } catch (error) {
-        console.error('Erro ao buscar cadastros dos últimos 4 meses:', error);
-      }
-    };
-
-      const fetchCadastrosPFUltimos = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/cadastrospf-ultimos4meses');
-        const data = await response.json();
-
-        // Corrige nome incorreto (retorno está como total_cadastros_pj)
-        const formatado = data.cadastros_pj_ultimos_4_meses?.map(item => ({
-          mes: item.mes,
-          total_clientes: parseInt(item.total_cadastros_pj || 0)
-        })) || [];
-
-        setCadastrosNovoPF(formatado);
-      } catch (error) {
-        console.error('Erro ao buscar cadastros PF:', error);
-      }
-    };
-
-
-      const fetchCadastrosPJUltimos = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/cadastrospj-ultimos4meses');
-        const data = await response.json();
-
-        // Corrige nome incorreto (retorno está como total_cadastros_pj)
-        const formatado = data.cadastros_pj_ultimos_4_meses?.map(item => ({
-          mes: item.mes,
-          total_clientes: parseInt(item.total_cadastros_pj || 0)
-        })) || [];
-
-        setCadastrosNovoPJ(formatado);
-      } catch (error) {
-        console.error('Erro ao buscar cadastros PF:', error);
-      }
-    };
-
-       const fetchCadastrosPJ = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/cadastrospj-mespassado');
-        const data = await response.json();
-
-        setTotalPJ(parseInt(data.total_cadastros_pj));
-      } catch (error) {
-        console.error('Erro ao buscar cadastros de PF do mês passado:', error);
-      }
-    };
-
-
-      const fetchCadastrosPF = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/cadastrospf-mespassado');
-        const data = await response.json();
-
-        setTotalPF(parseInt(data.total_cadastros_pf));
-      } catch (error) {
-        console.error('Erro ao buscar cadastros de PF do mês passado:', error);
-      }
-    };
-
-     const fetchChurnData = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/churn-mensal');
-        if (!response.ok) {
-          throw new Error('Erro na resposta da API');
-        }
-        const data = await response.json();
-        setTotalCancelamentoMes(data.total_cancelamentos_mes);
-      } catch (error) {
-        console.error('Erro ao buscar churn mensal:', error);
-      }
-    };
-
-
-      const buscarCancelamentos = async () => {
-      try {
-        const resposta = await fetch('http://38.224.145.3:3009/churn-mensal-ultimos');
-        if (!resposta.ok) throw new Error('Erro na requisição');
-        const dados = await resposta.json();
-
-        // Opcional: transformar número do mês em nome
-        const nomesMeses = [
-          '', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-          'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-        ];
-        const dadosFormatados = dados.map(item => ({
-          mes: `${nomesMeses[item.mes]}/${item.ano.toString().slice(-2)}`, // exemplo: "Abr/25"
-          total_cancelamentos_mes: item.total_cancelamentos_mes
-        }));
-
-        setCancelamentosMes(dadosFormatados);
-      } catch (erro) {
-        console.error('Erro ao buscar churn mensal:', erro);
-      }
-    };
-
-
-     const fetchChurnDataporcentos = async () => {
-      try {
-        const response = await fetch('http://38.224.145.3:3009/churn-mensal');
-        if (!response.ok) {
-          throw new Error('Erro na resposta da API');
-        }
-        const data = await response.json();
-        setTotalCancelamentoMesPorcentos(data.churn_mensal);
-      } catch (error) {
-        console.error('Erro ao buscar churn mensal:', error);
-      }
-    };
-
-
-      const buscarCancelamentosporcentos = async () => {
-      try {
-        const resposta = await fetch('http://38.224.145.3:3009/churn-mensal-ultimos');
-        if (!resposta.ok) throw new Error('Erro na requisição');
-        const dados = await resposta.json();
-
-        // Opcional: transformar número do mês em nome
-        const nomesMeses = [
-          '', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-          'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-        ];
-        const dadosFormatados = dados.map(item => ({
-          mes: `${nomesMeses[item.mes]}/${item.ano.toString().slice(-2)}`, // exemplo: "Abr/25"
-          total_cancelamentos_mes: item.churn_mensal
-        }));
-
-        setCancelamentosMesPorcentos(dadosFormatados);
-      } catch (erro) {
-        console.error('Erro ao buscar churn mensal:', erro);
-      }
-    };
-
-
-    const buscarCancelamentosPedido = async () => {
-      try {
-        const resposta = await fetch('http://38.224.145.3:3009/cancelamentos-por-pedido-mes-passado');
-        if (!resposta.ok) throw new Error('Erro ao buscar dados');
-        const dados = await resposta.json();
-
-        setCancelamentosPedido(dados.total_cancelamentos_pedido);
-      } catch (erro) {
-        console.error('Erro ao buscar cancelamentos por pedido do cliente:', erro);
-      }
-    };
-
-    const buscarCancelamentosUltimos = async () => {
-      try {
-        const resposta = await fetch('http://38.224.145.3:3009/cancelamentos-por-pedido-ultimos-4-meses');
-        if (!resposta.ok) throw new Error('Erro na API');
-        const dados = await resposta.json();
-
-        const nomesMeses = [
-          '', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-          'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-        ];
-
-        // Formata para: { mes: 'Abr/25', total_cancelamentos_mes: ... }
-        const dadosFormatados = dados.map(item => ({
-          mes: `${nomesMeses[item.mes]}/${item.ano.toString().slice(-2)}`,
-          total_cancelamentos_mes: item.total_cancelamentos_pedido
-        }));
-
-        setCancelamentosMesPedidos(dadosFormatados);
-      } catch (erro) {
-        console.error('Erro ao buscar cancelamentos por pedido:', erro);
-      }
-    };
-
+    setTicketMedio(parseFloat(data.ticket_medio));
+  } catch (error) {
+    console.error('Erro ao buscar ticket médio do mês:', error);
+  }
+};
 
     
-    const buscarCancelamentosautomatico = async () => {
-      try {
-        const resposta = await fetch('http://38.224.145.3:3009/cancelamentos-por-automatico-mes-passado');
-        if (!resposta.ok) throw new Error('Erro ao buscar dados');
-        const dados = await resposta.json();
+const fetchTicketMedioUltimos = async (mes, ano) => {
+  try {
+    const response = await fetch(`http://localhost:3009/ticket-medio-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const data = await response.json();
 
-        setCancelamentosAutomatico(dados.total_cancelamentos_pedido);
-      } catch (erro) {
-        console.error('Erro ao buscar cancelamentos por pedido do cliente:', erro);
-      }
-    };
+    const formatado = data.ticket_medio_ultimos_4_meses.map(item => ({
+      mes: item.mes,
+      ticket_medio: parseFloat(item.ticket_medio)
+    }));
 
-    const buscarCancelamentosUltimosAutomatico = async () => {
-      try {
-        const resposta = await fetch('http://38.224.145.3:3009/cancelamentos-por-automatico-ultimos-4-meses');
-        if (!resposta.ok) throw new Error('Erro na API');
-        const dados = await resposta.json();
-
-        const nomesMeses = [
-          '', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-          'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-        ];
-
-        // Formata para: { mes: 'Abr/25', total_cancelamentos_mes: ... }
-        const dadosFormatados = dados.map(item => ({
-          mes: `${nomesMeses[item.mes]}/${item.ano.toString().slice(-2)}`,
-          total_cancelamentos_mes: item.total_cancelamentos_pedido
-        }));
-
-        setCancelamentosMesAutomatico(dadosFormatados);
-      } catch (erro) {
-        console.error('Erro ao buscar cancelamentos por pedido:', erro);
-      }
-    };
+    setDadosTicketMedio(formatado);
+  } catch (error) {
+    console.error('Erro ao buscar ticket médio dos últimos meses:', error);
+  }
+};
 
 
+    const fetchCadastros = async (mes, ano) => {
+  try {
+    const response = await fetch(`http://localhost:3009/cadastrostotal-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
+    const data = await response.json();
 
-     const buscarAtendimentos = async () => {
-      try {
-        const resposta = await fetch('http://38.224.145.3:3009/atendimentos-tipo-mes-passado');
-        if (!resposta.ok) throw new Error('Erro ao buscar atendimentos');
-        const dados = await resposta.json();
-
-        setTotalAtendimentos(dados.percentual_sucesso);
-      } catch (erro) {
-        console.error('Erro ao carregar os atendimentos:', erro);
-      }
-    };
-
-    const buscarAtendimentosUltimos = async () => {
-      try {
-        const resposta = await fetch('http://38.224.145.3:3009/atendimentos-tipo-ultimos-4-meses');
-        if (!resposta.ok) throw new Error('Erro na requisição');
-        const dados = await resposta.json();
-
-        const nomesMeses = [
-          '', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-          'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-        ];
-
-        const dadosFormatados = dados.map(item => ({
-          mes: `${nomesMeses[item.mes]}/${item.ano.toString().slice(-2)}`,
-          percentual_sucesso: parseFloat(item.percentual_sucesso)
-        }));
+    setTotalCadastros(parseInt(data.total_cadastros));
+  } catch (error) {
+    console.error('Erro ao buscar total de cadastros do mês anterior:', error);
+  }
+};
 
 
-        setTotalAtendimentosUltimos(dadosFormatados);
-      } catch (erro) {
-        console.error('Erro ao carregar dados de atendimentos tipo 257:', erro);
-      }
-    };
+  const fetchCadastrosNovo = async (mes, ano) => {
+  try {
+    const response = await fetch(`http://localhost:3009/cadastrostotal-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const data = await response.json();
+
+    const adaptado = data.cadastros_ultimos_4_meses.map(item => ({
+      mes: item.mes,
+      total_clientes: parseInt(item.total_cadastros)
+    }));
+
+    sethCadastrosNovo(adaptado);
+  } catch (error) {
+    console.error('Erro ao buscar cadastros dos últimos 4 meses:', error);
+  }
+};
+
+
+const fetchCadastrosPFUltimos = async (mes, ano) => {
+  try {
+    const response = await fetch(`http://localhost:3009/cadastrospf-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const data = await response.json();
+
+    const formatado = data.cadastros_pf_ultimos_4_meses?.map(item => ({
+      mes: item.mes,
+      total_clientes: parseInt(item.total_cadastros_pf || 0)
+    })) || [];
+
+    setCadastrosNovoPF(formatado);
+  } catch (error) {
+    console.error('Erro ao buscar cadastros PF:', error);
+  }
+};
+
+
+
+const fetchCadastrosPJUltimos = async () => {
+  try {
+    if (!mesSelecionado) return;
+
+    const nomesMeses = [
+      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const [mesStr, anoStr] = mesSelecionado.split('/');
+    const mesIndex = nomesMeses.findIndex(m => m.toLowerCase() === mesStr.toLowerCase());
+    const mes = mesIndex + 1;
+    const ano = parseInt(`20${anoStr}`);
+
+    const response = await fetch(`http://localhost:3009/cadastrospj-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!response.ok) throw new Error('Erro na requisição');
+
+    const data = await response.json();
+
+    const formatado = data.cadastros_pj_ultimos_4_meses?.map(item => ({
+      mes: item.mes,
+      total_clientes: parseInt(item.total_cadastros_pj || 0)
+    })) || [];
+
+    setCadastrosNovoPJ(formatado);
+  } catch (error) {
+    console.error('Erro ao buscar cadastros PJ:', error);
+  }
+};
+
+
+
+
+     const fetchCadastrosPJ = async () => {
+  try {
+    if (!mesSelecionado) return;
+
+    const nomesMeses = [
+      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const [mesStr, anoStr] = mesSelecionado.split('/');
+    const mesIndex = nomesMeses.findIndex(m => m.toLowerCase() === mesStr.toLowerCase());
+    const mes = mesIndex + 1;
+    const ano = parseInt(`20${anoStr}`);
+
+    const response = await fetch(`http://localhost:3009/cadastrospj-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!response.ok) throw new Error('Erro na requisição');
+
+    const data = await response.json();
+    setTotalPJ(parseInt(data.total_cadastros_pj));
+  } catch (error) {
+    console.error('Erro ao buscar cadastros de PJ do mês passado:', error);
+  }
+};
+
+
+
+     const fetchCadastrosPF = async () => {
+  try {
+    if (!mesSelecionado) return;
+
+    const nomesMeses = [
+      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const [mesStr, anoStr] = mesSelecionado.split('/');
+    const mesIndex = nomesMeses.findIndex(m => m.toLowerCase() === mesStr.toLowerCase());
+    const mes = mesIndex + 1;
+    const ano = parseInt(`20${anoStr}`);
+
+    const response = await fetch(`http://localhost:3009/cadastrospf-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!response.ok) throw new Error('Erro na requisição');
+
+    const data = await response.json();
+    setTotalPF(parseInt(data.total_cadastros_pf));
+  } catch (error) {
+    console.error('Erro ao buscar cadastros de PF do mês passado:', error);
+  }
+};
+
+
+
+
+   const fetchChurnData = async (mes, ano) => {
+  try {
+    const response = await fetch(`http://localhost:3009/churn-mensal?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!response.ok) {
+      throw new Error('Erro na resposta da API');
+    }
+    const data = await response.json();
+    setTotalCancelamentoMes(data.total_cancelamentos_mes);
+  } catch (error) {
+    console.error('Erro ao buscar churn mensal:', error);
+  }
+};
+
+const buscarCancelamentos = async (mes, ano) => {
+  try {
+    const resposta = await fetch(`http://localhost:3009/churn-mensal-ultimos?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!resposta.ok) throw new Error('Erro na requisição');
+
+    const dados = await resposta.json();
+
+    const nomesMeses = [
+      '', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const dadosFormatados = dados.map(item => ({
+      mes: `${nomesMeses[item.mes]}/${item.ano.toString().slice(-2)}`,
+      total_cancelamentos_mes: item.total_cancelamentos_mes,
+      churn_mensal: item.churn_mensal,
+      total_ativos_mes: item.total_ativos_mes
+    }));
+
+    setCancelamentosMes(dadosFormatados);
+  } catch (erro) {
+    console.error('Erro ao buscar churn mensal:', erro);
+  }
+};
+
+
+
+   const fetchChurnDataporcentos = async (mes, ano) => {
+  try {
+    const response = await fetch(`http://localhost:3009/churn-mensal?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!response.ok) {
+      throw new Error('Erro na resposta da API');
+    }
+    const data = await response.json();
+    setTotalCancelamentoMesPorcentos(data.churn_mensal);
+  } catch (error) {
+    console.error('Erro ao buscar churn mensal (%):', error);
+  }
+};
+
+
+const buscarCancelamentosporcentos = async (mes, ano) => {
+  try {
+    const resposta = await fetch(`http://localhost:3009/churn-mensal-ultimos?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!resposta.ok) throw new Error('Erro na requisição');
+
+    const dados = await resposta.json();
+
+    const nomesMeses = [
+      '', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const dadosFormatados = dados.map(item => ({
+      mes: `${nomesMeses[item.mes]}/${item.ano.toString().slice(-2)}`,
+      churn_mensal: item.churn_mensal
+    }));
+
+    setCancelamentosMesPorcentos(dadosFormatados);
+  } catch (erro) {
+    console.error('Erro ao buscar churn mensal (%):', erro);
+  }
+};
+
+
+ const buscarCancelamentosPedido = async (mes, ano) => {
+  try {
+    const resposta = await fetch(`http://localhost:3009/cancelamentos-por-pedido-mes-passado?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!resposta.ok) throw new Error('Erro ao buscar dados');
+
+    const dados = await resposta.json();
+    setCancelamentosPedido(dados.total_cancelamentos_pedido);
+  } catch (erro) {
+    console.error('Erro ao buscar cancelamentos por pedido do cliente:', erro);
+  }
+};
+
+  
+    
+  const buscarCancelamentosautomatico = async (mes, ano) => {
+  try {
+    const resposta = await fetch(`http://localhost:3009/cancelamentos-por-automatico-mes-passado?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!resposta.ok) throw new Error('Erro ao buscar dados');
+    const dados = await resposta.json();
+
+    setCancelamentosAutomatico(dados.total_cancelamentos_pedido);
+  } catch (erro) {
+    console.error('Erro ao buscar cancelamentos por inadimplência:', erro);
+  }
+};
+
+
+const buscarCancelamentosPedidoUltimos = async (mes, ano) => {
+  try {
+    const resposta = await fetch(`http://localhost:3009/cancelamentos-por-pedido-ultimos-4-meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!resposta.ok) throw new Error('Erro ao buscar dados');
+
+    const dados = await resposta.json();
+
+    const nomesMeses = [
+      '', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const formatado = dados.map(item => ({
+      mes: `${nomesMeses[item.mes]}/${item.ano.toString().slice(-2)}`,
+      total_cancelamentos_pedido: item.total_cancelamentos_pedido
+    }));
+
+    setCancelamentosMesPedidos(formatado);
+  } catch (erro) {
+    console.error('Erro ao buscar cancelamentos por pedido dos últimos meses:', erro);
+  }
+};
+
+
+
+   const buscarAtendimentos = async (mes, ano) => {
+  try {
+    const resposta = await fetch(`http://localhost:3009/atendimentos-tipo-mes-passado?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!resposta.ok) throw new Error('Erro ao buscar atendimentos');
+    const dados = await resposta.json();
+
+    setTotalAtendimentos(dados.percentual_sucesso);
+  } catch (erro) {
+    console.error('Erro ao carregar os atendimentos:', erro);
+  }
+};
+
+
+  const buscarAtendimentosUltimos = async () => {
+  try {
+    if (!mesSelecionado) return;
+
+    const nomesMeses = [
+      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    // Extrair mês e ano do valor "Abr/25"
+    const [mesStr, anoStr] = mesSelecionado.split('/');
+    const mesIndex = nomesMeses.findIndex(m => m.toLowerCase() === mesStr.toLowerCase());
+    const mes = mesIndex + 1; // 1 a 12
+    const ano = parseInt(`20${anoStr}`); // '25' → 2025
+
+    const resposta = await fetch(`http://localhost:3009/atendimentos-tipo-ultimos-4-meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!resposta.ok) throw new Error('Erro na requisição');
+
+    const dados = await resposta.json();
+
+    const dadosFormatados = dados.map(item => ({
+      mes: `${nomesMeses[item.mes - 1]}/${item.ano.toString().slice(-2)}`,
+      percentual_sucesso: parseFloat(item.percentual_sucesso)
+    }));
+
+    setTotalAtendimentosUltimos(dadosFormatados);
+  } catch (erro) {
+    console.error('Erro ao carregar dados de atendimentos tipo 257:', erro);
+  }
+};
+
+
+const buscarCancelamentosAutomaticoUltimos = async (mes, ano) => {
+  try {
+    const resposta = await fetch(`http://localhost:3009/cancelamentos-por-automatico-ultimos-4-meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    if (!resposta.ok) throw new Error('Erro ao buscar dados');
+
+    const dados = await resposta.json();
+
+    const nomesMeses = [
+      '', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+    ];
+
+    const formatado = dados.map(item => ({
+      mes: `${nomesMeses[item.mes]}/${item.ano.toString().slice(-2)}`,
+      total_cancelamentos_pedido: item.total_cancelamentos_pedido
+    }));
+
+    setCancelamentosMesAutomatico(formatado);
+  } catch (erro) {
+    console.error('Erro ao buscar cancelamentos automáticos dos últimos meses:', erro);
+  }
+};
+
+
 
      const atualizarPeriodicamente = () => {
-    fetchClientesAtivos();
-    fetchClientesVendas();
-    fetchTotal();
-    fetchCrescimento();
-    fetchCrescimentoMesAtual();
-    fetchValorPago();
-    fetchFaturamento();
-    fetchNovosClientes();
-    fetchTotalClientesNovos();
-    fetchTicketMedio();
-    fetchTicketMedioUltimos();
-    fetchCadastros();
-    fetchCadastrosNovo();
-    fetchCadastrosPF();
-    fetchCadastrosPJ();
-    fetchCadastrosPFUltimos();
-    fetchCadastrosPJUltimos();
-    fetchChurnData();
-    fetchChurnDataporcentos();
-    buscarCancelamentos();
-    buscarCancelamentosporcentos();
-    buscarCancelamentosPedido();
-    buscarCancelamentosUltimos();
-    buscarCancelamentosautomatico();
-    buscarCancelamentosUltimosAutomatico();
-    buscarAtendimentos();
-    buscarAtendimentosUltimos();
+      buscarCancelamentosPedidoUltimos(mes, ano)
+      fetchTicketMedioUltimos(mes,ano)
+      fetchFaturamento(mes, ano);
+      fetchCrescimentoMesAtual(mes, ano)
+   fetchClientesAtivos(mes, ano);
+   fetchCrescimento(mes,ano);
+  fetchClientesVendas(mes, ano);
+  fetchTotal(mes, ano);
+  fetchValorPago(mes, ano);
+  fetchNovosClientes(mes, ano);
+  fetchTotalClientesNovos(mes, ano);
+  fetchTicketMedio(mes, ano);
+  fetchCadastros(mes, ano);
+  fetchCadastrosPF(mes, ano);
+  fetchCadastrosPJ(mes, ano);
+  fetchChurnData(mes, ano);
+  fetchChurnDataporcentos(mes, ano);
+  buscarCancelamentosPedido(mes, ano);
+  buscarCancelamentosautomatico(mes, ano);
+  buscarAtendimentos(mes, ano);
+  buscarAtendimentosUltimos(mes, ano);
+  fetchCadastrosNovo(mes, ano)
+  fetchCadastrosPJUltimos(mes, ano)
+  fetchCadastrosPFUltimos(mes, ano)
+  buscarCancelamentosporcentos(mes, ano)
+  buscarCancelamentos(mes, ano)
+  buscarCancelamentosAutomaticoUltimos(mes,ano)
+  fetchClientesAtivosMesSelecionado(mes, ano)
   };
 
   // Executa imediatamente na primeira renderização
@@ -646,7 +890,7 @@ const mesesDisponiveis = (() => {
   const intervalo = setInterval(atualizarPeriodicamente, 10000); // 60 segundos
 
   return () => clearInterval(intervalo); // limpeza quando o componente desmontar
-}, []);
+}, [mesSelecionado, estadoSelecionado]);
 
 
   const handleLimparFiltros = () => {
@@ -683,14 +927,19 @@ const mesesDisponiveis = (() => {
               </div>
 
 
-               <div className='div-body-opcao1'>
+              <div className='div-body-opcao1'>
                   <h1 className='h1-body-opcao'>Estado</h1>
-                  <select className='button-body-opcao' defaultValue="Todos">
+                  <select
+                    className='button-body-opcao'
+                    value={estadoSelecionado}
+                    onChange={(e) => setEstadoSelecionado(e.target.value)}
+                  >
                     <option value="Todos">Todos</option>
                     <option value="SC">SC</option>
                     <option value="RS">RS</option>
                   </select>
                 </div>
+
 
                 
                 <div className='div-body-opcao1'>
@@ -734,7 +983,7 @@ const mesesDisponiveis = (() => {
 
                     <div  className='card2-div--geral-dados'>
                         <h1 className='h1-card2-div--geral-dados'>Total</h1>
-                        <h1  className='h2-card2-div--geral-dados'>{totalClientesUltimoMes}</h1>
+                        <h1  className='h2-card2-div--geral-dados'>{clientesAtivosSelecionado}</h1>
                     </div>
 
 
@@ -744,7 +993,7 @@ const mesesDisponiveis = (() => {
 
                         <h2 className='h3-card2-div--geral-dados'>
                         {metaSelecionada
-                          ? `${((totalClientesUltimoMes / parseFloat(metaSelecionada.meta)) * 100).toFixed(2)}%`
+                          ? `${((clientesAtivosSelecionado / parseFloat(metaSelecionada.meta)) * 100).toFixed(2)}%`
                           : '—'}
                       </h2>
                         
@@ -756,7 +1005,7 @@ const mesesDisponiveis = (() => {
                          
                     <h2 className='h3-card2-div--geral-dados'>
                     {metaSelecionada
-                      ? `${((totalClientesUltimoMes / parseFloat(metaSelecionada.super_meta)) * 100).toFixed(2)}%`
+                      ? `${((clientesAtivosSelecionado / parseFloat(metaSelecionada.super_meta)) * 100).toFixed(2)}%`
                       : '—'}
                   </h2>
 
@@ -956,7 +1205,7 @@ const mesesDisponiveis = (() => {
                         ? `${(
                             (parseFloat(valorAbreviado.replace(/[^\d,-]/g, '').replace(',', '.')) /
                               parseFloat(faturamentoSelecionado.meta.replace(/[^\d,-]/g, '').replace(',', '.'))) *
-                            100
+                            1000
                           ).toFixed(2)}%`
                         : '—'}
                     </h2>
@@ -974,7 +1223,7 @@ const mesesDisponiveis = (() => {
                         ? `${(
                             (parseFloat(valorAbreviado.replace(/[^\d,-]/g, '').replace(',', '.')) /
                               parseFloat(faturamentoSelecionado.super_meta.replace(/[^\d,-]/g, '').replace(',', '.'))) *
-                            10000
+                            1000
                           ).toFixed(2)}%`
                         : '—'}
                     </h2>
@@ -1482,36 +1731,36 @@ const mesesDisponiveis = (() => {
                             
                         <div className='card1-div--geral-dados'>
                                 <h1 className='h1-card1-div--geral-dados'>Comparativo</h1>
-                   {cancelamentosMesPorcentos.length > 0 ? (
-        <ResponsiveContainer width="90%" height={270}>
-          <BarChart data={cancelamentosMesPorcentos}>
-            <CartesianGrid strokeDasharray="2 2" />
-            <XAxis dataKey="mes" tick={{ fill: '#fff' }} />
-            <YAxis tick={{ fill: '#fff' }} />
-            <Tooltip
-              formatter={(value) =>
-                typeof value === 'number'
-                  ? value.toLocaleString('pt-BR')
-                  : value
-              }
-            />
-            <Bar dataKey="total_cancelamentos_mes" fill="#F45742">
-              <LabelList
-                dataKey="total_cancelamentos_mes"
-                position="inside"
-                fill="#fff"
-                formatter={(value) =>
-                  typeof value === 'number'
-                    ? value.toLocaleString('pt-BR')
-                    : ''
-                }
-              />
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      ) : (
-        <p style={{ color: '#fff' }}>Carregando dados...</p>
-      )}
+                {cancelamentosMesPorcentos.length > 0 ? (
+  <ResponsiveContainer width="90%" height={270}>
+    <BarChart data={cancelamentosMesPorcentos}>
+      <CartesianGrid strokeDasharray="2 2" />
+      <XAxis dataKey="mes" tick={{ fill: '#fff' }} />
+      <YAxis tick={{ fill: '#fff' }} domain={[0, 'auto']} />
+      <Tooltip
+        formatter={(value) =>
+          typeof value === 'number'
+            ? `${value.toFixed(2)}%`
+            : value
+        }
+      />
+      <Bar dataKey="churn_mensal" fill="#F45742">
+        <LabelList
+          dataKey="churn_mensal"
+          position="inside"
+          fill="#fff"
+          formatter={(value) =>
+            typeof value === 'number'
+              ? `${value.toFixed(2)}%`
+              : ''
+          }
+        />
+      </Bar>
+    </BarChart>
+  </ResponsiveContainer>
+) : (
+  <p style={{ color: '#fff' }}>Carregando dados...</p>
+)}
 
                         </div>
 
@@ -1583,18 +1832,18 @@ const mesesDisponiveis = (() => {
                   : value
               }
             />
-            <Bar dataKey="total_cancelamentos_mes" fill="#F45742">
-              <LabelList
-                dataKey="total_cancelamentos_mes"
-                position="inside"
-                fill="#fff"
-                formatter={(value) =>
-                  typeof value === 'number'
-                    ? value.toLocaleString('pt-BR')
-                    : ''
-                }
-              />
-            </Bar>
+         <Bar dataKey="total_cancelamentos_pedido" fill="#F45742">
+  <LabelList
+    dataKey="total_cancelamentos_pedido"
+    position="inside"
+    fill="#fff"
+    formatter={(value) =>
+      typeof value === 'number'
+        ? value.toLocaleString('pt-BR')
+        : ''
+    }
+  />
+</Bar>
           </BarChart>
         </ResponsiveContainer>
       ) : (
@@ -1652,32 +1901,34 @@ const mesesDisponiveis = (() => {
                         <div className='card1-div--geral-dados'>
                                 <h1 className='h1-card1-div--geral-dados'>Comparativo</h1>
                    {cancelamentosMesAutomatico.length > 0 ? (
-        <ResponsiveContainer width="90%" height={270}>
-          <BarChart data={cancelamentosMesAutomatico}>
-            <CartesianGrid strokeDasharray="2 2" />
-            <XAxis dataKey="mes" tick={{ fill: '#fff' }} />
-            <YAxis tick={{ fill: '#fff' }} />
-            <Tooltip
-              formatter={(value) =>
-                typeof value === 'number'
-                  ? value.toLocaleString('pt-BR')
-                  : value
-              }
-            />
-            <Bar dataKey="total_cancelamentos_mes" fill="#F45742">
-              <LabelList
-                dataKey="total_cancelamentos_mes"
-                position="inside"
-                fill="#fff"
-                formatter={(value) =>
-                  typeof value === 'number'
-                    ? value.toLocaleString('pt-BR')
-                    : ''
-                }
-              />
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+                        <ResponsiveContainer width="90%" height={270}>
+                            <BarChart data={cancelamentosMesAutomatico}>
+                              <CartesianGrid strokeDasharray="2 2" />
+                              <XAxis dataKey="mes" tick={{ fill: '#fff' }} />
+                              <YAxis tick={{ fill: '#fff' }} />
+                              <Tooltip
+                                formatter={(value) =>
+                                  typeof value === 'number'
+                                    ? value.toLocaleString('pt-BR')
+                                    : value
+                                }
+                              />
+                              <Bar dataKey="total_cancelamentos_pedido" fill="#F45742">
+                                <LabelList
+                                  dataKey="total_cancelamentos_pedido"
+                                  position="inside"
+                                  fill="#fff"
+                                  formatter={(value) =>
+                                    typeof value === 'number'
+                                      ? value.toLocaleString('pt-BR')
+                                      : ''
+                                  }
+                                />
+                              </Bar>
+                            </BarChart>
+                          </ResponsiveContainer>
+
+
       ) : (
         <p style={{ color: '#fff' }}>Carregando dados...</p>
       )}

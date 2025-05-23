@@ -24,8 +24,8 @@ export const datageral = [
     "data": "jan/25",
     "base": "GERAL",
     "indicador": "Faturamento mensal",
-    "super_meta": "R$ 2.881.042,08",
-    "meta": "R$ 2.875.398,51"
+    "super_meta": "R$ 2.88M",
+    "meta": "R$ 2.87M"
   },
   {
     "data": "jan/25",
@@ -269,8 +269,8 @@ export const datageral = [
     "data": "fev/25",
     "base": "GERAL",
     "indicador": "Faturamento mensal",
-    "super_meta": "R$ 2.997.505,39",
-    "meta": "R$ 2.989.095,02"
+    "super_meta": "R$ 2.99M",
+    "meta": "R$ 2.98M"
   },
   {
     "data": "fev/25",
@@ -514,8 +514,8 @@ export const datageral = [
     "data": "mar/25",
     "base": "GERAL",
     "indicador": "Faturamento mensal",
-    "super_meta": "R$ 3.194.962,92",
-    "meta": "R$ 3.185.170,21"
+    "super_meta": "R$ 3.19M",
+    "meta": "R$ 3.18M"
   },
   {
     "data": "mar/25",
@@ -759,8 +759,8 @@ export const datageral = [
     "data": "abr/25",
     "base": "GERAL",
     "indicador": "Faturamento mensal",
-    "super_meta": "R$ 3.297.450,41",
-    "meta": "R$ 3.285.143,57"
+    "super_meta": "R$ 3.29M",
+    "meta": "R$ 3.28M"
   },
   {
     "data": "abr/25",
@@ -1004,8 +1004,8 @@ export const datageral = [
     "data": "mai/25",
     "base": "GERAL",
     "indicador": "Faturamento mensal",
-    "super_meta": "3.354M",
-    "meta": "3.3M"
+    "super_meta": "3.35M",
+    "meta": "3.30M"
   },
   {
     "data": "mai/25",
@@ -1242,8 +1242,8 @@ export const datageral = [
     "data": "jun/25",
     "base": "GERAL",
     "indicador": "Faturamento mensal",
-    "super_meta": "R$ 3.432.168,14",
-    "meta": "R$ 3.400.151,71"
+    "super_meta": "R$ 3.43M",
+    "meta": "R$ 3.40M"
   },
   {
     "data": "jun/25",
