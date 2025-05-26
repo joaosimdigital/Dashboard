@@ -219,7 +219,7 @@ const dadosClientes = [
 
                     </div>
 
-                    <h1  className='h2-head-gerencial-body-operacional'><h1  className='amarelo-h2-head-gerencial-body'>C</h1>ENTRO DE <h1 className='amarelo-h2-head-gerencial-body'> OP</h1>ERAÇÕES</h1>
+                    <h1  className='h2-head-gerencial-body-operacional'><h1  className='amarelo-h2-head-gerencial-body'>C</h1>ENTRO DE <h1 className='amarelo-h2-head-gerencial-body'> C</h1>ONTROLE DE <h1 className='amarelo-h2-head-gerencial-body'> O</h1>PERAÇÃO</h1>
 
                       <h1  className='h2-head-gerencial-body-invisivel'>Geral</h1>
                  
@@ -310,7 +310,9 @@ const dadosClientes = [
         </thead>
         <tbody>
           {dados.map((item, index) => (
-            <tr key={item.cidade} style={{flexDirection: 'row', display:'flex'}} className={index % 2 === 1 ? 'bg-gray-800' : 'bg-gray-600'}>
+            <tr key={item.cidade} style={{flexDirection: 'row', display:'flex', height: 30,
+    borderTop: '1px solid white',
+    borderBottom: '1px solid white'}} className={index % 2 === 1 ? 'bg-gray-800' : 'bg-gray-600'}>
               <td className="h7-card1-gerencial-geral">{item.cidade}</td>
               <td className="h8-card1-gerencial-geral">{item.instalacoes}</td>
               <td className="h8-card1-gerencial-geral">{item.manutencao}</td>
@@ -336,7 +338,9 @@ const dadosClientes = [
         </thead>
         <tbody>
           {dadosbairros.map((item, index) => (
-            <tr key={item.bairros} style={{flexDirection: 'row', display:'flex'}} className={index % 2 === 1 ? 'bg-gray-800' : 'bg-gray-600'}>
+            <tr key={item.bairros} style={{flexDirection: 'row', display:'flex',
+    borderTop: '1px solid white',
+    borderBottom: '1px solid white'}} className={index % 2 === 1 ? 'bg-gray-800' : 'bg-gray-600'}>
               <td className="h7-card1-gerencial-geral">{item.bairros}</td>
               <td className="h8-card1-gerencial-geral">{item.instalacoes}</td>
               <td className="h8-card1-gerencial-geral">{item.manutencao}</td>

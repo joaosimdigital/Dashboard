@@ -22,7 +22,7 @@
     color: white;
     font-size: 50px;
     display: flex;
-    width: 34%;
+    width: 70%;
     align-items: center;
 }
 
@@ -48,6 +48,7 @@
 .div-card1-gerencial-geral{
     width: 15%;
     background-color: #525252;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     height: 280px;
     border-radius: 5px;
     align-items: center;
@@ -61,6 +62,7 @@
     width: 34%;
     background-color: #525252;
     height: 280px;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     border-radius: 5px;
     align-items: center;
     display: flex;
@@ -121,6 +123,7 @@
 
 .div-card1-gerencial-geral1{
     width: 95%;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .row-div-gerencial-geral{
@@ -160,6 +163,7 @@
     justify-content: space-around;
     align-items: center;
     width: 100%;
+    margin-bottom: 10px;
 }
 
 .h7-card1-gerencial-geral{
@@ -190,6 +194,7 @@
 .div-card3-gerencial-geral{
     width: 12%;
     background-color: #525252;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     height: 280px;
     border-radius: 5px;
     align-items: center;
@@ -201,6 +206,7 @@
 .div-card4-gerencial-geral{
     width: 12%;
     background-color: #0B8634;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     height: 280px;
     border-radius: 5px;
     align-items: center;
@@ -212,6 +218,7 @@
 .div-card5-gerencial-geral{
     width: 12%;
     background-color: #05A039;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     height: 280px;
     border-radius: 5px;
     align-items: center;
@@ -222,6 +229,7 @@
 .div-card6-gerencial-geral{
     width: 12%;
     background-color: #FFC300;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     height: 280px;
     border-radius: 5px;
     align-items: center;
@@ -233,6 +241,7 @@
 .div-card7-gerencial-geral{
     width: 12%;
     background-color: #E9B407;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     height: 280px;
     border-radius: 5px;
     align-items: center;
@@ -244,6 +253,7 @@
 .div-card8-gerencial-geral{
     width: 12%;
     background-color: #E96507;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     height: 280px;
     border-radius: 5px;
     align-items: center;
@@ -254,6 +264,7 @@
 .div-card9-gerencial-geral{
     width: 12%;
     background-color: #CE0505;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     height: 280px;
     border-radius: 5px;
     align-items: center;
@@ -264,6 +275,7 @@
 .div-card10-gerencial-geral{
     width: 12%;
     background-color: black;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     height: 280px;
     border-radius: 5px;
     align-items: center;
