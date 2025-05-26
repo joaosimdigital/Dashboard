@@ -393,15 +393,14 @@ const fetchCrescimentoMesAtual = async () => {
     const mes = mesIndex + 1;
     const ano = parseInt(`20${anoStr}`);
 
-    const response = await fetch(`http://38.224.145.3:3009/clientestotal-crescimento-mesatual?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://localhost:3009/clientestotal-crescimento-mesatual?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) throw new Error('Erro na requisição');
 
     const data = await response.json();
 
-    // Pega o último mês da lista (mais recente)
-    const ultimoMes = data.dados[data.dados.length - 1];
+    setCrescimento(data.dados[0]?.crescimento_percentual ?? null);
 
-    setCrescimento(ultimoMes?.crescimento_percentual ?? null);
+    console.log(setCrescimento);
   } catch (error) {
     console.error('Erro ao buscar crescimento do mês selecionado:', error);
   }

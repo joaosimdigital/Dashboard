@@ -13,6 +13,7 @@ import DashboardChurnGerencial from '../Page/DashboardChurnGerencial';
 import DashboardCancelamentosClone from '../Page/DashboardCancelamentosClone';
 import DashboardComercialgerencial from '../Page/DashboardComercialgerencial';
 import DashboardClientesgerencial from '../Page/DashboardClientesgerencial';
+import DashboardOperacionalGerencial from '../Page/DashboardOperacionalGerencial';
 
 const Rotas = () => {
   return (
@@ -28,6 +29,7 @@ const Rotas = () => {
         <Route path='/dashboardchurngerencial' element={<DashboardChurnGerencial />} />
         <Route path='/dashboardcomercialgerencial' element={<DashboardComercialgerencial />} />
          <Route path='/geral' element={<DashboardClientesgerencial />} />  
+        <Route path='/dashboardoperacionalgerencial' element={<DashboardOperacionalGerencial />} />  
       </Routes>
     </Router>
   );
