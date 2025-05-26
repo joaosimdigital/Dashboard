@@ -92,6 +92,7 @@
     margin-bottom: 0px;
     display: flex;
     align-items: center;
+    margin-left: 5px;
 }
 
 .h4-card1-gerencial-geral{
@@ -102,6 +103,7 @@
     margin-bottom: 0px;
     display: flex;
     align-items: center;
+    margin-right: 5px;
 
 }
 
@@ -217,3 +219,157 @@
     flex-direction: column;
 }
 
+.div-card6-gerencial-geral{
+    width: 12%;
+    background-color: #FFC300;
+    height: 280px;
+    border-radius: 5px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.div-card7-gerencial-geral{
+    width: 12%;
+    background-color: #E9B407;
+    height: 280px;
+    border-radius: 5px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.div-card8-gerencial-geral{
+    width: 12%;
+    background-color: #E96507;
+    height: 280px;
+    border-radius: 5px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.div-card9-gerencial-geral{
+    width: 12%;
+    background-color: #CE0505;
+    height: 280px;
+    border-radius: 5px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.div-card10-gerencial-geral{
+    width: 12%;
+    background-color: black;
+    height: 280px;
+    border-radius: 5px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.div-slas {
+  width: 450px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  font-family: Bold;
+  color: white;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+ 
+}
+
+.sla-titulo {
+  background-color: #4c4c4c;
+  padding: 12px 16px;
+  text-align: center;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.sla-titulo-texto {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.sla-titulo-subtexto {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #cccccc;
+}
+
+.sla-categorias {
+  display: flex;
+  background-color: #928a8a;
+  text-align: center;
+}
+
+.sla-categoria {
+  flex: 1;
+  padding: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sla-valores {
+  display: flex;
+  background-color: #25282c;
+  text-align: center;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.sla-valor {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+
+.div-tabela-scroll {
+  overflow-x: auto;
+  max-width: 98%;
+  background-color: #525252;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  justify-self: center;
+  display: flex;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.tabela-clientes {
+  border-collapse: collapse;
+  width: max-content; /* permite rolagem horizontal */
+  min-width: 1200px;
+  font-family: 'Arial', sans-serif;
+}
+
+.tabela-clientes thead {
+  background-color: #292D32;
+  color: white;
+}
+
+.tabela-clientes th,
+.tabela-clientes td {
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 12px;
+  border: 1px solid #999;
+  white-space: nowrap; /* impede quebra de texto */
+}
+
+.tabela-clientes tbody tr {
+  background-color: #525252;
+  color: white;
+}
+
+.tabela-clientes tbody tr:nth-child(even) {
+  background-color: #767676;
+}
