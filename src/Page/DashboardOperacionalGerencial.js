@@ -1,27 +1,304 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import '../CSS/DashboardOperacionalGerencial.css'
 import logobranca from '../Images/logobrnaca.png'
 
 function DashboardOperacionalGerencial() {
+          const [totalManutencaoMes, setTotalManutencaoMes] = useState(0);
+      const [totalInstalacaoMes, setTotalInstalacaoMes] = useState(0);
+            const [totalTrocaEndMes, setTotalTrocaEndMes] = useState(0);
+            const [totalOutrosMes, setTotalOutrosMes]  = useState(0);
+               const [totalResumoMes, setTotalResumoMes]  = useState(0);
+               const [totalInstalacaoHoje, setTotalInstalacaoHoje] = useState(0);
+const [totalManutencaoHoje, setTotalManutencaoHoje] = useState(0);
+const [totalTrocaEndHoje, setTotalTrocaEndHoje] = useState(0);
+const [totalOutrosHoje, setTotalOutrosHoje] = useState(0);
+const [totalResumoHoje, setTotalResumoHoje] = useState(0);
+ const [dadosTabelaCidade, setDadosTabelaCidade] = useState([]);
+ const [dadosbairros, setDadosBairros] = useState([]);
+  const [dados, setDados] = useState([]);
+    const [dados2, setDados2] = useState([]);
+            const [dados3, setDados3] = useState([]);
+                const [dados4, setDados4] = useState([]);
+                    const [dados5, setDados5] = useState([]);
+                            const [dados6, setDados6] = useState([]);
+     const [totais, setTotais] = useState({
+    total_instalacoes: 0,
+    total_trocas: 0,
+    total_manutencoes: 0,
+    total_outros: 0,
+    total_geral: 0,
+  });
 
 
-    const dados = [
-  { cidade: 'FLORIANÓPOLIS', instalacoes: 100, manutencao: 50, trocaEndereco: 50, outros: 25 },
-  { cidade: 'CAXIAS DO SUL', instalacoes: 100, manutencao: 50, trocaEndereco: 50, outros: 25 },
-  { cidade: 'SÃO JOSÉ', instalacoes: 100, manutencao: 50, trocaEndereco: 50, outros: 25 },
-  { cidade: 'PALHOÇA', instalacoes: 100, manutencao: 50, trocaEndereco: 50, outros: 25 },
-  { cidade: 'CRICIÚMA', instalacoes: 100, manutencao: 50, trocaEndereco: 50, outros: 25 },
-];
+    const [semAgenda, setSemAgenda] = useState({
+    total_instalacoes: 0,
+    total_trocas: 0,
+    total_manutencoes: 0,
+    total_outros: 0,
+    total_geral: 0,
+  });
 
 
- const dadosbairros = [
-  { bairros: 'INGLESES', instalacoes: 100, manutencao: 50, trocaEndereco: 50, outros: 25 },
-  { bairros: 'CAMPECHE', instalacoes: 100, manutencao: 50, trocaEndereco: 50, outros: 25 },
-  { bairros: 'SÃO JOÃO DO RIO VERMELHO', instalacoes: 100, manutencao: 50, trocaEndereco: 50, outros: 25 },
-  { bairros: 'VARGEM GRANDE', instalacoes: 100, manutencao: 50, trocaEndereco: 50, outros: 25 },
-  { bairros: 'VARGEM PEQUENA', instalacoes: 100, manutencao: 50, trocaEndereco: 50, outros: 25 },
-];
+
+    useEffect(() => {
+    fetch('http://38.224.145.3:3010/ordens-servico-sem-agendamento')
+      .then(res => res.json())
+      .then(data => {
+        setSemAgenda(data);
+      })
+      .catch(err => {
+        console.error('Erro ao buscar ordens sem agendamento:', err);
+      });
+  }, []);
+
+
+    useEffect(() => {
+    fetch('http://38.224.145.3:3010/ordens-servico-vencidas-mes')
+      .then(res => res.json())
+      .then(data => {
+        setTotais(data);
+      })
+      .catch(error => {
+        console.error('Erro ao buscar ordens vencidas:', error);
+      });
+  }, []);
+
+useEffect(() => {
+    const fetchDadosAmanha1 = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha1');
+        if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
+
+        const data = await res.json();
+        setDados(data);
+      } catch (error) {
+        console.error('Erro ao carregar dados D+1:', error);
+      }
+    };
+
+
+      const fetchDadosAmanha2 = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha2');
+        if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
+
+        const data = await res.json();
+        setDados2(data);
+      } catch (error) {
+        console.error('Erro ao carregar dados D+1:', error);
+      }
+    };
+
+      const fetchDadosAmanha3 = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha3');
+        if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
+
+        const data = await res.json();
+        setDados3(data);
+      } catch (error) {
+        console.error('Erro ao carregar dados D+1:', error);
+      }
+    };
+
+
+         const fetchDadosAmanha4 = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha4');
+        if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
+
+        const data = await res.json();
+        setDados4(data);
+      } catch (error) {
+        console.error('Erro ao carregar dados D+1:', error);
+      }
+    };
+
+
+    const fetchDadosAmanha5 = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha5');
+        if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
+
+        const data = await res.json();
+        setDados5(data);
+      } catch (error) {
+        console.error('Erro ao carregar dados D+1:', error);
+      }
+    };
+
+
+       const fetchDadosAmanha6 = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha6');
+        if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
+
+        const data = await res.json();
+        setDados6(data);
+      } catch (error) {
+        console.error('Erro ao carregar dados D+1:', error);
+      }
+    };
+
+
+    fetchDadosAmanha1();
+    fetchDadosAmanha2();
+    fetchDadosAmanha3();
+    fetchDadosAmanha4();
+    fetchDadosAmanha5();   
+    fetchDadosAmanha6(); 
+
+
+  }, []);
+
+ useEffect(() => {
+    fetch('http://38.224.145.3:3010/ordens-servico-total-mes-por-cidade')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erro na resposta da API');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const dadosFormatados = data.cidades.map(item => ({
+          cidade: item.cidade,
+          instalacoes: item.total_instalacoes,
+          manutencao: item.total_manutencoes,
+          trocaEndereco: item.total_trocas,
+          outros: item.total_outros
+        }));
+        setDadosTabelaCidade(dadosFormatados);
+
+      })
+      .catch(error => {
+
+      });
+  }, []);
+
+  
+
+useEffect(() => {
+  const fetchInstalacoes = async () => {
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-instalacoes-do-mes');
+    if (!res.ok) throw new Error('Erro ao buscar instalações');
+    const data = await res.json();
+    setTotalInstalacaoMes(data.ordens_servico_mes[0]?.total_ordens_instalacao || 0);
+  };
+
+  const fetchManutencoes = async () => {
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-manutencao-do-mes');
+    if (!res.ok) throw new Error('Erro ao buscar manutenções');
+    const data = await res.json();
+    setTotalManutencaoMes(data.ordens_servico_mes[0]?.total_ordens_manutencao || 0);
+  };
+
+  const fetchTrocas = async () => {
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-trocas-do-mes');
+    if (!res.ok) throw new Error('Erro ao buscar trocas');
+    const data = await res.json();
+    setTotalTrocaEndMes(data.ordens_servico_mes[0]?.total_ordens_troca_endereco || 0);
+  };
+
+  const fetchOutros = async () => {
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-outros-do-mes');
+    if (!res.ok) throw new Error('Erro ao buscar outros motivos');
+    const data = await res.json();
+    setTotalOutrosMes(data.ordens_servico_mes[0]?.total_ordens_outros || 0);
+  };
+
+  const fetchResumo = async () => {
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-do-mes');
+    if (!res.ok) throw new Error('Erro ao buscar resumo mensal');
+    const data = await res.json();
+    setTotalResumoMes(data.total_geral || 0);
+  };
+
+
+const fetchInstalacoesHoje = async () => {
+  const res = await fetch('http://38.224.145.3:3010/ordens-servico-instalacoes-hoje');
+  if (!res.ok) throw new Error('Erro ao buscar instalações de hoje');
+  const data = await res.json();
+
+  // Correção aqui:
+  const total = data.ordens_servico_hoje?.[0]?.total_ordens_instalacao || 0;
+  setTotalInstalacaoHoje(Number(total));
+};
+
+  const fetchManutencoesHoje = async () => {
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-manutencao-hoje');
+    if (!res.ok) throw new Error('Erro ao buscar manutenções de hoje');
+    const data = await res.json();
+    setTotalManutencaoHoje(data.ordens_servico_hoje?.[0]?.total_ordens_manutencao || 0);
+  };
+
+  const fetchTrocasHoje = async () => {
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-trocas-hoje');
+    if (!res.ok) throw new Error('Erro ao buscar trocas de endereço de hoje');
+    const data = await res.json();
+    setTotalTrocaEndHoje(data.ordens_servico_hoje?.[0]?.total_ordens_troca || 0);
+  };
+
+  const fetchOutrosHoje = async () => {
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-outros-hoje');
+    if (!res.ok) throw new Error('Erro ao buscar ordens de outros motivos de hoje');
+    const data = await res.json();
+    setTotalOutrosHoje(data.ordens_servico_hoje?.[0]?.total_ordens_outros || 0);
+  };
+
+  const fetchResumoHoje = async () => {
+  const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-hoje');
+  if (!res.ok) throw new Error('Erro ao buscar resumo de hoje');
+  const data = await res.json();
+  setTotalResumoHoje(data.total_geral || 0);
+};
+
+
+
+  const fetchDadosBairros = async () => {
+  try {
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-mes-por-bairro');
+    if (!res.ok) throw new Error('Erro ao buscar dados por bairro');
+    
+    const data = await res.json();
+    // Mapeia para manter compatibilidade com nomes de chave utilizados na tabela
+    const transformado = data.bairros.map(bairro => ({
+      bairros: bairro.bairro || 'Não informado',
+      instalacoes: bairro.total_instalacoes || 0,
+      manutencao: bairro.total_manutencoes || 0,
+      trocaEndereco: bairro.total_trocas || 0,
+      outros: bairro.total_outros || 0
+    }));
+    setDadosBairros(transformado);
+  } catch (error) {
+    console.error('Erro ao carregar bairros:', error);
+  }
+};
+
+
+  const buscarTodos = async () => {
+    try {
+      await Promise.all([
+        fetchInstalacoes(),
+        fetchManutencoes(),
+        fetchTrocas(),
+        fetchOutros(),
+        fetchResumo(),
+         fetchInstalacoesHoje(),
+        fetchManutencoesHoje(),
+        fetchTrocasHoje(),
+        fetchOutrosHoje(),
+        fetchResumoHoje(),
+        fetchDadosBairros()
+      ]);
+    } catch (error) {
+      console.error('Erro ao buscar dados mensais:', error);
+    }
+  };
+
+  buscarTodos();
+}, []);
+
 
 
 
@@ -209,6 +486,7 @@ const dadosClientes = [
 ];
 
 
+
   return (
     <div>
 
@@ -233,29 +511,29 @@ const dadosClientes = [
 
                     <div className='div-card1-gerencial-geral'>
                         <h1 className='h1-card1-gerencial-geral'>BACKLOG TOTAL</h1>
-                        <h1  className='h2-card1-gerencial-geral'>200</h1>
+                        <h1  className='h2-card1-gerencial-geral'>{totalResumoMes}</h1>
 
                         <div className='div-card1-gerencial-geral1'>
                        
                                 <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalInstalacaoMes}</h1>
                                  </div>
 
                                   <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalTrocaEndMes}</h1>
                                  </div>
 
                                       <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalManutencaoMes}</h1>
                                  </div>
 
 
                                   <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalOutrosMes}</h1>
                                  </div>
 
                              
@@ -265,29 +543,29 @@ const dadosClientes = [
 
                                     <div className='div-card1-gerencial-geral'>
                         <h1 className='h1-card1-gerencial-geral'>AGENDA DIA</h1>
-                        <h1  className='h2-card1-gerencial-geral'>200</h1>
+                        <h1  className='h2-card1-gerencial-geral'>{totalResumoHoje}</h1>
 
                         <div className='div-card1-gerencial-geral1'>
                        
                                 <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalInstalacaoHoje}</h1>
                                  </div>
 
                                   <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalTrocaEndHoje}</h1>
                                  </div>
 
                                       <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalManutencaoHoje}</h1>
                                  </div>
 
 
                                   <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalOutrosHoje}</h1>
                                  </div>
 
                              
@@ -309,10 +587,14 @@ const dadosClientes = [
           </tr>
         </thead>
         <tbody>
-          {dados.map((item, index) => (
-            <tr key={item.cidade} style={{flexDirection: 'row', display:'flex', height: 30,
-    borderTop: '1px solid white',
-    borderBottom: '1px solid white'}} className={index % 2 === 1 ? 'bg-gray-800' : 'bg-gray-600'}>
+          {dadosTabelaCidade.map((item, index) => (
+            <tr key={item.cidade} style={{
+              flexDirection: 'row',
+              display: 'flex',
+              height: 30,
+              borderTop: '1px solid white',
+              borderBottom: '1px solid white'
+            }} className={index % 2 === 1 ? 'bg-gray-800' : 'bg-gray-600'}>
               <td className="h7-card1-gerencial-geral">{item.cidade}</td>
               <td className="h8-card1-gerencial-geral">{item.instalacoes}</td>
               <td className="h8-card1-gerencial-geral">{item.manutencao}</td>
@@ -325,32 +607,48 @@ const dadosClientes = [
     </div>
 
 
-                 <div className="div-card2-gerencial-geral">
-      <table style={{marginTop: 20, width: '95%'}}>
-        <thead style={{width: '100%'}}>
-          <tr className="row-card2-gerencial-geral">
-            <th className="h5-card1-gerencial-geral">CIDADE</th>
-            <th className="h6-card1-gerencial-geral">INSTALAÇÕES</th>
-            <th className="h6-card1-gerencial-geral">MANUT.</th>
-            <th className="h6-card1-gerencial-geral">TROCA END.</th>
-            <th className="h6-card1-gerencial-geral">OUTROS</th>
+<div className="div-card2-gerencial-geral">
+
+
+  {/* Div com rolagem vertical */}
+  <div style={{ maxHeight: '400px', overflowY: 'auto', width: '95%', height: 260 }}>
+    <table style={{ marginTop: 20, width: '95%' }}>
+      <thead style={{ width: '100%' }}>
+        <tr className="row-card2-gerencial-geral">
+          <th className="h5-card1-gerencial-geral">BAIRRO</th>
+          <th className="h6-card1-gerencial-geral">INSTALAÇÕES</th>
+          <th className="h6-card1-gerencial-geral">MANUT.</th>
+          <th className="h6-card1-gerencial-geral">TROCA END.</th>
+          <th className="h6-card1-gerencial-geral">OUTROS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {dadosbairros.map((item, index) => (
+          <tr
+            key={index}
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              borderTop: '1px solid white',
+              borderBottom: '1px solid white',
+              height: 30
+            }}
+            className={index % 2 === 1 ? 'bg-gray-800' : 'bg-gray-600'}
+          >
+            <td className="h7-card1-gerencial-geral" >{item.bairros}</td>
+            <td className="h8-card1-gerencial-geral" >{item.instalacoes}</td>
+            <td className="h8-card1-gerencial-geral" >{item.manutencao}</td>
+            <td className="h8-card1-gerencial-geral" >{item.trocaEndereco}</td>
+            <td className="h8-card1-gerencial-geral" >{item.outros}</td>
           </tr>
-        </thead>
-        <tbody>
-          {dadosbairros.map((item, index) => (
-            <tr key={item.bairros} style={{flexDirection: 'row', display:'flex',
-    borderTop: '1px solid white',
-    borderBottom: '1px solid white'}} className={index % 2 === 1 ? 'bg-gray-800' : 'bg-gray-600'}>
-              <td className="h7-card1-gerencial-geral">{item.bairros}</td>
-              <td className="h8-card1-gerencial-geral">{item.instalacoes}</td>
-              <td className="h8-card1-gerencial-geral">{item.manutencao}</td>
-              <td className="h8-card1-gerencial-geral">{item.trocaEndereco}</td>
-              <td className="h8-card1-gerencial-geral">{item.outros}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
            
 
             </div>    
@@ -359,268 +657,230 @@ const dadosClientes = [
             <div style={{ width: '100%', marginTop: 20, display: 'flex', justifyContent: 'space-around'}}>
 
 
-                 <div className='div-card4-gerencial-geral'>
-                        <h1 className='h1-card1-gerencial-geral'>D + 1</h1>
-                        <h1  className='h2-card1-gerencial-geral'>200</h1>
+                    <div className='div-card4-gerencial-geral'>
+      <h1 className='h1-card1-gerencial-geral'>D + 1</h1>
+      <h1 className='h2-card1-gerencial-geral'>{dados.total_geral}</h1>
 
-                        <div className='div-card1-gerencial-geral1'>
-                       
-                                <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+      <div className='div-card1-gerencial-geral1'>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados.total_instalacoes}</h1>
+        </div>
 
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados.total_trocas}</h1>
+        </div>
 
-                                      <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados.total_manutencoes}</h1>
+        </div>
 
-
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
-
-                             
-      
-                        </div>
-                    </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados.total_outros}</h1>
+        </div>
+      </div>
+    </div>
 
 
-                      <div className='div-card5-gerencial-geral'>
-                        <h1 className='h1-card1-gerencial-geral'>D + 2</h1>
-                        <h1  className='h2-card1-gerencial-geral'>200</h1>
+                        <div className='div-card5-gerencial-geral'>
+      <h1 className='h1-card1-gerencial-geral'>D + 2</h1>
+      <h1 className='h2-card1-gerencial-geral'>{dados2.total_geral}</h1>
 
-                        <div className='div-card1-gerencial-geral1'>
-                       
-                                <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+      <div className='div-card1-gerencial-geral1'>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados2.total_instalacoes}</h1>
+        </div>
 
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados2.total_trocas}</h1>
+        </div>
 
-                                      <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados2.total_manutencoes}</h1>
+        </div>
 
-
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
-
-                             
-      
-                        </div>
-                    </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados2.total_outros}</h1>
+        </div>
+      </div>
+    </div>
 
 
-                      <div className='div-card6-gerencial-geral'>
-                        <h1 className='h1-card1-gerencial-geral'>D + 3</h1>
-                        <h1  className='h2-card1-gerencial-geral'>200</h1>
 
-                        <div className='div-card1-gerencial-geral1'>
-                       
-                                <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+                                      <div className='div-card6-gerencial-geral'>
+      <h1 className='h1-card1-gerencial-geral'>D + 3</h1>
+      <h1 className='h2-card1-gerencial-geral'>{dados3.total_geral}</h1>
 
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+      <div className='div-card1-gerencial-geral1'>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados3.total_instalacoes}</h1>
+        </div>
 
-                                      <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados3.total_trocas}</h1>
+        </div>
 
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados3.total_manutencoes}</h1>
+        </div>
 
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
-
-                             
-      
-                        </div>
-                    </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados3.total_outros}</h1>
+        </div>
+      </div>
+    </div>
 
 
-                      <div className='div-card7-gerencial-geral'>
-                        <h1 className='h1-card1-gerencial-geral'>D + 4</h1>
-                        <h1  className='h2-card1-gerencial-geral'>200</h1>
+                                      <div className='div-card7-gerencial-geral'>
+      <h1 className='h1-card1-gerencial-geral'>D + 4</h1>
+      <h1 className='h2-card1-gerencial-geral'>{dados4.total_geral}</h1>
 
-                        <div className='div-card1-gerencial-geral1'>
-                       
-                                <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+      <div className='div-card1-gerencial-geral1'>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados4.total_instalacoes}</h1>
+        </div>
 
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados4.total_trocas}</h1>
+        </div>
 
-                                      <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados4.total_manutencoes}</h1>
+        </div>
 
-
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
-
-                             
-      
-                        </div>
-                    </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados4.total_outros}</h1>
+        </div>
+      </div>
+    </div>
 
 
-                      <div className='div-card8-gerencial-geral'>
-                        <h1 className='h1-card1-gerencial-geral'>D + 5</h1>
-                        <h1  className='h2-card1-gerencial-geral'>200</h1>
 
-                        <div className='div-card1-gerencial-geral1'>
-                       
-                                <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+                            <div className='div-card8-gerencial-geral'>
+      <h1 className='h1-card1-gerencial-geral'>D + 5</h1>
+      <h1 className='h2-card1-gerencial-geral'>{dados5.total_geral}</h1>
 
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+      <div className='div-card1-gerencial-geral1'>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados5.total_instalacoes}</h1>
+        </div>
 
-                                      <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados5.total_trocas}</h1>
+        </div>
 
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados5.total_manutencoes}</h1>
+        </div>
 
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados5.total_outros}</h1>
+        </div>
+      </div>
+    </div>
 
-                             
-      
-                        </div>
-                    </div>
+                                       <div className='div-card9-gerencial-geral'>
+      <h1 className='h1-card1-gerencial-geral'>D + 6</h1>
+      <h1 className='h2-card1-gerencial-geral'>{dados6.total_geral}</h1>
 
+      <div className='div-card1-gerencial-geral1'>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados6.total_instalacoes}</h1>
+        </div>
 
-                      <div className='div-card9-gerencial-geral'>
-                        <h1 className='h1-card1-gerencial-geral'>D + 6 (Futuro)</h1>
-                        <h1  className='h2-card1-gerencial-geral'>200</h1>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados6.total_trocas}</h1>
+        </div>
 
-                        <div className='div-card1-gerencial-geral1'>
-                       
-                                <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados6.total_manutencoes}</h1>
+        </div>
 
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
-
-                                      <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
-
-
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
-
-                             
-      
-                        </div>
-                    </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados6.total_outros}</h1>
+        </div>
+      </div>
+    </div>
 
 
-                      <div className='div-card10-gerencial-geral'>
-                        <h1 className='h1-card1-gerencial-geral'>SEM AGENDA</h1>
-                        <h1  className='h2-card1-gerencial-geral'>200</h1>
 
-                        <div className='div-card1-gerencial-geral1'>
-                       
-                                <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+                    <div className='div-card10-gerencial-geral'>
+      <h1 className='h1-card1-gerencial-geral'>SEM AGENDA</h1>
+      <h1 className='h2-card1-gerencial-geral'>{semAgenda.total_geral}</h1>
 
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+      <div className='div-card1-gerencial-geral1'>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{semAgenda.total_instalacoes}</h1>
+        </div>
 
-                                      <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
+          <h1 className='h4-card1-gerencial-geral'>{semAgenda.total_trocas}</h1>
+        </div>
 
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{semAgenda.total_manutencoes}</h1>
+        </div>
 
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
-
-                             
-      
-                        </div>
-                    </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
+          <h1 className='h4-card1-gerencial-geral'>{semAgenda.total_outros}</h1>
+        </div>
+      </div>
+    </div>
 
 
-                      <div className='div-card3-gerencial-geral'>
-                        <h1 className='h1-card1-gerencial-geral'>VENCIDOS</h1>
-                        <h1  className='h2-card1-gerencial-geral'>200</h1>
+                       <div className='div-card3-gerencial-geral'>
+      <h1 className='h1-card1-gerencial-geral'>VENCIDOS</h1>
+      <h1 className='h2-card1-gerencial-geral'>{totais.total_geral}</h1>
 
-                        <div className='div-card1-gerencial-geral1'>
-                       
-                                <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+      <div className='div-card1-gerencial-geral1'>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{totais.total_instalacoes}</h1>
+        </div>
 
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
+          <h1 className='h4-card1-gerencial-geral'>{totais.total_trocas}</h1>
+        </div>
 
-                                      <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+          <h1 className='h4-card1-gerencial-geral'>{totais.total_manutencoes}</h1>
+        </div>
 
-
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>200</h1>
-                                 </div>
-
-                             
-      
-                        </div>
-                    </div>
+        <div className='row-card1-gerencial-geral'>
+          <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
+          <h1 className='h4-card1-gerencial-geral'>{totais.total_outros}</h1>
+        </div>
+      </div>
+    </div>
 
             </div>
 

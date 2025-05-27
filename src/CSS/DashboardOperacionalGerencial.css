@@ -22,7 +22,7 @@
     color: white;
     font-size: 50px;
     display: flex;
-    width: 70%;
+    width: 100%;
     align-items: center;
 }
 
@@ -30,7 +30,7 @@
 .amarelo-h2-head-gerencial-body{
       font-family: Bold;
     margin-left: 10px;
-    color: yellow;
+    color: #FFC300;
     font-size: 50px;
     display: flex;
     align-items: center;
@@ -135,26 +135,27 @@
 
 
 .h5-card1-gerencial-geral{
-    font-size: 15px;
+    font-size: 11px;
     margin-top: 0px;
     color: white;
     font-family: Bold;
     margin-bottom: 0px;
     display: flex;
     align-items: start;
-    width: 70%;
+    width: 60%;
 
 }
 
 .h6-card1-gerencial-geral{
-    font-size: 15px;
+    font-size: 11px;
     margin-top: 0px;
     color: white;
+
     font-family: Bold;
     margin-bottom: 0px;
     display: flex;
-    text-align: end;
-    width: 50%;
+    text-align: start;
+    width: 30%;
 
 }
 
@@ -167,26 +168,25 @@
 }
 
 .h7-card1-gerencial-geral{
-    font-size: 15px;
+    font-size: 11px;
     margin-top: 0px;
     color: white;
     font-family: Bold;
     margin-bottom: 0px;
     display: flex;
     align-items: start;
-    width: 70%;
-
+    width: 65%;
 }
 
 .h8-card1-gerencial-geral{
-    font-size: 15px;
+    font-size: 11px;
     margin-top: 0px;
     color: white;
     font-family: Bold;
     margin-bottom: 0px;
     display: flex;
     text-align: start;
-    width: 50%;
+    width: 30%;
 
 }
 
