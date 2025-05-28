@@ -393,7 +393,7 @@ const fetchCrescimentoMesAtual = async () => {
     const mes = mesIndex + 1;
     const ano = parseInt(`20${anoStr}`);
 
-    const response = await fetch(`http://localhost:3009/clientestotal-crescimento-mesatual?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/clientestotal-crescimento-mesatual?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) throw new Error('Erro na requisição');
 
     const data = await response.json();
