@@ -354,6 +354,9 @@
   display: flex;
   margin-top: 20px;
   margin-bottom: 40px;
+  max-height: 600px; /* define altura máxima com scroll vertical */
+  overflow-x: auto;  /* scroll horizontal */
+  overflow-y: auto
 }
 
 .tabela-clientes {
