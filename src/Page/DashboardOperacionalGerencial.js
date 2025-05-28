@@ -77,10 +77,10 @@ const [totalResumoHoje, setTotalResumoHoje] = useState(0);
 
 
     useEffect(() => {
-    fetch('http://38.224.145.3:3010/ordens-servico-sem-agendamento')
+    fetch('http://38.224.145.3:3010/ordens-servico-aguardando-agendamento')
       .then(res => res.json())
       .then(data => {
-        setSemAgenda(data);
+        setSemAgenda(data.totais);
       })
       .catch(err => {
         console.error('Erro ao buscar ordens sem agendamento:', err);
@@ -89,7 +89,7 @@ const [totalResumoHoje, setTotalResumoHoje] = useState(0);
 
 
    useEffect(() => {
-  fetch('http://38.224.145.3:3010/ordens-servico-pendente-total-30-dias')
+  fetch('http://38.224.145.3:3010/ordens-servico-pendente-total-mes')
     .then(res => res.json())
     .then(data => {
       if (data && data.totais) {
@@ -338,6 +338,51 @@ const fetchInstalacoesHoje = async () => {
 }, []);
 
 
+const exportarCSV = () => {
+  if (!dadosClientesCompleto.length) return;
+
+  const headers = [
+    "ID OS", "ID CLIENTE", "NOME DO CLIENTE", "SERVIÇO", "VALOR PLANO",
+    "CPF / CNPJ", "BAIRRO", "CIDADE", "DATA CADASTRO",
+    "DATA PEDIDO PROVISIONADO", "HORA PEDIDO PROVISIONADO",
+    "JOTAS", "MAC/ONU", "TIPO CDO", "STATUS", "LOCALIZAÇÃO INSTALADOR"
+  ];
+
+  const csvRows = [
+    headers.join(";"),
+    ...dadosClientesCompleto.map(cliente => {
+      const row = [
+        cliente.id_ordem_servico,
+        cliente.id_cliente_servico,
+        cliente.cliente_nome,
+        cliente.descricao_servico,
+        cliente.valor,
+        cliente.tipo_pessoa === "pf" ? "CPF" : "CNPJ",
+        cliente.bairro_cliente,
+        cliente.cidade_nome,
+        new Date(cliente.data_cadastro).toLocaleDateString(),
+        new Date(cliente.data_inicio_programado).toLocaleDateString(),
+        new Date(cliente.data_inicio_programado).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        cliente.jotas || "-",
+        cliente.macOnu || "-",
+        cliente.tipoCdo || "-",
+        cliente.status,
+        cliente.instalador || "-"
+      ];
+      return row.map(item => `"${item}"`).join(";");
+    })
+  ];
+
+  const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "dados_clientes_completo.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
 
 
@@ -683,27 +728,27 @@ const fetchInstalacoesHoje = async () => {
 
                     <div className='div-card10-gerencial-geral'>
       <h1 className='h1-card1-gerencial-geral'>SEM AGENDA</h1>
-      <h1 className='h2-card1-gerencial-geral'>{semAgenda.total_geral}</h1>
+      <h1 className='h2-card1-gerencial-geral'>{semAgenda.todos}</h1>
 
       <div className='div-card1-gerencial-geral1'>
         <div className='row-card1-gerencial-geral'>
           <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
-          <h1 className='h4-card1-gerencial-geral'>{semAgenda.total_instalacoes}</h1>
+          <h1 className='h4-card1-gerencial-geral'>{semAgenda.instalacoes}</h1>
         </div>
 
         <div className='row-card1-gerencial-geral'>
           <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{semAgenda.total_trocas}</h1>
+          <h1 className='h4-card1-gerencial-geral'>{semAgenda.trocas_endereco}</h1>
         </div>
 
         <div className='row-card1-gerencial-geral'>
           <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
-          <h1 className='h4-card1-gerencial-geral'>{semAgenda.total_manutencoes}</h1>
+          <h1 className='h4-card1-gerencial-geral'>{semAgenda.manutencoes}</h1>
         </div>
 
         <div className='row-card1-gerencial-geral'>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
-          <h1 className='h4-card1-gerencial-geral'>{semAgenda.total_outros}</h1>
+          <h1 className='h4-card1-gerencial-geral'>{semAgenda.outros}</h1>
         </div>
       </div>
     </div>
@@ -762,7 +807,7 @@ const fetchInstalacoesHoje = async () => {
     </div>
 
             <div style={{width: '100%', marginTop: 20, display: 'flex', justifyContent:'flex-end', alignSelf: 'center'}}>
-              <button style={{ width: 150, marginRight: 10, backgroundColor: '#0B8634', borderRadius: 5, color: 'white', fontWeight: 'bold', border: 'transparent', height: 35, cursor: 'pointer'}}>EXPORTAR .CSV</button>
+              <button   onClick={exportarCSV} style={{ width: 150, marginRight: 10, backgroundColor: '#0B8634', borderRadius: 5, color: 'white', fontWeight: 'bold', border: 'transparent', height: 35, cursor: 'pointer'}}>EXPORTAR .CSV</button>
             </div>
 
         <div className="div-tabela-scroll">
