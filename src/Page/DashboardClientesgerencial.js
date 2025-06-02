@@ -1694,7 +1694,7 @@ const buscarCancelamentosAutomaticoUltimos = async (mes, ano) => {
                   </div>
 
                   <div className='card3-div--geral-dados'>
-                    <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+                    <h1 className='h1-card2-div--geral-dados'>Limites</h1>
                     <h1 className='h2-card2-div--geral-dados'>
                       {cancelamentosBaseSelecionado ? cancelamentosBaseSelecionado.meta : '—'}
                     </h1>
@@ -1709,7 +1709,7 @@ const buscarCancelamentosAutomaticoUltimos = async (mes, ano) => {
                   </div>
 
                   <div className='card3-div--geral-dados'>
-                    <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+                    <h1 className='h1-card2-div--geral-dados'>Super Limites</h1>
                     <h1 className='h2-card2-div--geral-dados'>
                       {cancelamentosBaseSelecionado ? cancelamentosBaseSelecionado.super_meta : '—'}
                     </h1>
