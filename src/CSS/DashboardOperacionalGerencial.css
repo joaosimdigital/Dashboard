@@ -91,6 +91,7 @@
     margin-top: 0px;
     color: white;
     font-family: Normal;
+    cursor: pointer;
     margin-bottom: 0px;
     display: flex;
     align-items: center;
@@ -181,6 +182,7 @@
 .h8-card1-gerencial-geral{
     font-size: 11px;
     margin-top: 0px;
+    cursor: pointer;
     color: white;
     font-family: Bold;
     margin-bottom: 0px;
