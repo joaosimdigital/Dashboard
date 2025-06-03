@@ -138,7 +138,7 @@ if (escopo === "amanha") {
     params.append("fim", fim.toISOString().split("T")[0]);
   }
 
-  const url = `http://localhost:3010/ordens-servico-categorias-completo-mes?${params.toString()}`;
+  const url = `http://38.224.145.3:3010/ordens-servico-categorias-completo-mes?${params.toString()}`;
   console.log("➡️ Requisição para backend:", url);
 
   try {
@@ -155,7 +155,7 @@ if (escopo === "amanha") {
 
 
     useEffect(() => {
-    fetch('http://localhost:3010/sla-os-categorias-30-dias')
+    fetch('http://38.224.145.3:3010/sla-os-categorias-30-dias')
       .then(response => response.json())
       .then(data => {
         if (data.sla_medio_dias) {
@@ -170,7 +170,7 @@ if (escopo === "amanha") {
 
 
     useEffect(() => {
-    fetch('http://localhost:3010/ordens-servico-aguardando-agendamento')
+    fetch('http://38.224.145.3:3010/ordens-servico-aguardando-agendamento')
       .then(res => res.json())
       .then(data => {
         setSemAgenda(data.totais);
@@ -182,7 +182,7 @@ if (escopo === "amanha") {
 
 
    useEffect(() => {
-  fetch('http://localhost:3010/ordens-servico-pendente-total-mes')
+  fetch('http://38.224.145.3:3010/ordens-servico-pendente-total-mes')
     .then(res => res.json())
     .then(data => {
       if (data && data.totais) {
@@ -198,7 +198,7 @@ if (escopo === "amanha") {
 useEffect(() => {
     const fetchDadosAmanha1 = async () => {
       try {
-        const res = await fetch('http://localhost:3010/ordens-servico-total-amanha1');
+        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha1');
         if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
 
         const data = await res.json();
@@ -211,7 +211,7 @@ useEffect(() => {
 
       const fetchDadosAmanha2 = async () => {
       try {
-        const res = await fetch('http://localhost:3010/ordens-servico-total-amanha2');
+        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha2');
         if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
 
         const data = await res.json();
@@ -223,7 +223,7 @@ useEffect(() => {
 
       const fetchDadosAmanha3 = async () => {
       try {
-        const res = await fetch('http://localhost:3010/ordens-servico-total-amanha3');
+        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha3');
         if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
 
         const data = await res.json();
@@ -236,7 +236,7 @@ useEffect(() => {
 
          const fetchDadosAmanha4 = async () => {
       try {
-        const res = await fetch('http://localhost:3010/ordens-servico-total-amanha4');
+        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha4');
         if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
 
         const data = await res.json();
@@ -249,7 +249,7 @@ useEffect(() => {
 
     const fetchDadosAmanha5 = async () => {
       try {
-        const res = await fetch('http://localhost:3010/ordens-servico-total-amanha5');
+        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha5');
         if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
 
         const data = await res.json();
@@ -262,7 +262,7 @@ useEffect(() => {
 
        const fetchDadosAmanha6 = async () => {
       try {
-        const res = await fetch('http://localhost:3010/ordens-servico-total-amanha6');
+        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha6');
         if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
 
         const data = await res.json();
@@ -284,7 +284,7 @@ useEffect(() => {
   }, []);
 
  useEffect(() => {
-    fetch('http://localhost:3010/ordens-servico-do-mes-por-cidade')
+    fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade')
       .then(response => {
         if (!response.ok) {
           throw new Error('Erro na resposta da API');
@@ -311,35 +311,35 @@ useEffect(() => {
 
 useEffect(() => {
   const fetchInstalacoes = async () => {
-    const res = await fetch('http://localhost:3010/ordens-servico-instalacoes-do-mes');
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-instalacoes-do-mes');
     if (!res.ok) throw new Error('Erro ao buscar instalações');
     const data = await res.json();
     setTotalInstalacaoMes(data.total_ordens_pendentes_aguardando_instalacao || 0);
   };
 
   const fetchManutencoes = async () => {
-    const res = await fetch('http://localhost:3010/ordens-servico-manutencao-do-mes');
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-manutencao-do-mes');
     if (!res.ok) throw new Error('Erro ao buscar manutenções');
     const data = await res.json();
     setTotalManutencaoMes(data.total_ordens_pendentes_aguardando_manutencao || 0);
   };
 
   const fetchTrocas = async () => {
-    const res = await fetch('http://localhost:3010/ordens-servico-trocas-do-mes');
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-trocas-do-mes');
     if (!res.ok) throw new Error('Erro ao buscar trocas');
     const data = await res.json();
     setTotalTrocaEndMes(data.total_ordens_pendentes_aguardando_troca_endereco || 0);
   };
 
   const fetchOutros = async () => {
-    const res = await fetch('http://localhost:3010/ordens-servico-outros-do-mes');
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-outros-do-mes');
     if (!res.ok) throw new Error('Erro ao buscar outros motivos');
     const data = await res.json();
     setTotalOutrosMes(data.total_ordens_pendentes_aguardando_outros || 0);
   };
 
   const fetchResumo = async () => {
-    const res = await fetch('http://localhost:3010/ordens-servico-total-do-mes');
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-do-mes');
     if (!res.ok) throw new Error('Erro ao buscar resumo mensal');
     const data = await res.json();
     setTotalResumoMes(data.total_geral || 0);
@@ -347,7 +347,7 @@ useEffect(() => {
 
 
 const fetchInstalacoesHoje = async () => {
-  const res = await fetch('http://localhost:3010/ordens-servico-instalacoes-hoje');
+  const res = await fetch('http://38.224.145.3:3010/ordens-servico-instalacoes-hoje');
   if (!res.ok) throw new Error('Erro ao buscar instalações de hoje');
   const data = await res.json();
 
@@ -357,28 +357,28 @@ const fetchInstalacoesHoje = async () => {
 };
 
   const fetchManutencoesHoje = async () => {
-    const res = await fetch('http://localhost:3010/ordens-servico-manutencao-hoje');
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-manutencao-hoje');
     if (!res.ok) throw new Error('Erro ao buscar manutenções de hoje');
     const data = await res.json();
     setTotalManutencaoHoje(data.total_ordens_pendentes_aguardando_manutencao || 0);
   };
 
   const fetchTrocasHoje = async () => {
-    const res = await fetch('http://localhost:3010/ordens-servico-trocas-hoje');
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-trocas-hoje');
     if (!res.ok) throw new Error('Erro ao buscar trocas de endereço de hoje');
     const data = await res.json();
     setTotalTrocaEndHoje(data.total_ordens_pendentes_aguardando_troca_endereco || 0);
   };
 
   const fetchOutrosHoje = async () => {
-    const res = await fetch('http://localhost:3010/ordens-servico-outros-hoje');
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-outros-hoje');
     if (!res.ok) throw new Error('Erro ao buscar ordens de outros motivos de hoje');
     const data = await res.json();
     setTotalOutrosHoje(data.total_ordens_pendentes_aguardando_outros || 0);
   };
 
   const fetchResumoHoje = async () => {
-  const res = await fetch('http://localhost:3010/ordens-servico-total-hoje');
+  const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-hoje');
   if (!res.ok) throw new Error('Erro ao buscar resumo de hoje');
   const data = await res.json();
   setTotalResumoHoje(data.total_geral || 0);
@@ -388,7 +388,7 @@ const fetchInstalacoesHoje = async () => {
 
   const fetchDadosBairros = async () => {
   try {
-    const res = await fetch('http://localhost:3010/ordens-servico-do-mes-por-bairro');
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-bairro');
     if (!res.ok) throw new Error('Erro ao buscar dados por bairro');
     
     const data = await res.json();
