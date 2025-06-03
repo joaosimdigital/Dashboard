@@ -52,79 +52,43 @@ const [totalResumoHoje, setTotalResumoHoje] = useState(0);
  
 const buscarOrdens = async (tipo, escopo, cidade = "", bairro = "") => {
   const hoje = new Date();
-  let dia = hoje.getDate();
-  let mes = hoje.getMonth() + 1;
-  let ano = hoje.getFullYear();
+  const dataInicio = new Date(hoje);
+  let dataFim = new Date(hoje); // inicia com hoje
 
-  if (escopo === 'amanha') {
-    const d1 = new Date();
-    d1.setDate(hoje.getDate() + 1);
-    dia = d1.getDate();
-    mes = d1.getMonth() + 1;
-    ano = d1.getFullYear();
+  // Mapa de escopos para dias adicionais
+  const diasAdicionais = {
+    amanha: 1,
+    d2: 2,
+    d3: 3,
+    d4: 4,
+    d5: 5,
+    d6: 6
+  };
+
+  if (diasAdicionais[escopo]) {
+    dataFim.setDate(dataFim.getDate() + diasAdicionais[escopo]);
   }
 
-  if (escopo === 'd2') {
-    const d2 = new Date();
-    d2.setDate(hoje.getDate() + 2);
-    dia = d2.getDate();
-    mes = d2.getMonth() + 1;
-    ano = d2.getFullYear();
-  }
-
-
-   if (escopo === 'd3') {
-    const d2 = new Date();
-    d2.setDate(hoje.getDate() + 3);
-    dia = d2.getDate();
-    mes = d2.getMonth() + 1;
-    ano = d2.getFullYear();
-  }
-
-
-   if (escopo === 'd4') {
-    const d2 = new Date();
-    d2.setDate(hoje.getDate() + 4);
-    dia = d2.getDate();
-    mes = d2.getMonth() + 1;
-    ano = d2.getFullYear();
-  }
-
-
-   if (escopo === 'd5') {
-    const d2 = new Date();
-    d2.setDate(hoje.getDate() + 5);
-    dia = d2.getDate();
-    mes = d2.getMonth() + 1;
-    ano = d2.getFullYear();
-  }
-
-
-   if (escopo === 'd6') {
-    const d2 = new Date();
-    d2.setDate(hoje.getDate() + 6);
-    dia = d2.getDate();
-    mes = d2.getMonth() + 1;
-    ano = d2.getFullYear();
-  }
+  const dataInicioFormatada = dataInicio.toISOString().split("T")[0];
+  const dataFimFormatada = dataFim.toISOString().split("T")[0];
 
   const params = new URLSearchParams();
   params.append("tipo", tipo);
-  params.append("mes", mes.toString());
-  params.append("ano", ano.toString());
-
-  if (escopo === "hoje" || escopo === "amanha" || escopo === "d2") {
-    params.append("dia", dia.toString());
-  }
+  params.append("inicio", dataInicioFormatada);
+  params.append("fim", dataFimFormatada);
 
   if (cidade) params.append("cidade", cidade);
   if (bairro) params.append("bairro", bairro);
 
-  const url = `http://localhost:3010/ordens-servico-categorias-completo-mes?${params.toString()}`;
+  const url = `http://38.224.145.3:3010/ordens-servico-categorias-completo-mes?${params.toString()}`;
+
+  console.log("➡️ Requisição para backend:", url);
+
   const resposta = await fetch(url);
   const json = await resposta.json();
   setDadosClientesCompleto(json.ordens_servico);
 };
+
 
 
 
@@ -563,10 +527,10 @@ const exportarCSV = () => {
               borderBottom: '1px solid white'
             }} className={index % 2 === 1 ? 'bg-gray-800' : 'bg-gray-600'}>
               <td className="h7-card1-gerencial-geral">{item.cidade}</td>
-             <td onClick={() => buscarOrdens('instalacao', 'mes', item.cidade)} className="h8-card1-gerencial-geral">{item.instalacoes}</td>
-      <td onClick={() => buscarOrdens('manutencao', 'mes', item.cidade)} className="h8-card1-gerencial-geral">{item.manutencao}</td>
-      <td onClick={() => buscarOrdens('troca', 'mes', item.cidade)} className="h8-card1-gerencial-geral">{item.trocaEndereco}</td>
-      <td onClick={() => buscarOrdens('outros', 'mes', item.cidade)} className="h8-card1-gerencial-geral">{item.outros}</td>
+             <td onClick={() => buscarOrdens('instalacao', item.cidade)} className="h8-card1-gerencial-geral">{item.instalacoes}</td>
+      <td onClick={() => buscarOrdens('manutencao', item.cidade)} className="h8-card1-gerencial-geral">{item.manutencao}</td>
+      <td onClick={() => buscarOrdens('troca',  item.cidade)} className="h8-card1-gerencial-geral">{item.trocaEndereco}</td>
+      <td onClick={() => buscarOrdens('outros', item.cidade)} className="h8-card1-gerencial-geral">{item.outros}</td>
             </tr>
           ))}
         </tbody>
