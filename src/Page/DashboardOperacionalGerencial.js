@@ -567,10 +567,10 @@ const exportarCSV = () => {
             className={index % 2 === 1 ? 'bg-gray-800' : 'bg-gray-600'}
           >
             <td className="h7-card1-gerencial-geral" >{item.bairros}</td>
-            <td onClick={() => buscarOrdens('instalacao', 'mes', '', item.bairros)} className="h8-card1-gerencial-geral">{item.instalacoes}</td>
-      <td onClick={() => buscarOrdens('manutencao', 'mes', '', item.bairros)} className="h8-card1-gerencial-geral">{item.manutencao}</td>
-      <td onClick={() => buscarOrdens('troca', 'mes', '', item.bairros)} className="h8-card1-gerencial-geral">{item.trocaEndereco}</td>
-      <td onClick={() => buscarOrdens('outros', 'mes', '', item.bairros)} className="h8-card1-gerencial-geral">{item.outros}</td>
+            <td onClick={() => buscarOrdens('instalacao',  '', item.bairros)} className="h8-card1-gerencial-geral">{item.instalacoes}</td>
+      <td onClick={() => buscarOrdens('manutencao', '', item.bairros)} className="h8-card1-gerencial-geral">{item.manutencao}</td>
+      <td onClick={() => buscarOrdens('troca',  '', item.bairros)} className="h8-card1-gerencial-geral">{item.trocaEndereco}</td>
+      <td onClick={() => buscarOrdens('outros',  '', item.bairros)} className="h8-card1-gerencial-geral">{item.outros}</td>
           </tr>
         ))}
       </tbody>
