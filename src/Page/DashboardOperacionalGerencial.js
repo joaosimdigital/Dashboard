@@ -16,6 +16,7 @@ const [totalOutrosHoje, setTotalOutrosHoje] = useState(0);
 const [totalResumoHoje, setTotalResumoHoje] = useState(0);
  const [dadosTabelaCidade, setDadosTabelaCidade] = useState([]);
  const [dadosbairros, setDadosBairros] = useState([]);
+ const [loading, setLoading] = useState(false);
   const [dados, setDados] = useState([]);
     const [dados2, setDados2] = useState([]);
             const [dados3, setDados3] = useState([]);
@@ -49,51 +50,112 @@ const [totalResumoHoje, setTotalResumoHoje] = useState(0);
 
   const [dadosClientesCompleto, setDadosClientesCompleto] = useState([]);
 
- 
-const buscarOrdens = async (tipo, escopo, cidade = "", bairro = "") => {
-  const hoje = new Date();
-  const dataInicio = new Date(hoje);
-  let dataFim = new Date(hoje); // inicia com hoje
-
-  // Mapa de escopos para dias adicionais
-  const diasAdicionais = {
-    amanha: 1,
-    d2: 2,
-    d3: 3,
-    d4: 4,
-    d5: 5,
-    d6: 6
-  };
-
-  if (diasAdicionais[escopo]) {
-    dataFim.setDate(dataFim.getDate() + diasAdicionais[escopo]);
-  }
-
-  const dataInicioFormatada = dataInicio.toISOString().split("T")[0];
-  const dataFimFormatada = dataFim.toISOString().split("T")[0];
-
+const buscarOrdens = async (tipo = "", escopo = "", cidade = "", bairro = "") => {
   const params = new URLSearchParams();
-  params.append("tipo", tipo);
-  params.append("inicio", dataInicioFormatada);
-  params.append("fim", dataFimFormatada);
 
+  if (tipo) params.append("tipo", tipo);
   if (cidade) params.append("cidade", cidade);
   if (bairro) params.append("bairro", bairro);
 
-  const url = `http://38.224.145.3:3010/ordens-servico-categorias-completo-mes?${params.toString()}`;
+  const hoje = new Date();
 
+  // Dia = ontem e hoje
+  if (escopo === "dia") {
+    const ontem = new Date(hoje);
+    ontem.setDate(hoje.getDate() - 1);
+
+    params.append("inicio", ontem.toISOString().split("T")[0]);
+    params.append("fim", hoje.toISOString().split("T")[0]);
+  }
+
+  // Amanhã = ontem até amanhã
+if (escopo === "amanha") {
+  const amanha = new Date();
+  amanha.setDate(amanha.getDate() + 1);
+
+  const inicio = new Date(amanha);
+  inicio.setHours(0, 0, 0, 0); // 00:00:00.000
+
+  const fim = new Date(amanha);
+  fim.setHours(23, 59, 59, 999); // 23:59:59.999
+
+  params.append("inicio", inicio.toISOString().split("T")[0]);
+  params.append("fim", fim.toISOString().split("T")[0]);
+}
+
+  // D2 = amanhã até depois de amanhã
+  if (escopo === "depoisdeamanha") {
+    const inicio = new Date(hoje);
+    inicio.setDate(hoje.getDate() + 1);
+    const fim = new Date(hoje);
+    fim.setDate(hoje.getDate() + 2);
+
+    params.append("inicio", inicio.toISOString().split("T")[0]);
+    params.append("fim", fim.toISOString().split("T")[0]);
+  }
+
+  // D3 = depois de amanhã até +3 dias
+  if (escopo === "d3") {
+    const inicio = new Date(hoje);
+    inicio.setDate(hoje.getDate() + 2);
+    const fim = new Date(hoje);
+    fim.setDate(hoje.getDate() + 3);
+
+    params.append("inicio", inicio.toISOString().split("T")[0]);
+    params.append("fim", fim.toISOString().split("T")[0]);
+  }
+
+  // D4 = +3 até +4 dias
+  if (escopo === "d4") {
+    const inicio = new Date(hoje);
+    inicio.setDate(hoje.getDate() + 3);
+    const fim = new Date(hoje);
+    fim.setDate(hoje.getDate() + 4);
+
+    params.append("inicio", inicio.toISOString().split("T")[0]);
+    params.append("fim", fim.toISOString().split("T")[0]);
+  }
+
+  // D5 = +4 até +5 dias
+  if (escopo === "d5") {
+    const inicio = new Date(hoje);
+    inicio.setDate(hoje.getDate() + 4);
+    const fim = new Date(hoje);
+    fim.setDate(hoje.getDate() + 5);
+
+    params.append("inicio", inicio.toISOString().split("T")[0]);
+    params.append("fim", fim.toISOString().split("T")[0]);
+  }
+
+  // D6 = +5 até +6 dias
+  if (escopo === "d6") {
+    const inicio = new Date(hoje);
+    inicio.setDate(hoje.getDate() + 5);
+    const fim = new Date(hoje);
+    fim.setDate(hoje.getDate() + 6);
+
+    params.append("inicio", inicio.toISOString().split("T")[0]);
+    params.append("fim", fim.toISOString().split("T")[0]);
+  }
+
+  const url = `http://localhost:3010/ordens-servico-categorias-completo-mes?${params.toString()}`;
   console.log("➡️ Requisição para backend:", url);
 
-  const resposta = await fetch(url);
-  const json = await resposta.json();
-  setDadosClientesCompleto(json.ordens_servico);
+  try {
+    const resposta = await fetch(url);
+    const json = await resposta.json();
+    setDadosClientesCompleto(json.ordens_servico);
+  } catch (error) {
+    console.error("❌ Erro ao buscar ordens de serviço:", error);
+  }
 };
 
 
 
 
+
     useEffect(() => {
-    fetch('http://38.224.145.3:3010/sla-os-categorias-30-dias')
+    fetch('http://localhost:3010/sla-os-categorias-30-dias')
       .then(response => response.json())
       .then(data => {
         if (data.sla_medio_dias) {
@@ -108,7 +170,7 @@ const buscarOrdens = async (tipo, escopo, cidade = "", bairro = "") => {
 
 
     useEffect(() => {
-    fetch('http://38.224.145.3:3010/ordens-servico-aguardando-agendamento')
+    fetch('http://localhost:3010/ordens-servico-aguardando-agendamento')
       .then(res => res.json())
       .then(data => {
         setSemAgenda(data.totais);
@@ -120,7 +182,7 @@ const buscarOrdens = async (tipo, escopo, cidade = "", bairro = "") => {
 
 
    useEffect(() => {
-  fetch('http://38.224.145.3:3010/ordens-servico-pendente-total-mes')
+  fetch('http://localhost:3010/ordens-servico-pendente-total-mes')
     .then(res => res.json())
     .then(data => {
       if (data && data.totais) {
@@ -136,7 +198,7 @@ const buscarOrdens = async (tipo, escopo, cidade = "", bairro = "") => {
 useEffect(() => {
     const fetchDadosAmanha1 = async () => {
       try {
-        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha1');
+        const res = await fetch('http://localhost:3010/ordens-servico-total-amanha1');
         if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
 
         const data = await res.json();
@@ -149,7 +211,7 @@ useEffect(() => {
 
       const fetchDadosAmanha2 = async () => {
       try {
-        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha2');
+        const res = await fetch('http://localhost:3010/ordens-servico-total-amanha2');
         if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
 
         const data = await res.json();
@@ -161,7 +223,7 @@ useEffect(() => {
 
       const fetchDadosAmanha3 = async () => {
       try {
-        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha3');
+        const res = await fetch('http://localhost:3010/ordens-servico-total-amanha3');
         if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
 
         const data = await res.json();
@@ -174,7 +236,7 @@ useEffect(() => {
 
          const fetchDadosAmanha4 = async () => {
       try {
-        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha4');
+        const res = await fetch('http://localhost:3010/ordens-servico-total-amanha4');
         if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
 
         const data = await res.json();
@@ -187,7 +249,7 @@ useEffect(() => {
 
     const fetchDadosAmanha5 = async () => {
       try {
-        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha5');
+        const res = await fetch('http://localhost:3010/ordens-servico-total-amanha5');
         if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
 
         const data = await res.json();
@@ -200,7 +262,7 @@ useEffect(() => {
 
        const fetchDadosAmanha6 = async () => {
       try {
-        const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha6');
+        const res = await fetch('http://localhost:3010/ordens-servico-total-amanha6');
         if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
 
         const data = await res.json();
@@ -222,7 +284,7 @@ useEffect(() => {
   }, []);
 
  useEffect(() => {
-    fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade')
+    fetch('http://localhost:3010/ordens-servico-do-mes-por-cidade')
       .then(response => {
         if (!response.ok) {
           throw new Error('Erro na resposta da API');
@@ -249,35 +311,35 @@ useEffect(() => {
 
 useEffect(() => {
   const fetchInstalacoes = async () => {
-    const res = await fetch('http://38.224.145.3:3010/ordens-servico-instalacoes-do-mes');
+    const res = await fetch('http://localhost:3010/ordens-servico-instalacoes-do-mes');
     if (!res.ok) throw new Error('Erro ao buscar instalações');
     const data = await res.json();
     setTotalInstalacaoMes(data.total_ordens_pendentes_aguardando_instalacao || 0);
   };
 
   const fetchManutencoes = async () => {
-    const res = await fetch('http://38.224.145.3:3010/ordens-servico-manutencao-do-mes');
+    const res = await fetch('http://localhost:3010/ordens-servico-manutencao-do-mes');
     if (!res.ok) throw new Error('Erro ao buscar manutenções');
     const data = await res.json();
     setTotalManutencaoMes(data.total_ordens_pendentes_aguardando_manutencao || 0);
   };
 
   const fetchTrocas = async () => {
-    const res = await fetch('http://38.224.145.3:3010/ordens-servico-trocas-do-mes');
+    const res = await fetch('http://localhost:3010/ordens-servico-trocas-do-mes');
     if (!res.ok) throw new Error('Erro ao buscar trocas');
     const data = await res.json();
     setTotalTrocaEndMes(data.total_ordens_pendentes_aguardando_troca_endereco || 0);
   };
 
   const fetchOutros = async () => {
-    const res = await fetch('http://38.224.145.3:3010/ordens-servico-outros-do-mes');
+    const res = await fetch('http://localhost:3010/ordens-servico-outros-do-mes');
     if (!res.ok) throw new Error('Erro ao buscar outros motivos');
     const data = await res.json();
     setTotalOutrosMes(data.total_ordens_pendentes_aguardando_outros || 0);
   };
 
   const fetchResumo = async () => {
-    const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-do-mes');
+    const res = await fetch('http://localhost:3010/ordens-servico-total-do-mes');
     if (!res.ok) throw new Error('Erro ao buscar resumo mensal');
     const data = await res.json();
     setTotalResumoMes(data.total_geral || 0);
@@ -285,7 +347,7 @@ useEffect(() => {
 
 
 const fetchInstalacoesHoje = async () => {
-  const res = await fetch('http://38.224.145.3:3010/ordens-servico-instalacoes-hoje');
+  const res = await fetch('http://localhost:3010/ordens-servico-instalacoes-hoje');
   if (!res.ok) throw new Error('Erro ao buscar instalações de hoje');
   const data = await res.json();
 
@@ -295,28 +357,28 @@ const fetchInstalacoesHoje = async () => {
 };
 
   const fetchManutencoesHoje = async () => {
-    const res = await fetch('http://38.224.145.3:3010/ordens-servico-manutencao-hoje');
+    const res = await fetch('http://localhost:3010/ordens-servico-manutencao-hoje');
     if (!res.ok) throw new Error('Erro ao buscar manutenções de hoje');
     const data = await res.json();
     setTotalManutencaoHoje(data.total_ordens_pendentes_aguardando_manutencao || 0);
   };
 
   const fetchTrocasHoje = async () => {
-    const res = await fetch('http://38.224.145.3:3010/ordens-servico-trocas-hoje');
+    const res = await fetch('http://localhost:3010/ordens-servico-trocas-hoje');
     if (!res.ok) throw new Error('Erro ao buscar trocas de endereço de hoje');
     const data = await res.json();
     setTotalTrocaEndHoje(data.total_ordens_pendentes_aguardando_troca_endereco || 0);
   };
 
   const fetchOutrosHoje = async () => {
-    const res = await fetch('http://38.224.145.3:3010/ordens-servico-outros-hoje');
+    const res = await fetch('http://localhost:3010/ordens-servico-outros-hoje');
     if (!res.ok) throw new Error('Erro ao buscar ordens de outros motivos de hoje');
     const data = await res.json();
     setTotalOutrosHoje(data.total_ordens_pendentes_aguardando_outros || 0);
   };
 
   const fetchResumoHoje = async () => {
-  const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-hoje');
+  const res = await fetch('http://localhost:3010/ordens-servico-total-hoje');
   if (!res.ok) throw new Error('Erro ao buscar resumo de hoje');
   const data = await res.json();
   setTotalResumoHoje(data.total_geral || 0);
@@ -326,7 +388,7 @@ const fetchInstalacoesHoje = async () => {
 
   const fetchDadosBairros = async () => {
   try {
-    const res = await fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-bairro');
+    const res = await fetch('http://localhost:3010/ordens-servico-do-mes-por-bairro');
     if (!res.ok) throw new Error('Erro ao buscar dados por bairro');
     
     const data = await res.json();
@@ -446,24 +508,24 @@ const exportarCSV = () => {
 
                         <div className='div-card1-gerencial-geral1'>
                        
-                                <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'mes')}>
+                                <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao')}>
                                 <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
                                  <h1  className='h4-card1-gerencial-geral'>{totalInstalacaoMes}</h1>
                                  </div>
 
                                   <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'mes')}>TROCAS END.</h1>
+                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('troca')}>TROCAS END.</h1>
                                  <h1  className='h4-card1-gerencial-geral'>{totalTrocaEndMes}</h1>
                                  </div>
 
                                       <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral'onClick={() => buscarOrdens('manutencao', 'mes')}>MANUTENÇÕES</h1>
+                                <h1 className='h3-card1-gerencial-geral'onClick={() => buscarOrdens('manutencao')}>MANUTENÇÕES</h1>
                                  <h1  className='h4-card1-gerencial-geral'>{totalManutencaoMes}</h1>
                                  </div>
 
 
                                   <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('outros', 'mes')}>OUTROS</h1>
+                              <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('outros')}>OUTROS</h1>
                                  <h1  className='h4-card1-gerencial-geral'>{totalOutrosMes}</h1>
                                  </div>
 
@@ -484,18 +546,18 @@ const exportarCSV = () => {
                                  </div>
 
                                   <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'mes')}>TROCAS END.</h1>
+                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'dia')}>TROCAS END.</h1>
                                  <h1  className='h4-card1-gerencial-geral'>{totalTrocaEndHoje}</h1>
                                  </div>
 
                                       <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'mes')}>MANUTENÇÕES</h1>
+                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'dia')}>MANUTENÇÕES</h1>
                                  <h1  className='h4-card1-gerencial-geral'>{totalManutencaoHoje}</h1>
                                  </div>
 
 
                                   <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('outros', 'mes')}>OUTROS</h1>
+                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('outros', 'dia')}>OUTROS</h1>
                                  <h1  className='h4-card1-gerencial-geral'>{totalOutrosHoje}</h1>
                                  </div>
 
@@ -527,10 +589,11 @@ const exportarCSV = () => {
               borderBottom: '1px solid white'
             }} className={index % 2 === 1 ? 'bg-gray-800' : 'bg-gray-600'}>
               <td className="h7-card1-gerencial-geral">{item.cidade}</td>
-             <td onClick={() => buscarOrdens('instalacao', item.cidade)} className="h8-card1-gerencial-geral">{item.instalacoes}</td>
-      <td onClick={() => buscarOrdens('manutencao', item.cidade)} className="h8-card1-gerencial-geral">{item.manutencao}</td>
-      <td onClick={() => buscarOrdens('troca',  item.cidade)} className="h8-card1-gerencial-geral">{item.trocaEndereco}</td>
-      <td onClick={() => buscarOrdens('outros', item.cidade)} className="h8-card1-gerencial-geral">{item.outros}</td>
+         <td onClick={() => buscarOrdens('instalacao', '', item.cidade)} className="h8-card1-gerencial-geral">{item.instalacoes}</td>
+<td onClick={() => buscarOrdens('manutencao', '', item.cidade)} className="h8-card1-gerencial-geral">{item.manutencao}</td>
+<td onClick={() => buscarOrdens('troca', '', item.cidade)} className="h8-card1-gerencial-geral">{item.trocaEndereco}</td>
+<td onClick={() => buscarOrdens('outros', '', item.cidade)} className="h8-card1-gerencial-geral">{item.outros}</td>
+
             </tr>
           ))}
         </tbody>
@@ -567,10 +630,11 @@ const exportarCSV = () => {
             className={index % 2 === 1 ? 'bg-gray-800' : 'bg-gray-600'}
           >
             <td className="h7-card1-gerencial-geral" >{item.bairros}</td>
-            <td onClick={() => buscarOrdens('instalacao',  '', item.bairros)} className="h8-card1-gerencial-geral">{item.instalacoes}</td>
-      <td onClick={() => buscarOrdens('manutencao', '', item.bairros)} className="h8-card1-gerencial-geral">{item.manutencao}</td>
-      <td onClick={() => buscarOrdens('troca',  '', item.bairros)} className="h8-card1-gerencial-geral">{item.trocaEndereco}</td>
-      <td onClick={() => buscarOrdens('outros',  '', item.bairros)} className="h8-card1-gerencial-geral">{item.outros}</td>
+           <td onClick={() => buscarOrdens('instalacao', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.instalacoes}</td>
+<td onClick={() => buscarOrdens('manutencao', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.manutencao}</td>
+<td onClick={() => buscarOrdens('troca', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.trocaEndereco}</td>
+<td onClick={() => buscarOrdens('outros', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.outros}</td>
+
           </tr>
         ))}
       </tbody>
@@ -621,7 +685,7 @@ const exportarCSV = () => {
       <h1 className='h2-card1-gerencial-geral'>{dados2.total_geral}</h1>
 
       <div className='div-card1-gerencial-geral1'>
-        <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('instalacao', 'd2')}>
+        <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('instalacao', 'depoisdeamanha')}>
           <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados2.total_instalacoes}</h1>
         </div>
