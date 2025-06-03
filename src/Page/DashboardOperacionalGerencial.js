@@ -71,75 +71,71 @@ const buscarOrdens = async (tipo = "", escopo = "", cidade = "", bairro = "") =>
     params.append("fim", hoje.toISOString().split("T")[0]);
   }
 
-  // Amanhã = ontem até amanhã
-if (escopo === "amanha") {
-  const amanha = new Date();
-  amanha.setDate(amanha.getDate() + 1);
-
-  const inicio = new Date(amanha);
-  inicio.setHours(0, 0, 0, 0); // 00:00:00.000
-
-  const fim = new Date(amanha);
-  fim.setHours(23, 59, 59, 999); // 23:59:59.999
+if (escopo === "d1") {
+  const inicio = new Date();
+  inicio.setDate(inicio.getDate() - 1); // amanhã
+  const fim = new Date();
+  fim.setDate(fim.getDate()); // depois de amanhã
 
   params.append("inicio", inicio.toISOString().split("T")[0]);
   params.append("fim", fim.toISOString().split("T")[0]);
 }
 
-  // D2 = amanhã até depois de amanhã
-  if (escopo === "depoisdeamanha") {
-    const inicio = new Date(hoje);
-    inicio.setDate(hoje.getDate() + 1);
-    const fim = new Date(hoje);
-    fim.setDate(hoje.getDate() + 2);
+if (escopo === "d2") {
+  const inicio = new Date();
+  inicio.setDate(inicio.getDate()); // AMANHÃ
 
-    params.append("inicio", inicio.toISOString().split("T")[0]);
-    params.append("fim", fim.toISOString().split("T")[0]);
-  }
+  const fim = new Date();
+  fim.setDate(fim.getDate() + 3); // +3 DIAS
 
+  params.append("inicio", inicio.toISOString().split("T")[0]);
+  params.append("fim", fim.toISOString().split("T")[0]);
+}
+
+
+ 
   // D3 = depois de amanhã até +3 dias
-  if (escopo === "d3") {
-    const inicio = new Date(hoje);
-    inicio.setDate(hoje.getDate() + 2);
-    const fim = new Date(hoje);
-    fim.setDate(hoje.getDate() + 3);
+if (escopo === "d3") {
+  const inicio = new Date();
+  inicio.setDate(inicio.getDate()); // amanhã
+  const fim = new Date();
+  fim.setDate(fim.getDate() + 4); // depois de amanhã
 
-    params.append("inicio", inicio.toISOString().split("T")[0]);
-    params.append("fim", fim.toISOString().split("T")[0]);
-  }
+  params.append("inicio", inicio.toISOString().split("T")[0]);
+  params.append("fim", fim.toISOString().split("T")[0]);
+}
 
-  // D4 = +3 até +4 dias
   if (escopo === "d4") {
-    const inicio = new Date(hoje);
-    inicio.setDate(hoje.getDate() + 3);
-    const fim = new Date(hoje);
-    fim.setDate(hoje.getDate() + 4);
+  const inicio = new Date();
+  inicio.setDate(inicio.getDate()); // amanhã
+  const fim = new Date();
+  fim.setDate(fim.getDate() + 5); // depois de amanhã
 
-    params.append("inicio", inicio.toISOString().split("T")[0]);
-    params.append("fim", fim.toISOString().split("T")[0]);
-  }
+  params.append("inicio", inicio.toISOString().split("T")[0]);
+  params.append("fim", fim.toISOString().split("T")[0]);
+}
 
-  // D5 = +4 até +5 dias
-  if (escopo === "d5") {
-    const inicio = new Date(hoje);
-    inicio.setDate(hoje.getDate() + 4);
-    const fim = new Date(hoje);
-    fim.setDate(hoje.getDate() + 5);
 
-    params.append("inicio", inicio.toISOString().split("T")[0]);
-    params.append("fim", fim.toISOString().split("T")[0]);
-  }
+ if (escopo === "d5") {
+  const inicio = new Date();
+  inicio.setDate(inicio.getDate()); // amanhã
+  const fim = new Date();
+  fim.setDate(fim.getDate() + 6); // depois de amanhã
 
-  // D6 = +5 até +6 dias
+  params.append("inicio", inicio.toISOString().split("T")[0]);
+  params.append("fim", fim.toISOString().split("T")[0]);
+}
+
   if (escopo === "d6") {
-    const inicio = new Date(hoje);
-    inicio.setDate(hoje.getDate() + 5);
-    const fim = new Date(hoje);
-    fim.setDate(hoje.getDate() + 6);
+  const inicio = new Date();
+  inicio.setDate(inicio.getDate()); // amanhã
+  const fim = new Date();
+  fim.setDate(fim.getDate() + 7); // depois de amanhã
 
-    params.append("inicio", inicio.toISOString().split("T")[0]);
-    params.append("fim", fim.toISOString().split("T")[0]);
-  }
+  params.append("inicio", inicio.toISOString().split("T")[0]);
+  params.append("fim", fim.toISOString().split("T")[0]);
+}
+
 
   const url = `http://38.224.145.3:3010/ordens-servico-categorias-completo-mes?${params.toString()}`;
   console.log("➡️ Requisição para backend:", url);
@@ -662,22 +658,22 @@ const exportarCSV = () => {
       <h1 className='h2-card1-gerencial-geral'>{dados.total_geral}</h1>
 
       <div className='div-card1-gerencial-geral1'>
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'amanha')}>
+        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
           <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados.total_instalacoes}</h1>
         </div>
 
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'amanha')}>
+        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
           <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados.total_trocas}</h1>
         </div>
 
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'amanha')}>
+        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
           <h1 className='h3-card1-gerencial-geral' >MANUTENÇÕES</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados.total_manutencoes}</h1>
         </div>
 
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('outro', 'amanha')}>
+        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('outro', 'd1')}>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados.total_outros}</h1>
         </div>
@@ -690,7 +686,7 @@ const exportarCSV = () => {
       <h1 className='h2-card1-gerencial-geral'>{dados2.total_geral}</h1>
 
       <div className='div-card1-gerencial-geral1'>
-        <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('instalacao', 'depoisdeamanha')}>
+        <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('instalacao', 'd2')}>
           <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados2.total_instalacoes}</h1>
         </div>
