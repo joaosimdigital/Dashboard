@@ -236,7 +236,7 @@ const mesesDisponiveis = (() => {
     const mes = mesIndex + 1;
     const ano = parseInt(`20${anoStr}`);
 
-    const response = await fetch(`http://localhost:3009/clientestotal-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/clientestotal-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) throw new Error('Erro na requisição');
 
     const data = await response.json();
@@ -280,7 +280,7 @@ const mesesDisponiveis = (() => {
     const mes = mesIndex + 1;
     const ano = parseInt(`20${anoStr}`);
 
-    const response = await fetch(`http://localhost:3009/clientestotal-mes?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/clientestotal-mes?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) throw new Error('Erro ao buscar dados do mês');
 
     const data = await response.json();
@@ -305,7 +305,7 @@ const mesesDisponiveis = (() => {
     const mes = mesIndex + 1;
     const ano = parseInt(`20${anoStr}`);
 
-    const response = await fetch(`http://localhost:3009/clientes-entrantes-reais-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/clientes-entrantes-reais-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) throw new Error('Erro na requisição');
 
     const data = await response.json();
@@ -336,7 +336,7 @@ const mesesDisponiveis = (() => {
     const mes = mesIndex + 1;
     const ano = parseInt(`20${anoStr}`);
 
-    const response = await fetch(`http://localhost:3009/clientes-entrantes-reais?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/clientes-entrantes-reais?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) throw new Error('Erro na requisição');
 
     const data = await response.json();
@@ -361,7 +361,7 @@ const mesesDisponiveis = (() => {
     const mes = mesIndex + 1;
     const ano = parseInt(`20${anoStr}`);
 
-    const response = await fetch(`http://localhost:3009/clientestotal-crescimento?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/clientestotal-crescimento?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) throw new Error('Erro na requisição');
 
     const data = await response.json();
@@ -393,7 +393,7 @@ const fetchCrescimentoMesAtual = async () => {
     const mes = mesIndex + 1;
     const ano = parseInt(`20${anoStr}`);
 
-    const response = await fetch(`http://localhost:3009/clientestotal-crescimento-mesatual?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/clientestotal-crescimento-mesatual?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) throw new Error('Erro na requisição');
 
     const data = await response.json();
@@ -422,7 +422,7 @@ const fetchValorPago = async () => {
     const mes = mesIndex + 1;
     const ano = parseInt(`20${anoStr}`);
 
-    const response = await fetch(`http://localhost:3009/valortotalpago-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/valortotalpago-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) throw new Error('Erro na requisição');
 
     const data = await response.json();
@@ -450,7 +450,7 @@ const fetchValorPago = async () => {
     const mes = mesIndex + 1;
     const ano = parseInt(`20${anoStr}`);
 
-    const response = await fetch(`http://localhost:3009/valortotalpago-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/valortotalpago-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) throw new Error('Erro na requisição');
 
     const data = await response.json();
@@ -464,7 +464,7 @@ const fetchValorPago = async () => {
 
 const fetchNovosClientes = async (mes, ano) => {
   try {
-    const response = await fetch(`http://localhost:3009/total-clientes-habilitados-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/total-clientes-habilitados-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
     const data = await response.json();
 
     const dadosFormatados = data.dados.map((item) => ({
@@ -482,7 +482,7 @@ const fetchNovosClientes = async (mes, ano) => {
 
  const fetchTotalClientesNovos = async (mes, ano) => {
   try {
-    const response = await fetch(`http://localhost:3009/total-clientes-habilitados-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/total-clientes-habilitados-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
     const data = await response.json();
 
     setTotal(parseInt(data.total_clientes_habilitados));
@@ -494,7 +494,7 @@ const fetchNovosClientes = async (mes, ano) => {
 
     const fetchTicketMedio = async (mes, ano) => {
   try {
-    const response = await fetch(`http://localhost:3009/ticket-medio-mesatual?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/ticket-medio-mesatual?mes=${mes}&ano=${ano}${estadoParam}`);
     const data = await response.json();
 
     setTicketMedio(parseFloat(data.ticket_medio));
@@ -506,7 +506,7 @@ const fetchNovosClientes = async (mes, ano) => {
     
 const fetchTicketMedioUltimos = async (mes, ano) => {
   try {
-    const response = await fetch(`http://localhost:3009/ticket-medio-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/ticket-medio-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
     const data = await response.json();
 
     const formatado = data.ticket_medio_ultimos_4_meses.map(item => ({
@@ -523,7 +523,7 @@ const fetchTicketMedioUltimos = async (mes, ano) => {
 
     const fetchCadastros = async (mes, ano) => {
   try {
-    const response = await fetch(`http://localhost:3009/cadastrostotal-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/cadastrostotal-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
     const data = await response.json();
 
     setTotalCadastros(parseInt(data.total_cadastros));
@@ -535,7 +535,7 @@ const fetchTicketMedioUltimos = async (mes, ano) => {
 
   const fetchCadastrosNovo = async (mes, ano) => {
   try {
-    const response = await fetch(`http://localhost:3009/cadastrostotal-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/cadastrostotal-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
     const data = await response.json();
 
     const adaptado = data.cadastros_ultimos_4_meses.map(item => ({
@@ -552,7 +552,7 @@ const fetchTicketMedioUltimos = async (mes, ano) => {
 
 const fetchCadastrosPFUltimos = async (mes, ano) => {
   try {
-    const response = await fetch(`http://localhost:3009/cadastrospf-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/cadastrospf-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
     const data = await response.json();
 
     const formatado = data.cadastros_pf_ultimos_4_meses?.map(item => ({
@@ -582,7 +582,7 @@ const fetchCadastrosPJUltimos = async () => {
     const mes = mesIndex + 1;
     const ano = parseInt(`20${anoStr}`);
 
-    const response = await fetch(`http://localhost:3009/cadastrospj-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/cadastrospj-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) throw new Error('Erro na requisição');
 
     const data = await response.json();
@@ -615,7 +615,7 @@ const fetchCadastrosPJUltimos = async () => {
     const mes = mesIndex + 1;
     const ano = parseInt(`20${anoStr}`);
 
-    const response = await fetch(`http://localhost:3009/cadastrospj-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/cadastrospj-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) throw new Error('Erro na requisição');
 
     const data = await response.json();
@@ -641,7 +641,7 @@ const fetchCadastrosPJUltimos = async () => {
     const mes = mesIndex + 1;
     const ano = parseInt(`20${anoStr}`);
 
-    const response = await fetch(`http://localhost:3009/cadastrospf-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/cadastrospf-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) throw new Error('Erro na requisição');
 
     const data = await response.json();
@@ -656,7 +656,7 @@ const fetchCadastrosPJUltimos = async () => {
 
    const fetchChurnData = async (mes, ano) => {
   try {
-    const response = await fetch(`http://localhost:3009/churn-mensal?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/churn-mensal?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) {
       throw new Error('Erro na resposta da API');
     }
@@ -669,7 +669,7 @@ const fetchCadastrosPJUltimos = async () => {
 
 const buscarCancelamentos = async (mes, ano) => {
   try {
-    const resposta = await fetch(`http://localhost:3009/churn-mensal-ultimos?mes=${mes}&ano=${ano}${estadoParam}`);
+    const resposta = await fetch(`http://38.224.145.3:3009/churn-mensal-ultimos?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!resposta.ok) throw new Error('Erro na requisição');
 
     const dados = await resposta.json();
@@ -696,7 +696,7 @@ const buscarCancelamentos = async (mes, ano) => {
 
    const fetchChurnDataporcentos = async (mes, ano) => {
   try {
-    const response = await fetch(`http://localhost:3009/churn-mensal?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/churn-mensal?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!response.ok) {
       throw new Error('Erro na resposta da API');
     }
@@ -710,7 +710,7 @@ const buscarCancelamentos = async (mes, ano) => {
 
 const buscarCancelamentosporcentos = async (mes, ano) => {
   try {
-    const resposta = await fetch(`http://localhost:3009/churn-mensal-ultimos?mes=${mes}&ano=${ano}${estadoParam}`);
+    const resposta = await fetch(`http://38.224.145.3:3009/churn-mensal-ultimos?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!resposta.ok) throw new Error('Erro na requisição');
 
     const dados = await resposta.json();
@@ -734,7 +734,7 @@ const buscarCancelamentosporcentos = async (mes, ano) => {
 
  const buscarCancelamentosPedido = async (mes, ano) => {
   try {
-    const resposta = await fetch(`http://localhost:3009/cancelamentos-por-pedido-mes-passado?mes=${mes}&ano=${ano}${estadoParam}`);
+    const resposta = await fetch(`http://38.224.145.3:3009/cancelamentos-por-pedido-mes-passado?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!resposta.ok) throw new Error('Erro ao buscar dados');
 
     const dados = await resposta.json();
@@ -748,7 +748,7 @@ const buscarCancelamentosporcentos = async (mes, ano) => {
     
   const buscarCancelamentosautomatico = async (mes, ano) => {
   try {
-    const resposta = await fetch(`http://localhost:3009/cancelamentos-por-automatico-mes-passado?mes=${mes}&ano=${ano}${estadoParam}`);
+    const resposta = await fetch(`http://38.224.145.3:3009/cancelamentos-por-automatico-mes-passado?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!resposta.ok) throw new Error('Erro ao buscar dados');
     const dados = await resposta.json();
 
@@ -761,7 +761,7 @@ const buscarCancelamentosporcentos = async (mes, ano) => {
 
 const buscarCancelamentosPedidoUltimos = async (mes, ano) => {
   try {
-    const resposta = await fetch(`http://localhost:3009/cancelamentos-por-pedido-ultimos-4-meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const resposta = await fetch(`http://38.224.145.3:3009/cancelamentos-por-pedido-ultimos-4-meses?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!resposta.ok) throw new Error('Erro ao buscar dados');
 
     const dados = await resposta.json();
@@ -786,7 +786,7 @@ const buscarCancelamentosPedidoUltimos = async (mes, ano) => {
 
    const buscarAtendimentos = async (mes, ano) => {
   try {
-    const resposta = await fetch(`http://localhost:3009/atendimentos-tipo-mes-passado?mes=${mes}&ano=${ano}${estadoParam}`);
+    const resposta = await fetch(`http://38.224.145.3:3009/atendimentos-tipo-mes-passado?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!resposta.ok) throw new Error('Erro ao buscar atendimentos');
     const dados = await resposta.json();
 
@@ -812,7 +812,7 @@ const buscarCancelamentosPedidoUltimos = async (mes, ano) => {
     const mes = mesIndex + 1; // 1 a 12
     const ano = parseInt(`20${anoStr}`); // '25' → 2025
 
-    const resposta = await fetch(`http://localhost:3009/atendimentos-tipo-ultimos-4-meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const resposta = await fetch(`http://38.224.145.3:3009/atendimentos-tipo-ultimos-4-meses?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!resposta.ok) throw new Error('Erro na requisição');
 
     const dados = await resposta.json();
@@ -831,7 +831,7 @@ const buscarCancelamentosPedidoUltimos = async (mes, ano) => {
 
 const buscarCancelamentosAutomaticoUltimos = async (mes, ano) => {
   try {
-    const resposta = await fetch(`http://localhost:3009/cancelamentos-por-automatico-ultimos-4-meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const resposta = await fetch(`http://38.224.145.3:3009/cancelamentos-por-automatico-ultimos-4-meses?mes=${mes}&ano=${ano}${estadoParam}`);
     if (!resposta.ok) throw new Error('Erro ao buscar dados');
 
     const dados = await resposta.json();

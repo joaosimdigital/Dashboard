@@ -29,10 +29,10 @@ function DashboardOsTicket() {
     const fetchDados = async () => {
       try {
         const endpoints = [
-          { key: 'total', url: 'http://localhost:3007/total-tickets' },
-          { key: 'abertos', url: 'http://localhost:3007/tickets-abertos' },
-          { key: 'atualizados', url: 'http://localhost:3007/tickets-atualizados' },
-          { key: 'fechados', url: 'http://localhost:3007/tickets-fechados' },
+          { key: 'total', url: 'http://38.224.145.3:3007/total-tickets' },
+          { key: 'abertos', url: 'http://38.224.145.3:3007/tickets-abertos' },
+          { key: 'atualizados', url: 'http://38.224.145.3:3007/tickets-atualizados' },
+          { key: 'fechados', url: 'http://38.224.145.3:3007/tickets-fechados' },
         ];
 
         const results = await Promise.all(
