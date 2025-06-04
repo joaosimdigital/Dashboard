@@ -107,9 +107,19 @@ useEffect(() => {
   const [mesStr, anoStr] = mesSelecionado.split('/');
   const chave = `${mesStr.toLowerCase()}/${anoStr}`;
 
+
   const baseSelecionada = estadoSelecionado === 'Todos'
     ? 'geral'
     : estadoSelecionado.toLowerCase();
+
+
+    const indicadorCancelamento = ['sc', 'rs'].includes(baseSelecionada)
+  ? 'meta - número de cancelamentos (base)'
+  : 'meta - número de cancelamentos (base)'; 
+
+   const indicadorVendas = ['sc', 'rs'].includes(baseSelecionada)
+  ? 'meta de nova vendas'
+  : 'meta de novas vendas geral'; 
 
   const meta = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
@@ -131,31 +141,31 @@ useEffect(() => {
 
   const crescimento = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === baseSelecionada &&
+    item.base?.trim().toLowerCase() === 'geral' &&
     item.indicador?.trim().toLowerCase() === '% de crescimento ao mês passado'
   );
 
   const faturamento = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === baseSelecionada &&
+    item.base?.trim().toLowerCase() === 'geral' &&
     item.indicador?.trim().toLowerCase() === 'faturamento mensal'
   );
 
   const ticket = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === baseSelecionada &&
+    item.base?.trim().toLowerCase() === 'geral' &&
     item.indicador?.trim().toLowerCase() === 'ticket médio geral'
   );
 
   const novosClientes = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === baseSelecionada &&
-    item.indicador?.trim().toLowerCase() === 'meta de novos clientes (ativação)'
+    item.base?.trim().toLowerCase() === 'geral' &&
+    item.indicador?.trim().toLowerCase() === 'meta de novas vendas geral'
   );
 
   const novasVendas = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === baseSelecionada &&
+    item.base?.trim().toLowerCase() === 'geral' &&
     item.indicador?.trim().toLowerCase() === 'meta de novas vendas geral'
   );
 
@@ -174,24 +184,24 @@ useEffect(() => {
   const cancelamentosBase = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
     item.base?.trim().toLowerCase() === baseSelecionada &&
-    item.indicador?.trim().toLowerCase() === 'número de cancelamentos (base)'
+    item.indicador?.trim().toLowerCase() === indicadorCancelamento
   );
 
   const cancelamentosSolicitacao = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === baseSelecionada &&
+    item.base?.trim().toLowerCase() === 'geral' &&
     item.indicador?.trim().toLowerCase() === 'cancelamentos (por solicitação)'
   );
 
   const cancelamentosInadimplencia = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === baseSelecionada &&
+    item.base?.trim().toLowerCase() === 'geral' &&
     item.indicador?.trim().toLowerCase() === 'cancelamentos (inadimplencia)'
   );
 
   const retencaoCS = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === baseSelecionada &&
+    item.base?.trim().toLowerCase() === 'geral' &&
     item.indicador?.trim().toLowerCase() === 'meta de taxa de retenção cs'
   );
  

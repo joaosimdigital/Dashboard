@@ -155,23 +155,13 @@ if (escopo === "d3") {
 
 
 
-    useEffect(() => {
-    fetch('http://38.224.145.3:3010/sla-os-categorias-30-dias')
-      .then(response => response.json())
-      .then(data => {
-        if (data.sla_medio_dias) {
-          setSla(data.sla_medio_dias);
-        }
-      })
-      .catch(error => {
-        console.error('Erro ao buscar SLA médio:', error);
-      });
-  }, []);
+  
 
+useEffect(() => {
 
-
-    useEffect(() => {
-    fetch('http://38.224.145.3:3010/ordens-servico-aguardando-agendamento')
+   const ordensservico3 = async () => {
+    try {
+      fetch('http://38.224.145.3:3010/ordens-servico-aguardando-agendamento')
       .then(res => res.json())
       .then(data => {
         setSemAgenda(data.totais);
@@ -179,11 +169,15 @@ if (escopo === "d3") {
       .catch(err => {
         console.error('Erro ao buscar ordens sem agendamento:', err);
       });
-  }, []);
+    }catch (error) {
+        console.error('Erro ao carregar dados D+1:', error);
+
+  }}
 
 
-   useEffect(() => {
-  fetch('http://38.224.145.3:3010/ordens-servico-pendente-total-mes')
+   const ordensservico2 = async () => {
+    try {
+      fetch('http://38.224.145.3:3010/ordens-servico-pendente-total-mes')
     .then(res => res.json())
     .then(data => {
       if (data && data.totais) {
@@ -193,11 +187,67 @@ if (escopo === "d3") {
     .catch(error => {
       console.error('Erro ao buscar ordens vencidas:', error);
     });
-}, []);
 
+    }catch (error) {
+        console.error('Erro ao carregar dados D+1:', error);
 
-useEffect(() => {
-    const fetchDadosAmanha1 = async () => {
+  }}
+
+  
+
+  const ordensservico1 = async () => {
+    try {
+          fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erro na resposta da API');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const dadosFormatados = data.total_por_cidade.map(item => ({
+          cidade: item.cidade,
+          instalacoes: item.total_instalacoes,
+          manutencao: item.total_manutencoes,
+          trocaEndereco: item.total_trocas,
+          outros: item.total_outros
+        }));
+        setDadosTabelaCidade(dadosFormatados);
+
+      })
+      .catch(error => {
+
+      });
+    }catch (error) {
+        console.error('Erro ao carregar dados D+1:', error);
+
+  }}
+
+     const cidadeordensservico = async () => {
+      try {
+       fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erro na resposta da API');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const dadosFormatados = data.total_por_cidade.map(item => ({
+          cidade: item.cidade,
+          instalacoes: item.total_instalacoes,
+          manutencao: item.total_manutencoes,
+          trocaEndereco: item.total_trocas,
+          outros: item.total_outros
+        }));
+        setDadosTabelaCidade(dadosFormatados);
+
+      }) 
+      }  catch (error) {
+        console.error('Erro ao carregar dados D+1:', error);
+      }}
+
+     const fetchDadosAmanha1 = async () => {
       try {
         const res = await fetch('http://38.224.145.3:3010/ordens-servico-total-amanha1');
         if (!res.ok) throw new Error('Erro ao buscar dados de ordens de serviço de amanhã');
@@ -274,43 +324,6 @@ useEffect(() => {
     };
 
 
-    fetchDadosAmanha1();
-    fetchDadosAmanha2();
-    fetchDadosAmanha3();
-    fetchDadosAmanha4();
-    fetchDadosAmanha5();   
-    fetchDadosAmanha6(); 
-
-
-  }, []);
-
- useEffect(() => {
-    fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Erro na resposta da API');
-        }
-        return response.json();
-      })
-      .then(data => {
-        const dadosFormatados = data.total_por_cidade.map(item => ({
-          cidade: item.cidade,
-          instalacoes: item.total_instalacoes,
-          manutencao: item.total_manutencoes,
-          trocaEndereco: item.total_trocas,
-          outros: item.total_outros
-        }));
-        setDadosTabelaCidade(dadosFormatados);
-
-      })
-      .catch(error => {
-
-      });
-  }, []);
-
-  
-
-useEffect(() => {
   const fetchInstalacoes = async () => {
     const res = await fetch('http://38.224.145.3:3010/ordens-servico-instalacoes-do-mes');
     if (!res.ok) throw new Error('Erro ao buscar instalações');
@@ -407,8 +420,8 @@ const fetchInstalacoesHoje = async () => {
   }
 };
 
-
-  const buscarTodos = async () => {
+  
+ const buscarTodos = async () => {
     try {
       await Promise.all([
         fetchInstalacoes(),
@@ -416,20 +429,37 @@ const fetchInstalacoesHoje = async () => {
         fetchTrocas(),
         fetchOutros(),
         fetchResumo(),
-         fetchInstalacoesHoje(),
+        fetchInstalacoesHoje(),
         fetchManutencoesHoje(),
         fetchTrocasHoje(),
         fetchOutrosHoje(),
         fetchResumoHoje(),
         fetchDadosBairros(),
-        buscarOrdens()
+        ordensservico3(),
+        fetchDadosAmanha1(),
+        fetchDadosAmanha2(),
+        fetchDadosAmanha3(),
+        fetchDadosAmanha4(),
+        fetchDadosAmanha5(),
+        fetchDadosAmanha6(),
+        cidadeordensservico(),
+        ordensservico1(),
+        ordensservico2()
       ]);
     } catch (error) {
       console.error('Erro ao buscar dados mensais:', error);
     }
   };
 
+  // Executa imediatamente ao montar
   buscarTodos();
+   buscarOrdens();
+
+  // Atualiza a cada 1 segundo
+  const intervalId = setInterval(buscarTodos, 1000);
+
+  // Cleanup no desmontar
+  return () => clearInterval(intervalId);
 }, []);
 
 
