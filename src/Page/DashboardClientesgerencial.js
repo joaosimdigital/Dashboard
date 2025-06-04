@@ -80,7 +80,6 @@ const [loading, setLoading] = useState(false);
 
 
 
-
 const [mesSelecionado, setMesSelecionado] = useState(() => {
   const hoje = new Date();
   const nomesMeses = [
@@ -108,90 +107,94 @@ useEffect(() => {
   const [mesStr, anoStr] = mesSelecionado.split('/');
   const chave = `${mesStr.toLowerCase()}/${anoStr}`;
 
+  const baseSelecionada = estadoSelecionado === 'Todos'
+    ? 'geral'
+    : estadoSelecionado.toLowerCase();
+
   const meta = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === 'meta de número clientes ativos'
   );
 
   const metaChurn = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === 'meta de churn (base final do mês)'
   );
 
   const incremento = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === 'incremento de clientes na base'
   );
 
   const crescimento = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === '% de crescimento ao mês passado'
   );
 
   const faturamento = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === 'faturamento mensal'
   );
 
   const ticket = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === 'ticket médio geral'
   );
 
   const novosClientes = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === 'meta de novos clientes (ativação)'
   );
 
   const novasVendas = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === 'meta de novas vendas geral'
   );
 
   const novasVendasB2C = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === 'meta de novas vendas b2c'
   );
 
   const novasVendasB2B = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === 'meta de novas vendas b2b'
   );
 
   const cancelamentosBase = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === 'número de cancelamentos (base)'
   );
 
   const cancelamentosSolicitacao = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === 'cancelamentos (por solicitação)'
   );
 
   const cancelamentosInadimplencia = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === 'cancelamentos (inadimplencia)'
   );
 
   const retencaoCS = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
-    item.base?.trim().toLowerCase() === 'geral' &&
+    item.base?.trim().toLowerCase() === baseSelecionada &&
     item.indicador?.trim().toLowerCase() === 'meta de taxa de retenção cs'
   );
-
+ 
   setMetaChurnSelecionada(metaChurn || null);
   setIncrementoSelecionado(incremento || null);
   setCrescimentoSelecionado(crescimento || null);
@@ -206,7 +209,7 @@ useEffect(() => {
   setCancelamentosInadimplenciaSelecionado(cancelamentosInadimplencia || null);
   setRetencaoCSSelecionado(retencaoCS || null);
    setMetaSelecionada(meta || null);
-}, [mesSelecionado, datageral]);
+}, [mesSelecionado, datageral, estadoSelecionado]);
 
 
             // Gera automaticamente os meses até o mês atual de 2025
