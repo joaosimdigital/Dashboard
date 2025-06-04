@@ -23,7 +23,62 @@ export default function DashboardCancelamentos() {
       const [erro, setErro] = useState(null);
       const [cancelamentosPorCidade, setCancelamentosPorCidade] = useState([]);
       const [churnUltimosMeses, setChurnUltimosMeses] = useState([]);
-     
+   const datametames = {
+  1: 354,
+  2: 362,
+  3: 369,
+  4: 383,
+  5: 389,
+  6: 396,
+  7: 403,
+  8: 410,
+  9: 418,
+  10: 425,
+  11: 432
+};
+
+// Pega o mês atual (de 1 a 12)
+const mesAtual = new Date().getMonth() + 1;
+
+// Pega a meta correspondente ao mês atual
+const metaDoMes = datametames[mesAtual];
+
+let status = '';
+let corClasse = '';
+let corClasse2 = '';
+let mensagem = '';
+
+
+
+if (metaDoMes !== undefined) {
+  const metadeDaMeta = metaDoMes;
+
+  if (totalCanceladosMes < metadeDaMeta) {
+
+    status = 'abaixo';
+    corClasse = 'h2-verde';
+    corClasse2 = 'div-verde';
+    mensagem = `✅ Cancelamentos no mês (${totalCanceladosMes}) estão bem abaixo da meta (${metaDoMes}).`;
+  } else if (totalCanceladosMes >= metadeDaMeta && totalCanceladosMes < metaDoMes) {
+    status = 'medio';
+    corClasse = 'h2-amarelo';
+    corClasse2 = 'div-amarelo';
+    mensagem = `🟡 Cancelamentos no mês (${totalCanceladosMes}) estão se aproximando da meta (${metaDoMes}).`;
+  } else {
+    status = 'acima';
+    corClasse = 'h2-vermelho';
+    corClasse2 = 'div-vermelho';
+    mensagem = `⚠️ Cancelamentos no mês (${totalCanceladosMes}) estão acima da meta (${metaDoMes}).`;
+  }
+} else {
+  status = 'indefinido';
+  mensagem = '⚠️ Meta do mês atual não foi definida.';
+}
+
+
+console.log(status);
+
+
 
         // Mapeamento de números de mês para nomes
     const mesParaNome = [
@@ -207,8 +262,8 @@ export default function DashboardCancelamentos() {
       </div>
 
       </div>
-      <div className='div-numeros-churn2'>
-        <h1 className='h2-numeros-churn'>389</h1>
+      <div  className={`div-numeros-churn2 ${corClasse2}`}>
+        <h1 className='h2-numeros-churn'>{metaDoMes}</h1>
         <h1 className='h2-mes'>Limite</h1>
         <h1 className='h2-numeros-churn'>1.50%</h1>
 
@@ -228,7 +283,7 @@ export default function DashboardCancelamentos() {
 
       <div className='div-texto-status'>
         <h1 className='h1-texto-status'>Projeção</h1>
-        <h1 className='h2-texto-status'>ABAIXO</h1>
+        <h1 className={`h2-texto-status ${corClasse}`}>{status}</h1>
       </div>
 
       </div>

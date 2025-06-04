@@ -45,7 +45,6 @@
 }
 
 .div-numeros-churn2{
-    background-color: rgb(64, 255, 0);
     width: 580px;
     justify-content: space-between;
     height: 70px;
@@ -143,12 +142,38 @@
 }
 
 .h2-texto-status{
-    color: rgb(64, 255, 0);
     font-family: 'Bold';
     font-size: 80px;
     margin-top: -10px;
     margin-bottom: 20px;
+      text-transform: uppercase;
 }
+
+.div-amarelo {
+  background-color: rgb(255, 251, 13);
+}
+
+.div-verde {
+  background-color: rgb(64, 255, 0);
+}
+
+.div-vermelho {
+  background-color: red;
+}
+
+    .h2-amarelo {
+  color:  rgb(255, 251, 13);
+}
+
+    
+.h2-verde {
+  color: rgb(64, 255, 0);
+}
+
+.h2-vermelho {
+  color: red;
+}
+
 
 .h1-texto-status{
     font-size: 15px;
