@@ -43,12 +43,58 @@ const [totalResumoHoje, setTotalResumoHoje] = useState(0);
   });
 
 
-    const [sla, setSla] = useState({
-    instalacoes: '-',
-    trocas_endereco: '-',
-    manutencoes: '-',
-    outros: '-'
+      const [sla, setSla] = useState({
+    instalacoes: null,
+    trocas_endereco: null,
+    manutencoes: null,
+    outros: null
   });
+
+  useEffect(() => {
+    const fetchSla = async () => {
+      try {
+        const res = await fetch('http://38.224.145.3:3010/sla-os-categorias-30-dias');
+        const data = await res.json();
+
+        if (data.sla_medio_dias) {
+          setSla(data.sla_medio_dias);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar SLA médio:', error);
+      }
+    };
+
+    fetchSla();
+
+    // Atualiza a cada 60 segundos (opcional)
+    const interval = setInterval(fetchSla, 60000);
+    return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
+  }, []);
+
+     useEffect(() => {
+    const buscarTotais = async () => {
+      try {
+        const response = await fetch('http://38.224.145.3:3010/ordens-servico-pendente-total-mes');
+        const data = await response.json();
+
+        setTotais({
+          instalacoes: data.total_instalacoes || 0,
+          trocas: data.total_trocas || 0,
+          manutencoes: data.total_manutencoes || 0,
+          outros: data.total_outros || 0,
+          todos: data.total_geral || 0,
+        });
+      } catch (error) {
+        console.error('Erro ao buscar totais vencidos:', error);
+      }
+    };
+
+    buscarTotais();
+
+    const interval = setInterval(buscarTotais, 60000); // Atualiza a cada 60s
+
+    return () => clearInterval(interval); // Evita vazamento de memória
+  }, []);
 
   const [dadosClientesCompleto, setDadosClientesCompleto] = useState([]);
 
@@ -174,24 +220,6 @@ useEffect(() => {
 
   }}
 
-
-   const ordensservico2 = async () => {
-    try {
-      fetch('http://38.224.145.3:3010/ordens-servico-pendente-total-mes')
-    .then(res => res.json())
-    .then(data => {
-      if (data && data.totais) {
-        setTotais(data.totais); // Seta diretamente o objeto com os totais
-      }
-    })
-    .catch(error => {
-      console.error('Erro ao buscar ordens vencidas:', error);
-    });
-
-    }catch (error) {
-        console.error('Erro ao carregar dados D+1:', error);
-
-  }}
 
   
 
@@ -444,7 +472,7 @@ const fetchInstalacoesHoje = async () => {
         fetchDadosAmanha6(),
         cidadeordensservico(),
         ordensservico1(),
-        ordensservico2()
+      
       ]);
     } catch (error) {
       console.error('Erro ao buscar dados mensais:', error);
@@ -573,23 +601,24 @@ const exportarCSV = () => {
                        
                                 <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'dia')}>
                                 <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>{totalInstalacaoHoje}</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalInstalacaoHoje} | {totalResumoHoje > 0 ? `${Math.round((totalInstalacaoHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
+                             
                                  </div>
 
                                   <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'dia')}>TROCAS END.</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>{totalTrocaEndHoje}</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalTrocaEndHoje} | {totalResumoHoje > 0 ? `${Math.round((totalTrocaEndHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
                                  </div>
 
                                       <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'dia')}>MANUTENÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>{totalManutencaoHoje}</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalManutencaoHoje} | {totalResumoHoje > 0 ? `${Math.round((totalManutencaoHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
                                  </div>
 
 
                                   <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('outros', 'dia')}>OUTROS</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>{totalOutrosHoje}</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalOutrosHoje} | {totalResumoHoje > 0 ? `${Math.round((totalOutrosHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
                                  </div>
 
                              
@@ -893,7 +922,7 @@ const exportarCSV = () => {
 
         <div className='row-card1-gerencial-geral'>
           <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{totais.trocas_endereco}</h1>
+          <h1 className='h4-card1-gerencial-geral'>{totais.trocas}</h1>
         </div>
 
         <div className='row-card1-gerencial-geral'>
