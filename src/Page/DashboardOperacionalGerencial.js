@@ -73,6 +73,44 @@ const ordenarTabela = (dados, coluna, direcaoAtual = 'asc') => {
     outros: null
   });
 
+  const [dadosOriginais, setDadosOriginais] = useState([]);
+const [ordemCrescente, setOrdemCrescente] = useState(true);
+
+const fetchDadosCidades = async () => {
+  try {
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade');
+    if (!res.ok) throw new Error('Erro ao buscar dados por cidade');
+    const data = await res.json();
+
+    const transformado = data.total_por_cidade
+      .map(cidade => {
+        const instalacoes = cidade.total_instalacoes || 0;
+        const manutencao = cidade.total_manutencoes || 0;
+        const trocaEndereco = cidade.total_trocas || 0;
+        const outros = cidade.total_outros || 0;
+        const total = instalacoes + manutencao + trocaEndereco + outros;
+
+        return {
+          cidade: cidade.cidade || 'Não informado',
+          instalacoes,
+          manutencao,
+          trocaEndereco,
+          outros,
+          total
+        };
+      })
+      .sort((a, b) => b.total - a.total); // Ordena do maior para o menor TOTAL
+
+    setDadosOriginais(transformado);       // Salva os dados ordenados
+    setDadosTabelaCidade(transformado);    // Já aparece ordenado no render
+
+  } catch (error) {
+    console.error('Erro ao carregar cidades:', error);
+  }
+};
+  
+
+
   useEffect(() => {
     const fetchSla = async () => {
       try {
@@ -113,6 +151,7 @@ const ordenarTabela = (dados, coluna, direcaoAtual = 'asc') => {
     };
 
     buscarTotais();
+    fetchDadosCidades();
 
     const interval = setInterval(buscarTotais, 60000); // Atualiza a cada 60s
 
@@ -254,41 +293,6 @@ useEffect(() => {
   }}
 
 
-  
-
- const ordensservico1 = async () => {
-  try {
-    const response = await fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade');
-    if (!response.ok) throw new Error('Erro na resposta da API');
-
-    const data = await response.json();
-
-    // Calcular total e ordenar
-    const dadosOrdenados = [...data.total_por_cidade]
-      .map(item => ({
-        cidade: item.cidade,
-        instalacoes: item.total_instalacoes || 0,
-        manutencao: item.total_manutencoes || 0,
-        trocaEndereco: item.total_trocas || 0,
-        outros: item.total_outros || 0
-      }))
-      .map((item, index) => ({
-        ...item,
-        total: item.instalacoes + item.manutencao + item.trocaEndereco + item.outros
-      }))
-      .sort((a, b) => b.total - a.total) // Ordena do maior para o menor total
-      .map((item, index) => ({
-        ...item,
-        ranking: index + 1
-      }));
-
-    // Remover o campo total se não quiser exibir
-    setDadosTabelaCidade(dadosOrdenados);
-
-  } catch (error) {
-    console.error('Erro ao carregar dados de ordens por cidade:', error);
-  }
-};
 
      const cidadeordensservico = async () => {
       try {
@@ -467,30 +471,46 @@ const fetchInstalacoesHoje = async () => {
 
 
 
+
   const fetchDadosBairros = async () => {
   try {
     const res = await fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-bairro');
     if (!res.ok) throw new Error('Erro ao buscar dados por bairro');
     
     const data = await res.json();
-    // Mapeia para manter compatibilidade com nomes de chave utilizados na tabela
-    const transformado = data.total_por_bairro.map(bairro => ({
-      bairros: bairro.bairro || 'Não informado',
-      instalacoes: bairro.total_instalacoes || 0,
-      manutencao: bairro.total_manutencoes || 0,
-      trocaEndereco: bairro.total_trocas || 0,
-      outros: bairro.total_outros || 0
-    }));
+
+    const transformado = data.total_por_bairro
+      .map(bairro => {
+        const instalacoes = bairro.total_instalacoes || 0;
+        const manutencao = bairro.total_manutencoes || 0;
+        const trocaEndereco = bairro.total_trocas || 0;
+        const outros = bairro.total_outros || 0;
+        const total = instalacoes + manutencao + trocaEndereco + outros;
+
+        return {
+          bairros: bairro.bairro || 'Não informado',
+          instalacoes,
+          manutencao,
+          trocaEndereco,
+          outros,
+          total
+        };
+      })
+      .sort((a, b) => b.total - a.total); // ordena do maior para o menor
+
     setDadosBairros(transformado);
   } catch (error) {
     console.error('Erro ao carregar bairros:', error);
   }
 };
 
+
   
  const buscarTodos = async () => {
     try {
       await Promise.all([
+        
+        cidadeordensservico(),
         fetchInstalacoes(),
         fetchManutencoes(),
         fetchTrocas(),
@@ -509,8 +529,7 @@ const fetchInstalacoesHoje = async () => {
         fetchDadosAmanha4(),
         fetchDadosAmanha5(),
         fetchDadosAmanha6(),
-        cidadeordensservico(),
-        ordensservico1(),
+        
       
       ]);
     } catch (error) {
