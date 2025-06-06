@@ -25,6 +25,29 @@ const [totalResumoHoje, setTotalResumoHoje] = useState(0);
                             const [dados6, setDados6] = useState([]);
                             const [loadingTabela, setLoadingTabela] = useState(false);
 
+const [dadosBrutos, setDadosBrutos] = useState([]);
+const [dadosOrdenados, setDadosOrdenados] = useState([]);
+const [ordemColuna, setOrdemColuna] = useState({ coluna: null, direcao: 'asc' });
+
+
+const ordenarTabela = (dados, coluna, direcaoAtual = 'asc') => {
+  const novaDirecao = ordemColuna.coluna === coluna && ordemColuna.direcao === 'asc' ? 'desc' : 'asc';
+
+  const ordenados = [...dados].sort((a, b) => {
+    const valorA = a[coluna] ?? 0;
+    const valorB = b[coluna] ?? 0;
+    return novaDirecao === 'asc' ? valorA - valorB : valorB - valorA;
+  });
+
+  const comRanking = ordenados.map((item, index) => ({
+    ...item,
+    ranking: index + 1
+  }));
+
+  setDadosTabelaCidade(comRanking);
+  setOrdemColuna({ coluna, direcao: novaDirecao });
+};
+
      const [totais, setTotais] = useState({
     total_instalacoes: 0,
     total_trocas: 0,
@@ -138,6 +161,16 @@ if (escopo === "d2") {
   params.append("fim", fim.toISOString().split("T")[0]);
 }
 
+if (escopo === "inicio2017") {
+  const inicio = new Date("2017-01-01"); // fixo no primeiro dia de 2017
+  const fim = new Date(); // hoje
+
+  params.append("inicio", inicio.toISOString().split("T")[0]);
+  params.append("fim", fim.toISOString().split("T")[0]);
+  params.append("status", "pendente"); // filtra apenas ordens com status pendente
+}
+
+
 
  
   // D3 = depois de amanhã até +3 dias
@@ -223,33 +256,39 @@ useEffect(() => {
 
   
 
-  const ordensservico1 = async () => {
-    try {
-          fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Erro na resposta da API');
-        }
-        return response.json();
-      })
-      .then(data => {
-        const dadosFormatados = data.total_por_cidade.map(item => ({
-          cidade: item.cidade,
-          instalacoes: item.total_instalacoes,
-          manutencao: item.total_manutencoes,
-          trocaEndereco: item.total_trocas,
-          outros: item.total_outros
-        }));
-        setDadosTabelaCidade(dadosFormatados);
+ const ordensservico1 = async () => {
+  try {
+    const response = await fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade');
+    if (!response.ok) throw new Error('Erro na resposta da API');
 
-      })
-      .catch(error => {
+    const data = await response.json();
 
-      });
-    }catch (error) {
-        console.error('Erro ao carregar dados D+1:', error);
+    // Calcular total e ordenar
+    const dadosOrdenados = [...data.total_por_cidade]
+      .map(item => ({
+        cidade: item.cidade,
+        instalacoes: item.total_instalacoes || 0,
+        manutencao: item.total_manutencoes || 0,
+        trocaEndereco: item.total_trocas || 0,
+        outros: item.total_outros || 0
+      }))
+      .map((item, index) => ({
+        ...item,
+        total: item.instalacoes + item.manutencao + item.trocaEndereco + item.outros
+      }))
+      .sort((a, b) => b.total - a.total) // Ordena do maior para o menor total
+      .map((item, index) => ({
+        ...item,
+        ranking: index + 1
+      }));
 
-  }}
+    // Remover o campo total se não quiser exibir
+    setDadosTabelaCidade(dadosOrdenados);
+
+  } catch (error) {
+    console.error('Erro ao carregar dados de ordens por cidade:', error);
+  }
+};
 
      const cidadeordensservico = async () => {
       try {
@@ -633,10 +672,10 @@ const exportarCSV = () => {
         <thead style={{width: '100%'}}>
           <tr className="row-card2-gerencial-geral">
             <th className="h5-card1-gerencial-geral">CIDADE</th>
-            <th className="h6-card1-gerencial-geral">INSTALAÇÕES</th>
-            <th className="h6-card1-gerencial-geral">MANUT.</th>
-            <th className="h6-card1-gerencial-geral">TROCA END.</th>
-            <th className="h6-card1-gerencial-geral">OUTROS</th>
+            <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'instalacoes')}>INSTALAÇÕES</th>
+            <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'manutencao')}>MANUT.</th>
+            <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'trocaEndereco')}>TROCA END.</th>
+            <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'outros')}>OUTROS</th>
           </tr>
         </thead>
         <tbody>
@@ -915,22 +954,22 @@ const exportarCSV = () => {
       <h1 className='h2-card1-gerencial-geral'>{totais.todos}</h1>
 
       <div className='div-card1-gerencial-geral1'>
-        <div className='row-card1-gerencial-geral'>
+        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'inicio2017')}>
           <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
           <h1 className='h4-card1-gerencial-geral'>{totais.instalacoes}</h1>
         </div>
 
-        <div className='row-card1-gerencial-geral'>
+        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'inicio2017')}>
           <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
           <h1 className='h4-card1-gerencial-geral'>{totais.trocas}</h1>
         </div>
 
-        <div className='row-card1-gerencial-geral'>
+        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'inicio2017')} >
           <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
           <h1 className='h4-card1-gerencial-geral'>{totais.manutencoes}</h1>
         </div>
 
-        <div className='row-card1-gerencial-geral'>
+        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('outros', 'inicio2017')}>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{totais.outros}</h1>
         </div>
