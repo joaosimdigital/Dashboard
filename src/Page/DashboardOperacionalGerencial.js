@@ -6,6 +6,7 @@ import logobranca from '../Images/logobrnaca.png'
 function DashboardOperacionalGerencial() {
           const [totalManutencaoMes, setTotalManutencaoMes] = useState(0);
       const [totalInstalacaoMes, setTotalInstalacaoMes] = useState(0);
+      const [totalRecolhimentoMes, setTotalRecolhimentoMes] = useState(0);
             const [totalTrocaEndMes, setTotalTrocaEndMes] = useState(0);
             const [totalOutrosMes, setTotalOutrosMes]  = useState(0);
                const [totalResumoMes, setTotalResumoMes]  = useState(0);
@@ -108,7 +109,7 @@ const fetchDadosCidades = async () => {
     console.error('Erro ao carregar cidades:', error);
   }
 };
-  
+
 
 
   useEffect(() => {
@@ -402,6 +403,13 @@ useEffect(() => {
     setTotalInstalacaoMes(data.total_ordens_pendentes_aguardando_instalacao || 0);
   };
 
+    const fetchRecolhimento = async () => {
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-recolhimento-do-mes');
+    if (!res.ok) throw new Error('Erro ao buscar instalações');
+    const data = await res.json();
+    setTotalRecolhimentoMes(data.total_ordens_pendentes_aguardando_recolhimento || 0);
+  };
+
   const fetchManutencoes = async () => {
     const res = await fetch('http://38.224.145.3:3010/ordens-servico-manutencao-do-mes');
     if (!res.ok) throw new Error('Erro ao buscar manutenções');
@@ -509,7 +517,7 @@ const fetchInstalacoesHoje = async () => {
  const buscarTodos = async () => {
     try {
       await Promise.all([
-        
+        fetchRecolhimento(),
         cidadeordensservico(),
         fetchInstalacoes(),
         fetchManutencoes(),
@@ -628,6 +636,11 @@ const exportarCSV = () => {
                                 <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao')}>
                                 <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
                                  <h1  className='h4-card1-gerencial-geral'>{totalInstalacaoMes}</h1>
+                                 </div>
+
+                                  <div className='row-card1-gerencial-geral'>
+                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento')}>RECOLHIMENTO</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalRecolhimentoMes}</h1>
                                  </div>
 
                                   <div className='row-card1-gerencial-geral'>
