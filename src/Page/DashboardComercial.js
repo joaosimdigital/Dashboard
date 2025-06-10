@@ -34,6 +34,31 @@ export default function DashboardComercial() {
   const [mediaDiaria, setMediaDiaria] = useState(0);
   const [metaTotal, setMetaTotal] = useState("");
   const [porcentagemMeta, setPorcentagemMeta] = useState(0);
+  const metasMensais = [
+  { mes: 'jan/25', meta: 941 },
+  { mes: 'fev/25', meta: 953 },
+  { mes: 'mar/25', meta: 965 },
+  { mes: 'abr/25', meta: 976 },
+  { mes: 'mai/25', meta: 988 },
+  { mes: 'jun/25', meta: 1000 }
+];
+
+
+const getMesFormatado = () => {
+  const now = new Date();
+  const meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+  const mes = meses[now.getMonth()];
+  const ano = String(now.getFullYear()).slice(2); // pega só os dois últimos dígitos
+  return `${mes}/${ano}`;
+};
+const mesAtual = getMesFormatado(); // exemplo: 'jun/25'
+const metaDoMes = metasMensais.find(m => m.mes === mesAtual)?.meta || 0;
+
+
+
+
+const statusMeta = totalmediadia >= mediaDiaria ? 'ACIMA' : 'ABAIXO';
+
  
   
   const data = [
@@ -213,7 +238,7 @@ const COLORS = ['#FF4500', '#D3D3D3'];
 
         <div className='card-meta-mes'>
           <h1 className='h1-card-meta-mes'>Meta Mês</h1>
-          <h1 className='h2-card-meta-mes'>1035</h1>
+          <h1 className='h2-card-meta-mes'>{metaDoMes}</h1>
           
           </div>
 
@@ -246,9 +271,13 @@ const COLORS = ['#FF4500', '#D3D3D3'];
           <h1  className='h2-div-row-card-meta'>{mediaDiaria}</h1>
         </div>
 
-        <div className='div-row-card-meta-text'>
-          <h1 className='h1-div-row-card-meta-text'>ABAIXO</h1>
-        </div>
+       <div
+              className='div-row-card-meta-text'
+              style={{ backgroundColor: statusMeta === 'ACIMA' ? '#12B51D' : 'red' }}
+            >
+              <h1 className='h1-div-row-card-meta-text'>{statusMeta}</h1>
+            </div>
+
 
         </div>
 

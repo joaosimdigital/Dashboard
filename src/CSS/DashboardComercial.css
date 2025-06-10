@@ -434,6 +434,15 @@
 }
 
 
+.verde {
+  color: #12B51D;
+}
+
+.vermelho {
+  color: red;
+}
+
+
 .div-row-card-meta-text{
     height: 50px;
     width: 50%;
