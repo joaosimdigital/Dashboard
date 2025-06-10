@@ -15,10 +15,14 @@ export default function DashboardComercial() {
   const [totalCadastrosSC, setTotalCadastrosSC] = useState(0);
   const [totalCadastrosRS, setTotalCadastrosRS] = useState(0);
   const [totalCadastrosRSPF, setTotalCadastrosRSPF] = useState(0); // PF no RS
+    const [totalPorcentagemCadastrosRSPF, setPorcentagemTotalCadastrosRSPF] = useState(0); // PF no RS
   const [totalCadastrosRSPJ, setTotalCadastrosRSPJ] = useState(0); // PJ no RS
+    const [totalPercentualCadastrosRSPJ, setPercentualCadastrosRSPJ] = useState(0); // PJ no RS
   const [totalCadastrosSCPF, setTotalCadastrosSCPF] = useState(0); // PF no SC
+    const [totalPorcentagemCadastrosSCPF, setPorcentagemTotalCadastrosSCPF] = useState(0); // PF no SC
   const [totalmediadia, setTotalMediaDia] = useState(0); // PF no SC
   const [totalCadastrosSCPJ, setTotalCadastrosSCPJ] = useState(0); // PJ no SC
+    const [totalPorcentagemCadastrosSCPJ, setPorcentagemTotalCadastrosSCPJ] = useState(0); // PJ no SC
   const [totalVendasDiaSC, setTotalVendasDiaSC] = useState(0);
   const [totalVendasDiaRS, setTotalVendasDiaRS] = useState(0);
   const [planosVendidos, setPlanosVendidos] = useState([]);
@@ -99,22 +103,28 @@ const COLORS = ['#FF4500', '#D3D3D3'];
         // Buscar dados de Clientes PF no RS
         const responseRSPF = await fetch('http://38.224.145.3:3002/cadastros-rs-pf');
         const dataRSPF = await responseRSPF.json();
-        setTotalCadastrosRSPF(dataRSPF.total_cadastros_pf); // Armazenando o total de cadastros PF no RS
+        setTotalCadastrosRSPF(dataRSPF.total_cadastros); // Armazenando o total de cadastros PF no RS
+        setPorcentagemTotalCadastrosRSPF(dataRSPF.percentual_faturamento)
+
 
         // Buscar dados de Clientes PJ no RS
         const responseRSPJ = await fetch('http://38.224.145.3:3002/cadastros-rs-pj');
         const dataRSPJ = await responseRSPJ.json();
-        setTotalCadastrosRSPJ(dataRSPJ.total_cadastros_pj); // Armazenando o total de cadastros PJ no RS
+        setTotalCadastrosRSPJ(dataRSPJ.total_cadastros); // Armazenando o total de cadastros PJ no RS
+        setPercentualCadastrosRSPJ(dataRSPJ.percentual_faturamento); // Armazenando o total de cadastros PJ no RS
+          
 
          // Buscar dados de Clientes PF em SC
          const responseSCPF = await fetch('http://38.224.145.3:3002/cadastros-sc-pf');
          const dataSCPF = await responseSCPF.json();
          setTotalCadastrosSCPF(dataSCPF.total_cadastros); // Armazenando o total de cadastros PF em SC
+         setPorcentagemTotalCadastrosSCPF(dataSCPF.percentual_faturamento)
  
          // Buscar dados de Clientes PJ em SC
          const responseSCPJ = await fetch('http://38.224.145.3:3002/cadastros-sc-pj');
          const dataSCPJ = await responseSCPJ.json();
          setTotalCadastrosSCPJ(dataSCPJ.total_cadastros); // Armazenando o total de cadastros PJ em SC
+         setPorcentagemTotalCadastrosSCPJ(dataSCPJ.percentual_faturamento)
 
          const response = await fetch('http://38.224.145.3:3002/maiores-tickets');
          const data = await response.json();
@@ -251,12 +261,12 @@ const COLORS = ['#FF4500', '#D3D3D3'];
       {/* Novos cards para exibir dados de PF e PJ no RS */}
       <div className='card-vendas-mes-azul'>
         <h1 className='h1-card-vendas-mes-painel'>PF</h1>
-        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosSCPF}</h1>
+        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosSCPF} | <h1 className='h2-card-vendas-mes-painel1'>{totalPorcentagemCadastrosSCPF}</h1></h1>
       </div>
 
       <div className='card-vendas-mes-azul'>
         <h1 className='h1-card-vendas-mes-painel'>PJ</h1>
-        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosSCPJ}</h1>
+        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosSCPJ} | <h1 className='h2-card-vendas-mes-painel1'>{totalPorcentagemCadastrosSCPJ}</h1></h1>
       </div>
 
      
@@ -265,12 +275,12 @@ const COLORS = ['#FF4500', '#D3D3D3'];
 
       <div  className='card-vendas-mes-azul'>
         <h1 className='h1-card-vendas-mes-painel'>PF</h1>
-        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosRSPF}</h1>
+        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosRSPF} | <h1 className='h2-card-vendas-mes-painel1'>{totalPorcentagemCadastrosRSPF}</h1></h1>
       </div>
 
       <div  className='card-vendas-mes-azul'>
         <h1 className='h1-card-vendas-mes-painel'>PJ</h1>
-        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosRSPJ}</h1>
+        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosRSPJ} | <h1 className='h2-card-vendas-mes-painel1'>{totalPercentualCadastrosRSPJ}</h1></h1>
       </div>
 
     
