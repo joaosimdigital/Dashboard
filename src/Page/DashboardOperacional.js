@@ -36,7 +36,31 @@ export default function DashboardOperacional() {
       { name: 'Centro', days: 3 },
     ]);
 
-        const total1 = 840;
+    
+
+
+    const metasMensais = [
+  { mes: 'jan/25', meta: 800 },
+  { mes: 'fev/25', meta: 810 },
+  { mes: 'mar/25', meta: 820 },
+  { mes: 'abr/25', meta: 830 },
+  { mes: 'mai/25', meta: 840 },
+  { mes: 'jun/25', meta: 850 }
+];
+
+
+const getMesFormatado = () => {
+  const now = new Date();
+  const meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+  const mes = meses[now.getMonth()];
+  const ano = String(now.getFullYear()).slice(2); // pega só os dois últimos dígitos
+  return `${mes}/${ano}`;
+};
+const mesAtual = getMesFormatado(); // exemplo: 'jun/25'
+const metaHabilitacaoDoMes = metasMensais.find(m => m.mes === mesAtual)?.meta || 0;
+
+
+     
         const total2 = 1200;
       
         // Obtém o ano e mês atual
@@ -58,8 +82,9 @@ export default function DashboardOperacional() {
         };
       
         const diasUteisNoMes = calcularDiasUteis(ano, mes);
-        const media1 = (total1 / diasUteisNoMes).toFixed(0);
+        const media1 = (metaHabilitacaoDoMes / diasUteisNoMes).toFixed(0);
         const media2 = (total2 / diasUteisNoMes).toFixed(0);
+        const atingiuMetaHoje = totalExecutadoMesHoje >= media2;
 
 
   useEffect(() => {
@@ -147,6 +172,39 @@ export default function DashboardOperacional() {
     return () => clearInterval(intervalId);
   }, []); // O array vazio faz a requisição apenas uma vez quando o componente for montado
       
+  const totalHabilitacoes = totalHabilitadosMesSC + totalHabilitadosMesRS;
+const atingiuMeta = totalHabilitacoes >= metaHabilitacaoDoMes;
+
+const hoje = new Date();
+
+// Função para contar os dias do mês que não são domingo
+const contarDiasUteis = (ano, mes) => {
+  const ultimoDia = new Date(ano, mes + 1, 0).getDate(); // último dia do mês
+  let diasValidos = 0;
+
+  for (let dia = 1; dia <= ultimoDia; dia++) {
+    const data = new Date(ano, mes, dia);
+    const diaSemana = data.getDay(); // 0 = domingo
+    if (diaSemana !== 0) {
+      diasValidos++;
+    }
+  }
+
+  return diasValidos;
+};
+
+const diasUteisNoMes1 = contarDiasUteis(ano, mes);
+
+// Calcula a média da meta apenas sobre os dias úteis (sem domingo)
+const mediaDiariaCalculada = Math.floor(metaHabilitacaoDoMes / diasUteisNoMes1);
+
+// Compara se hoje bateu a média
+const atingiuMediaDiaria = totalHabilitadosHoje >= mediaDiariaCalculada;
+
+
+const totalExecutado = totalExecutadoMesRS + totalExecutadoMesSC;
+const atingiuMeta1 = totalExecutado >= total2;
+  
 
 
   return (
@@ -178,10 +236,17 @@ export default function DashboardOperacional() {
                            
                             </div>
 
-                            <div className='div-meta-card-dados-principais'>
-                                <h1 className='h1-meta-card-dados-principais'>Meta Mês</h1>
-                                <h1  className='h2-meta-card-dados-principais'>840</h1>
-                            </div>
+                         <div
+  className='div-meta-card-dados-principais'
+  style={{
+    backgroundColor: atingiuMeta ? 'red' : '#12B51D',
+    transition: '0.3s ease',
+    color: '#fff'
+  }}
+>
+  <h1 className='h1-meta-card-dados-principais'>Meta Mês</h1>
+  <h1 className='h2-meta-card-dados-principais'>{metaHabilitacaoDoMes}</h1>
+</div>
 
                             </div>
 
@@ -195,10 +260,17 @@ export default function DashboardOperacional() {
                                 </div>
                                 
 
-                                <div className='div-meta-card-dados-principais'>
-                                <h1 className='h1-meta-card-dados-principais'>Meta / Média</h1>
-                                <h1  className='h2-meta-card-dados-principais'>{media1}</h1>
-                                </div>
+                          <div
+                            className='div-meta-card-dados-principais'
+                            style={{
+                              backgroundColor: atingiuMediaDiaria ? '#12B51D' : 'red',
+                              transition: '0.3s ease',
+                              color: '#fff'
+                            }}
+                          >
+                            <h1 className='h1-meta-card-dados-principais'>Meta / Média</h1>
+                            <h1 className='h2-meta-card-dados-principais'>{mediaDiariaCalculada}</h1>
+                          </div>
                             </div>
 
                             <div>
@@ -232,10 +304,17 @@ export default function DashboardOperacional() {
                            
                             </div>
 
-                            <div className='div-meta-card-dados-principais'>
-                                <h1 className='h1-meta-card-dados-principais'>Meta Mês</h1>
-                                <h1  className='h2-meta-card-dados-principais'>1200</h1>
-                            </div>
+                          <div
+                      className='div-meta-card-dados-principais'
+                      style={{
+                        backgroundColor: atingiuMeta1 ? 'red' : '#12B51D',
+                        transition: '0.3s ease',
+                        color: '#fff',
+                      }}
+                    >
+                      <h1 className='h1-meta-card-dados-principais'>Meta Mês</h1>
+                      <h1 className='h2-meta-card-dados-principais'>{total2}</h1>
+                    </div>
 
                             </div>
 
@@ -249,11 +328,19 @@ export default function DashboardOperacional() {
                                 </div>
                                 
 
-                                <div className='div-meta-card-dados-principais'>
-                                <h1 className='h1-meta-card-dados-principais'>Meta / Média</h1>
-                                <h1  className='h2-meta-card-dados-principais'>{media2}</h1>
+                                <div
+                                  className='div-meta-card-dados-principais'
+                                  style={{
+                                    backgroundColor: atingiuMetaHoje ? '#12B51D' : 'red',
+                                    transition: '0.3s ease',
+                                    color: '#fff',
+
+                                  }}
+                                >
+                                  <h1 className='h1-meta-card-dados-principais'>Meta / Média</h1>
+                                  <h1 className='h2-meta-card-dados-principais'>{media2}</h1>
                                 </div>
-                            </div>
+                              </div>
 
                             <div>
 
