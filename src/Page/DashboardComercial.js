@@ -260,13 +260,13 @@ const COLORS = ['#FF4500', '#D3D3D3'];
 
       {/* Novos cards para exibir dados de PF e PJ no RS */}
       <div className='card-vendas-mes-azul'>
-        <h1 className='h1-card-vendas-mes-painel'>PF</h1>
-        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosSCPF} | <h1 className='h2-card-vendas-mes-painel1'>{totalPorcentagemCadastrosSCPF}</h1></h1>
+        <h1 className='h1-card-vendas-mes-painel'>PF <h1 style={{fontSize: 10, marginLeft: 10}}> (QTD. e Porcentagem Faturamento)</h1></h1>
+        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosSCPF}<h1 className='h2-card-vendas-mes-painel1'>{totalPorcentagemCadastrosSCPF}</h1></h1>
       </div>
 
       <div className='card-vendas-mes-azul'>
-        <h1 className='h1-card-vendas-mes-painel'>PJ</h1>
-        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosSCPJ} | <h1 className='h2-card-vendas-mes-painel1'>{totalPorcentagemCadastrosSCPJ}</h1></h1>
+        <h1 className='h1-card-vendas-mes-painel'>PJ <h1 style={{fontSize: 10, marginLeft: 10}}> (QTD. e Porcentagem Faturamento)</h1></h1>
+        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosSCPJ}<h1 className='h2-card-vendas-mes-painel1'>{totalPorcentagemCadastrosSCPJ}</h1></h1>
       </div>
 
      
@@ -274,13 +274,13 @@ const COLORS = ['#FF4500', '#D3D3D3'];
       <h1 className='rs-h1-card-vendas'>RS</h1>
 
       <div  className='card-vendas-mes-azul'>
-        <h1 className='h1-card-vendas-mes-painel'>PF</h1>
-        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosRSPF} | <h1 className='h2-card-vendas-mes-painel1'>{totalPorcentagemCadastrosRSPF}</h1></h1>
+        <h1 className='h1-card-vendas-mes-painel'>PF <h1 style={{fontSize: 10, marginLeft: 10}}> (QTD. e Porcentagem Faturamento)</h1></h1>
+        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosRSPF}<h1 className='h2-card-vendas-mes-painel1'>{totalPorcentagemCadastrosRSPF}</h1></h1>
       </div>
 
       <div  className='card-vendas-mes-azul'>
-        <h1 className='h1-card-vendas-mes-painel'>PJ</h1>
-        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosRSPJ} | <h1 className='h2-card-vendas-mes-painel1'>{totalPercentualCadastrosRSPJ}</h1></h1>
+        <h1 className='h1-card-vendas-mes-painel'>PJ <h1 style={{fontSize: 10, marginLeft: 10}}> (QTD. e Porcentagem Faturamento)</h1></h1>
+        <h1 className='h2-card-vendas-mes-painel'>{totalCadastrosRSPJ}<h1 className='h2-card-vendas-mes-painel1'>{totalPercentualCadastrosRSPJ}</h1></h1>
       </div>
 
     
