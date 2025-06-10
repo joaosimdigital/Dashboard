@@ -140,13 +140,35 @@ const buscarOrdens = async (tipo = "", escopo = "", cidade = "", bairro = "") =>
   const hoje = new Date();
 
   // Dia = ontem e hoje
-  if (escopo === "dia") {
-    const ontem = new Date(hoje);
-    ontem.setDate(hoje.getDate() - 1);
+if (escopo === "dia") {
+  const hoje = new Date();
+  const ontem = new Date(hoje);
+  ontem.setDate(hoje.getDate() - 1);
 
-    params.append("inicio", ontem.toISOString().split("T")[0]);
-    params.append("fim", hoje.toISOString().split("T")[0]);
-  }
+  // Início: ontem às 00:01
+  const inicio = new Date(
+    ontem.getFullYear(),
+    ontem.getMonth(),
+    ontem.getDate(),
+    0, 1, 0 // 00:01:00
+  );
+
+  // Fim: hoje às 23:59
+  const fim = new Date(
+    hoje.getFullYear(),
+    hoje.getMonth(),
+    hoje.getDate(),
+    23, 59, 59 // 23:59:59
+  );
+
+  // Para uso em URLs ou body de requisição
+  const format = (date) => date.toISOString().slice(0, 19).replace('T', ' ');
+
+  params.append("inicio", format(inicio)); // Ex: 2025-09-08 00:01:00
+  params.append("fim", format(fim));       // Ex: 2025-09-09 23:59:59
+}
+
+
 
 if (escopo === "d1") {
   const inicio = new Date();
