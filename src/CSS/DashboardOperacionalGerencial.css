@@ -49,7 +49,7 @@
     width: 15%;
     background-color: #525252;
      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    height: 280px;
+    height: 310px;
     border-radius: 5px;
     align-items: center;
     display: flex;
@@ -61,7 +61,7 @@
 .div-card2-gerencial-geral{
     width: 34%;
     background-color: #525252;
-    height: 280px;
+    height: 310px;
      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     border-radius: 5px;
     align-items: center;
@@ -223,7 +223,7 @@
     width: 12%;
     background-color: #525252;
      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    height: 280px;
+    height: 310px;
     border-radius: 5px;
     align-items: center;
     display: flex;
@@ -235,7 +235,7 @@
     width: 12%;
     background-color: #0B8634;
      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    height: 280px;
+    height: 310px;
     border-radius: 5px;
     align-items: center;
     display: flex;
@@ -247,7 +247,7 @@
     width: 12%;
     background-color: #05A039;
      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    height: 280px;
+    height: 310px;
     border-radius: 5px;
     align-items: center;
     display: flex;
@@ -258,7 +258,7 @@
     width: 12%;
     background-color: #FFC300;
      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    height: 280px;
+    height: 310px;
     border-radius: 5px;
     align-items: center;
     display: flex;
@@ -270,7 +270,7 @@
     width: 12%;
     background-color: #E9B407;
      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    height: 280px;
+    height: 310px;
     border-radius: 5px;
     align-items: center;
     display: flex;
@@ -282,7 +282,7 @@
     width: 12%;
     background-color: #E96507;
      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    height: 280px;
+    height: 310px;
     border-radius: 5px;
     align-items: center;
     display: flex;
@@ -293,7 +293,7 @@
     width: 12%;
     background-color: #CE0505;
      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    height: 280px;
+    height: 310px;
     border-radius: 5px;
     align-items: center;
     display: flex;
@@ -304,7 +304,7 @@
     width: 12%;
     background-color: black;
      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    height: 280px;
+    height: 310px;
     border-radius: 5px;
     align-items: center;
     display: flex;
@@ -313,7 +313,7 @@
 
 
 .div-slas {
-  width: 450px;
+  width: 520px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   font-family: Bold;
   color: white;
