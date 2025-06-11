@@ -184,7 +184,7 @@ useEffect(() => {
   const cancelamentosBase = datageral.find(item =>
     item.data?.trim().toLowerCase() === chave &&
     item.base?.trim().toLowerCase() === baseSelecionada &&
-    item.indicador?.trim().toLowerCase() === indicadorCancelamento
+    item.indicador?.trim().toLowerCase() === 'número de cancelamentos (base)'
   );
 
   const cancelamentosSolicitacao = datageral.find(item =>
