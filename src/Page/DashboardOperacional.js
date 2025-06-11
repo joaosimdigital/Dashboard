@@ -331,7 +331,7 @@ const atingiuMeta1 = totalExecutado >= total2;
                                 <div
                                   className='div-meta-card-dados-principais'
                                   style={{
-                                    backgroundColor: atingiuMetaHoje ? '#12B51D' : 'red',
+                                    backgroundColor: atingiuMetaHoje ? 'red' : '#12B51D',
                                     transition: '0.3s ease',
                                     color: '#fff',
 
