@@ -663,18 +663,16 @@ const exportarCSV = () => {
                                  <h1  className='h4-card1-gerencial-geral'>{totalManutencaoMes}</h1>
                                  </div>
 
-                                  
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento')}>RECOLHIMENTO</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>{totalRecolhimentoMes}</h1>
-                                 </div>
 
                                   <div className='row-card1-gerencial-geral'>
                               <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('outros')}>OUTROS</h1>
                                  <h1  className='h4-card1-gerencial-geral'>{totalOutrosMes}</h1>
                                  </div>
 
-                             
+                               <div className='row-card1-gerencial-geral'>
+                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento')}>RECOLHIMENTO</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalRecolhimentoMes}</h1>
+                                 </div>
       
                         </div>
                     </div>
@@ -702,18 +700,18 @@ const exportarCSV = () => {
                                  <h1  className='h4-card1-gerencial-geral'>{totalManutencaoHoje} | {totalResumoHoje > 0 ? `${Math.round((totalManutencaoHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
                                  </div>
 
-                                    <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'dia')}>RECOLHIMENTO</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>{totalRecolhimentoHoje} | {totalResumoHoje > 0 ? `${Math.round((totalRecolhimentoHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
-
-                                 </div>
+                                
 
                                   <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('outros', 'dia')}>OUTROS</h1>
                                  <h1  className='h4-card1-gerencial-geral'>{totalOutrosHoje} | {totalResumoHoje > 0 ? `${Math.round((totalOutrosHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
                                  </div>
 
-                             
+                                 <div className='row-card1-gerencial-geral'>
+                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'dia')}>RECOLHIMENTO</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalRecolhimentoHoje} | {totalResumoHoje > 0 ? `${Math.round((totalRecolhimentoHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
+
+                                 </div>
       
                         </div>
                     </div>
@@ -728,8 +726,8 @@ const exportarCSV = () => {
             <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'instalacoes')}>INSTALAÇÕES</th>
             <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'manutencao')}>MANUT.</th>
             <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'trocaEndereco')}>TROCA END.</th>
-              <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'trocaEndereco')}>RECOLHIMENTO</th>
             <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'outros')}>OUTROS</th>
+                <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'trocaEndereco')}>RECOLHIMENTO</th>
           </tr>
         </thead>
         <tbody>
@@ -745,8 +743,8 @@ const exportarCSV = () => {
          <td onClick={() => buscarOrdens('instalacao', '', item.cidade)} className="h8-card1-gerencial-geral">{item.instalacoes}</td>
 <td onClick={() => buscarOrdens('manutencao', '', item.cidade)} className="h8-card1-gerencial-geral">{item.manutencao}</td>
 <td onClick={() => buscarOrdens('troca', '', item.cidade)} className="h8-card1-gerencial-geral">{item.trocaEndereco}</td>
-<td onClick={() => buscarOrdens('recolhimento', '', item.cidade)} className="h8-card1-gerencial-geral">{item.recolhimentos}</td>
 <td onClick={() => buscarOrdens('outros', '', item.cidade)} className="h8-card1-gerencial-geral">{item.outros}</td>
+<td onClick={() => buscarOrdens('recolhimento', '', item.cidade)} className="h8-card1-gerencial-geral">{item.recolhimentos}</td>
 
             </tr>
           ))}
@@ -767,8 +765,8 @@ const exportarCSV = () => {
           <th className="h6-card1-gerencial-geral">INSTALAÇÕES</th>
           <th className="h6-card1-gerencial-geral">MANUT.</th>
           <th className="h6-card1-gerencial-geral">TROCA END.</th>
-              <th className="h6-card1-gerencial-geral">RECOLHIMENTO</th>
           <th className="h6-card1-gerencial-geral">OUTROS</th>
+           <th className="h6-card1-gerencial-geral">RECOLHIMENTO</th>
         </tr>
       </thead>
       <tbody>
@@ -788,8 +786,8 @@ const exportarCSV = () => {
            <td onClick={() => buscarOrdens('instalacao', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.instalacoes}</td>
 <td onClick={() => buscarOrdens('manutencao', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.manutencao}</td>
 <td onClick={() => buscarOrdens('troca', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.trocaEndereco}</td>
-<td onClick={() => buscarOrdens('recolhimento', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.recolhimentos}</td>
 <td onClick={() => buscarOrdens('outros', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.outros}</td>
+<td onClick={() => buscarOrdens('recolhimento', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.recolhimentos}</td>
 
           </tr>
         ))}
@@ -861,16 +859,20 @@ const exportarCSV = () => {
           <h1 className='h4-card1-gerencial-geral'>{dados2.total_manutencoes}</h1>
         </div>
 
-          <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd2')}>
-          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados.total_recolhimentos}</h1>
-        </div>
 
 
         <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('outro', 'd2')}>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados2.total_outros}</h1>
         </div>
+
+
+          <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd2')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados2.total_recolhimentos}</h1>
+        </div>
+
+
       </div>
     </div>
 
@@ -896,15 +898,18 @@ const exportarCSV = () => {
           <h1 className='h4-card1-gerencial-geral'>{dados3.total_manutencoes}</h1>
         </div>
 
-             <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd4')}>
-          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados.total_recolhimentos}</h1>
-        </div>
 
         <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('outro', 'd3')}>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados3.total_outros}</h1>
         </div>
+
+
+              <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd4')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados3.total_recolhimentos}</h1>
+        </div>
+
       </div>
     </div>
 
@@ -929,15 +934,16 @@ const exportarCSV = () => {
           <h1 className='h4-card1-gerencial-geral'>{dados4.total_manutencoes}</h1>
         </div>
 
-               <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd4')}>
-          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados.total_recolhimentos}</h1>
-        </div>
-
         <div className='row-card1-gerencial-geral'   onClick={() => buscarOrdens('outro', 'd4')}>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados4.total_outros}</h1>
         </div>
+
+            <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd4')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados4.total_recolhimentos}</h1>
+        </div>
+
       </div>
     </div>
 
@@ -963,15 +969,16 @@ const exportarCSV = () => {
           <h1 className='h4-card1-gerencial-geral'>{dados5.total_manutencoes}</h1>
         </div>
 
-             <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd5')}>
-          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados.total_recolhimentos}</h1>
-        </div>
-
         <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('outro', 'd5')}>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados5.total_outros}</h1>
         </div>
+
+             <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd5')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados5.total_recolhimentos}</h1>
+        </div>
+
       </div>
     </div>
 
@@ -997,15 +1004,18 @@ const exportarCSV = () => {
         </div>
 
         
-             <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd6')}>
-          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados.total_recolhimentos}</h1>
-        </div>
-
+        
         <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('outro', 'd6')}>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados6.total_outros}</h1>
         </div>
+
+             <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd6')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados6.total_recolhimentos}</h1>
+        </div>
+
+
       </div>
     </div>
 
@@ -1033,7 +1043,7 @@ const exportarCSV = () => {
 
            <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd1')}>
           <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{totais.manutencoes}</h1>
+          <h1 className='h4-card1-gerencial-geral'>{semAgenda.manutencoes}</h1>
         </div>
 
 
@@ -1041,6 +1051,9 @@ const exportarCSV = () => {
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{semAgenda.outros}</h1>
         </div>
+
+
+
       </div>
     </div>
 
@@ -1065,15 +1078,16 @@ const exportarCSV = () => {
           <h1 className='h4-card1-gerencial-geral'>{totais.manutencoes}</h1>
         </div>
 
-             <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'inicio2017')}>
-          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{totais.manutencoes}</h1>
-        </div>
-
         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('outros', 'inicio2017')}>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{totais.outros}</h1>
         </div>
+
+              <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'inicio2017')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{totais.manutencoes}</h1>
+        </div>
+
       </div>
     </div>
 
@@ -1090,16 +1104,16 @@ const exportarCSV = () => {
           <div className="sla-categoria">INSTALAÇÕES</div>
           <div className="sla-categoria">TROCAS END.</div>
           <div className="sla-categoria">MANUTENÇÕES</div>
-            <div className="sla-categoria">RECOLHIMENTO</div>
           <div className="sla-categoria">OUTROS</div>
+             <div className="sla-categoria">RECOLHIMENTO</div>
         </div>
 
         <div className="sla-valores">
           <div className="sla-valor">{sla.instalacoes}</div>
           <div className="sla-valor">{sla.trocas_endereco}</div>
           <div className="sla-valor">{sla.manutencoes}</div>
-           <div className="sla-valor">{sla.recolhimentos}</div>
           <div className="sla-valor">{sla.outros}</div>
+           <div className="sla-valor">{sla.recolhimentos}</div>
         </div>
       </div>
     </div>
