@@ -685,31 +685,31 @@ const exportarCSV = () => {
                        
                                 <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'dia')}>
                                 <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>{totalInstalacaoHoje} | {totalResumoHoje > 0 ? `${Math.round((totalInstalacaoHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalInstalacaoHoje} | {totalInstalacaoMes > 0 ? `${Math.round((totalInstalacaoHoje / totalInstalacaoMes) * 100)}%` : '0%'}</h1>
                              
                                  </div>
 
 
                                   <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'dia')}>TROCAS END.</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>{totalTrocaEndHoje} | {totalResumoHoje > 0 ? `${Math.round((totalTrocaEndHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalTrocaEndHoje} | {totalTrocaEndMes > 0 ? `${Math.round((totalTrocaEndHoje / totalTrocaEndMes) * 100)}%` : '0%'}</h1>
                                  </div>
 
                                       <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'dia')}>MANUTENÇÕES</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>{totalManutencaoHoje} | {totalResumoHoje > 0 ? `${Math.round((totalManutencaoHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalManutencaoHoje} | {totalManutencaoMes > 0 ? `${Math.round((totalManutencaoHoje / totalManutencaoMes) * 100)}%` : '0%'}</h1>
                                  </div>
 
                                 
 
                                   <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('outros', 'dia')}>OUTROS</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>{totalOutrosHoje} | {totalResumoHoje > 0 ? `${Math.round((totalOutrosHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalOutrosHoje} | {totalOutrosMes > 0 ? `${Math.round((totalOutrosHoje / totalOutrosMes) * 100)}%` : '0%'}</h1>
                                  </div>
 
                                  <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'dia')}>RECOLHIMENTO</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>{totalRecolhimentoHoje} | {totalResumoHoje > 0 ? `${Math.round((totalRecolhimentoHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalRecolhimentoHoje} | {totalRecolhimentoMes > 0 ? `${Math.round((totalRecolhimentoHoje / totalRecolhimentoMes) * 100)}%` : '0%'}</h1>
 
                                  </div>
       
