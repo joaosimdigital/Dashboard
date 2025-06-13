@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList, PieChart, Pie, Cell } from 'recharts';
 import { Modal, Spinner } from 'react-bootstrap';
+//import { registerLocale } from "react-datepicker";
 
 
 import logobranca from '../Images/logobrnaca.png'
+//import DatePicker from 'react-datepicker';
+//import ptBR from "date-fns/locale/pt-BR";
 import grafico from '../Images/chart-graphic.png'
 import '../CSS/DashboardChurnGerencial.css'
+import 'react-datepicker/dist/react-datepicker.css';
+
+//registerLocale("pt-BR", ptBR);
 
 function DashboardChurnGerencial() {
   const currentDate = new Date();
@@ -17,9 +23,13 @@ function DashboardChurnGerencial() {
     const [projecao, setProjecao] = useState(0);
     const [cancelamentosPJ, setCancelamentosPJ] = useState(0);
     const [cancelamentosPF, setCancelamentosPF] = useState(0);
+    const [tipoPessoaSelecionado, setTipoPessoaSelecionado] = useState(null);
     const [churnUltimosMeses, setChurnUltimosMeses] = useState([]);
     const [churnPorBairro, setChurnPorBairro] = useState([]);
     const [churnPorCidade, setChurnPorCidade] = useState([]);
+    const [diaSelecionado, setDiaSelecionado] = useState('');
+    const [dataInicial, setDataInicial] = useState(null);
+    const [dataFinal, setDataFinal] = useState(null);
     const [downgradeAtendimentos, setDowngradeAtendimentos] = useState([]);
     const [motivosCancelamentos, setMotivosCancelamentos] = useState([]);
     const [atendimentosTipo257, setAtendimentosTipo257] = useState([]);
@@ -32,6 +42,7 @@ function DashboardChurnGerencial() {
     const [clientesRepetidosAtendimento, setClientesRepetidosAtendimento] = useState([]);
     const [motivoSelecionado, setMotivoSelecionado] = useState(null);
     const [cidadeSelecionada, setCidadeSelecionada] = useState(null);
+    const [ordenarPorCancelamentos, setOrdenarPorCancelamentos] = useState(false);
     const [loading, setLoading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [bairroSelecionado, setBairroSelecionado] = useState(null);
@@ -44,8 +55,6 @@ function DashboardChurnGerencial() {
     
     const COLORS = ['#F45742', '#00000']; // Cores para Batido e Restante
 
-
-
     const fetchChurnMensal = async () => {
       try {
         let url = `http://38.224.145.3:3007/churn-mensal?ano=${anoSelecionado}&mes=${mesSelecionado}`;
@@ -53,6 +62,8 @@ function DashboardChurnGerencial() {
         if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
         if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
         if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+        //if (dataInicial) url += `&data_inicial=${encodeURIComponent(dataInicial.toISOString().split('T')[0])}`;
+        //if (dataFinal) url += `&data_final=${encodeURIComponent(dataFinal.toISOString().split('T')[0])}`;
     
         const response = await fetch(url);
         const data = await response.json();
@@ -67,7 +78,6 @@ function DashboardChurnGerencial() {
       }
     };
     
-
     const fetchLimiteMeta = async () => {
       try {
         let url = `http://38.224.145.3:3007/limitemeta?ano=${anoSelecionado}&mes=${mesSelecionado}`;
@@ -75,6 +85,8 @@ function DashboardChurnGerencial() {
         if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
         if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
         if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+        //if (dataInicial) url += `&data_inicial=${encodeURIComponent(dataInicial.toISOString().split('T')[0])}`;
+        //if (dataFinal) url += `&data_final=${encodeURIComponent(dataFinal.toISOString().split('T')[0])}`;
     
         const response = await fetch(url);
         const data = await response.json();
@@ -92,8 +104,6 @@ function DashboardChurnGerencial() {
       }
     };
     
-    
-
       const fetchChurnTipoPessoa = async () => {
         try {
           let url = `http://38.224.145.3:3007/churn-mensal_tipo_pessoa?ano=${anoSelecionado}&mes=${mesSelecionado}`;
@@ -101,6 +111,8 @@ function DashboardChurnGerencial() {
           if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
           if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
           if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+          //if (dataInicial) url += `&data_inicial=${encodeURIComponent(dataInicial.toISOString().split('T')[0])}`;
+          //if (dataFinal) url += `&data_final=${encodeURIComponent(dataFinal.toISOString().split('T')[0])}`;
       
           const response = await fetch(url);
           const data = await response.json();
@@ -115,7 +127,6 @@ function DashboardChurnGerencial() {
         }
       };
       
-
       const fetchChurn3Meses = async () => {
         try {
           let url = `http://38.224.145.3:3007/churn-mensal-3meses?ano=${anoSelecionado}&mes=${mesSelecionado}`;
@@ -123,6 +134,9 @@ function DashboardChurnGerencial() {
           if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
           if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
           if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+          if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
+          //if (dataInicial) url += `&data_inicial=${encodeURIComponent(dataInicial.toISOString().split('T')[0])}`;
+          //if (dataFinal) url += `&data_final=${encodeURIComponent(dataFinal.toISOString().split('T')[0])}`;
       
           const response = await fetch(url);
           const data = await response.json();
@@ -147,7 +161,6 @@ function DashboardChurnGerencial() {
         }
       };
       
-
         const fetchChurnPorCidade = async () => {
           try {
             let url = `http://38.224.145.3:3007/churn-cidade?ano=${anoSelecionado}&mes=${mesSelecionado}`;
@@ -164,6 +177,9 @@ function DashboardChurnGerencial() {
             let url = `http://38.224.145.3:3007/churn-bairro?ano=${anoSelecionado}&mes=${mesSelecionado}`;
             if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
             if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+            if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
+            //if (dataInicial) url += `&data_inicial=${encodeURIComponent(dataInicial.toISOString().split('T')[0])}`;
+            //if (dataFinal) url += `&data_final=${encodeURIComponent(dataFinal.toISOString().split('T')[0])}`;
     
             const response = await fetch(url);
             const data = await response.json();
@@ -171,13 +187,15 @@ function DashboardChurnGerencial() {
           } catch (error) { console.error('Erro:', error); }
         };
 
-
         const fetchDowngradeAtendimentos = async () => {
           try {
             let url = `http://38.224.145.3:3007/atendimentos_tipo_downgrade?ano=${anoSelecionado}&mes=${mesSelecionado}`;
             if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
             if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
             if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+            if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
+            //if (dataInicial) url += `&data_inicial=${encodeURIComponent(dataInicial.toISOString().split('T')[0])}`;
+            //if (dataFinal) url += `&data_final=${encodeURIComponent(dataFinal.toISOString().split('T')[0])}`;
         
             const response = await fetch(url);
             const data = await response.json();
@@ -202,12 +220,14 @@ function DashboardChurnGerencial() {
           }
         };
         
-
       const fetchMotivosCancelamento = async () => {
                   try {
                     let url = `http://38.224.145.3:3007/motivos_cancelamentos?ano=${anoSelecionado}&mes=${mesSelecionado}`;
                     if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
                     if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
+                    if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
+                    //if (dataInicial) url += `&data_inicial=${encodeURIComponent(dataInicial.toISOString().split('T')[0])}`;
+                    //if (dataFinal) url += `&data_final=${encodeURIComponent(dataFinal.toISOString().split('T')[0])}`;
 
                     const response = await fetch(url);
                     const data = await response.json();
@@ -228,8 +248,6 @@ function DashboardChurnGerencial() {
                     let url = `http://38.224.145.3:3007/atendimentos_tipo?ano=${anoSelecionado}&mes=${mesSelecionado}`;
                     if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
                    
-                  
-                
                     const response = await fetch(url);
                     const data = await response.json();
                 
@@ -253,7 +271,6 @@ function DashboardChurnGerencial() {
                   }
                 };  
 
-
                 const fetchValorCancelamentoMensal = async () => {
                   try {
                     let url = `http://38.224.145.3:3007/valor-cancelamento-mensal?ano=${anoSelecionado}&mes=${mesSelecionado}`;
@@ -267,7 +284,7 @@ function DashboardChurnGerencial() {
                     if (motivoSelecionado) {
                       url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
                     }
-                
+                  
                     const response = await fetch(url);
                     const data = await response.json();
                     
@@ -281,7 +298,6 @@ function DashboardChurnGerencial() {
                   }
                 };
                 
-        
         const fetchValorCancelamentoAnual = async () => {
           try {
             let url = `http://38.224.145.3:3007/valor-cancelamento-anual?ano=${anoSelecionado}`;
@@ -300,8 +316,6 @@ function DashboardChurnGerencial() {
             console.error('Erro na requisição valor anual:', error);
           }
         };
-        
-
 
         const fetchChurnAnual = async () => {
           try {
@@ -413,6 +427,27 @@ function DashboardChurnGerencial() {
             console.error('Erro na requisição de atendimentos repetidos:', error);
           }
         };
+
+        const fetchCancelamentosDetalhadosPorTipoPessoa = async (tipoPessoa) => {
+          try {
+            let url = `http://38.224.145.3:3007/cancelamentos-detalhados?ano=${anoSelecionado}&mes=${mesSelecionado}&tipo_pessoa=${tipoPessoa}`;
+
+            if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+            if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
+            if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (response.ok) {
+              setCancelamentosDetalhados(data);
+            } else {
+              console.error('Erro ao buscar cancelamentos detalhados:', data.error);
+            }
+          } catch (error) {
+            console.error('Erro ao buscar cancelamentos detalhados:', error);
+          }
+        };
         
 
         const fetchStatusMeta = async () => {
@@ -467,12 +502,16 @@ function DashboardChurnGerencial() {
           }
         };
 
+        const handleClick = (tipo) => {
+          setTipoPessoaSelecionado(tipo);
+          fetchCancelamentosDetalhadosPorTipoPessoa(tipo);
+        };
 
         useEffect(() => {
           fetchAll(false); // não mostra loading nas chamadas automáticas
-          const intervalo = setInterval(() => fetchAll(false), 1000);
+          const intervalo = setInterval(() => fetchAll(false), 2000);
           return () => clearInterval(intervalo);
-        }, [anoSelecionado, mesSelecionado, cidadeSelecionada, bairroSelecionado, motivoSelecionado]);
+        }, [anoSelecionado, mesSelecionado, dataInicial, dataFinal, cidadeSelecionada, bairroSelecionado, motivoSelecionado, tipoPessoaSelecionado]);
 
 
     const handleUserInteraction = async (callback) => {
@@ -486,8 +525,8 @@ function DashboardChurnGerencial() {
     const anos = Array.from({ length: currentYear - 2018 + 1 }, (_, i) => 2018 + i);
   
     const meses = [
-      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+       'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+       'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
     ];
 
   return (
@@ -526,6 +565,31 @@ function DashboardChurnGerencial() {
           ))}
         </select>
       </div>
+     {/*
+      <div className='div-body-opcao1'>
+        <h3 className='h1-body-opcao'>Data inicial</h3>
+        <DatePicker
+          selected={dataInicial}
+          onChange={(date) => handleUserInteraction(() => setDataInicial(date))}
+          dateFormat="yyyy-MM-dd"
+          className="button-body-opcao"
+          placeholderText="Selecione a data inicial"
+          locale="pt-BR"
+        />
+      </div>
+
+      <div className='div-body-opcao1'>
+        <h3 className='h1-body-opcao'>Data final</h3>
+        <DatePicker
+          selected={dataFinal}
+          onChange={(date) => handleUserInteraction(() => setDataFinal(date))}
+          dateFormat="yyyy-MM-dd"
+          className="button-body-opcao"
+          placeholderText="Selecione a data final"
+          locale="pt-BR"
+        />
+      </div>
+      */}
 
       <button
   className="botao-limparfiltros"
@@ -533,6 +597,8 @@ function DashboardChurnGerencial() {
     setCidadeSelecionada(null);
     setBairroSelecionado(null);
     setMotivoSelecionado(null);
+    setDataInicial(null);
+    setDataFinal(null);
     setAnoSelecionado(currentYear);
     setMesSelecionado(currentMonth);
   })}
@@ -646,12 +712,12 @@ function DashboardChurnGerencial() {
                                 <h1 className='h2-div-gerencial-body1'>{statusMeta.toLocaleUpperCase()}</h1>
                             </div>
 
-                            <div className='card3-div-gerencial-body1'>
+                            <div className='card3-div-gerencial-body1' onClick={() => handleClick('PF')} style={{ cursor: 'pointer' }}>
                                 <h1 className='h1-div-gerencial-body1'>PF</h1>
                                 <h1 className='h2-div-gerencial-body1'>{cancelamentosPF}</h1>
                             </div>
 
-                            <div className='card3-div-gerencial-body1'>
+                            <div className='card3-div-gerencial-body1'onClick={() => handleClick('PJ')} style={{ cursor: 'pointer' }}>
                                 <h1 className='h1-div-gerencial-body1'>PJ</h1>
                                 <h1 className='h2-div-gerencial-body1'>{cancelamentosPJ}</h1>
                             </div>
@@ -667,7 +733,16 @@ function DashboardChurnGerencial() {
                     <thead>
                         <tr style={{backgroundColor: 'white'}}>
                         <th className='h1-tabela-bairros-gerencial'>Bairro</th>
-                        <th className='h1-tabela-bairros-gerencial'>Cancelamentos</th>
+                        <th className='h1-tabela-bairros-gerencial'>
+                          Cancelamentos
+                          <span
+                            onClick={() => setOrdenarPorCancelamentos(prev => !prev)}
+                            style={{ cursor: 'pointer', marginLeft: 5 }}
+                            title="Ordenar por número de cancelamentos"
+                          >
+                            ↓
+                          </span>
+                        </th>
                         <th className='h1-tabela-bairros-gerencial'>Clientes Ativos</th>
                         <th className='h1-tabela-bairros-gerencial'>Churn Inad.</th>
                         <th className='h1-tabela-bairros-gerencial'>Churn Opção</th>
@@ -676,33 +751,34 @@ function DashboardChurnGerencial() {
                     </thead>
                     <tbody>
                       {churnPorBairro
-                        .filter(item => 
-                          (!cidadeSelecionada || item.cidade_nome === cidadeSelecionada) &&
-                          (!motivoSelecionado || cancelamentosDetalhados.some(cancel => 
-                            cancel.bairro === item.bairro_nome && cancel.motivo_cancelamento === motivoSelecionado
-                          ))
-                        )
-                        .map((item, index) => (
-                          <tr
-                            key={index}
-                            className='link-tabela-bairros'
-                            onClick={() =>  handleUserInteraction(() => {
-                              setBairroSelecionado(prev => prev === item.bairro_nome ? null : item.bairro_nome);
-                              setCidadeSelecionada(item.cidade_nome);
-                            })}
-                            style={{
-                              cursor: 'pointer',
-                              backgroundColor: bairroSelecionado === item.bairro_nome ? '#f2f2f2' : 'white'
-                            }}
-                          >
-                            <td className='h2-tabela-bairros-gerencial'>{item.bairro_nome}</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.total_clientes_ativos}</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.pct_pedido}%</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.pct_automatico}%</td>
-                            <td className='h2-tabela-bairros-gerencial'>{item.churn_rate}%</td>
-                          </tr>
-                        ))}
+                    .filter(item => 
+                      (!cidadeSelecionada || item.cidade_nome === cidadeSelecionada) &&
+                      (!motivoSelecionado || cancelamentosDetalhados.some(cancel => 
+                        cancel.bairro === item.bairro_nome && cancel.motivo_cancelamento === motivoSelecionado
+                      ))
+                    )
+                    .sort((a, b) => ordenarPorCancelamentos ? b.total_cancelamentos - a.total_cancelamentos : 0)
+                    .map((item, index) => (
+                      <tr
+                        key={index}
+                        className='link-tabela-bairros'
+                        onClick={() => handleUserInteraction(() => {
+                          setBairroSelecionado(prev => prev === item.bairro_nome ? null : item.bairro_nome);
+                          setCidadeSelecionada(item.cidade_nome);
+                        })}
+                        style={{
+                          cursor: 'pointer',
+                          backgroundColor: bairroSelecionado === item.bairro_nome ? '#f2f2f2' : 'white'
+                        }}
+                      >
+                        <td className='h2-tabela-bairros-gerencial'>{item.bairro_nome}</td>
+                        <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
+                        <td className='h2-tabela-bairros-gerencial'>{item.total_clientes_ativos}</td>
+                        <td className='h2-tabela-bairros-gerencial'>{item.pct_pedido}%</td>
+                        <td className='h2-tabela-bairros-gerencial'>{item.pct_automatico}%</td>
+                        <td className='h2-tabela-bairros-gerencial'>{item.churn_rate}%</td>
+                      </tr>
+                  ))}
                   </tbody>
 
 
@@ -821,38 +897,83 @@ function DashboardChurnGerencial() {
                         </tr>
                     </thead>
                     <tbody>
-  {motivosCancelamentos
-    .filter(item => {
-      if (bairroSelecionado || cidadeSelecionada) {
-        return cancelamentosDetalhados.some(cancelamento =>
-          (!bairroSelecionado || cancelamento.bairro === bairroSelecionado) &&
-          (!cidadeSelecionada || cancelamento.cidade_nome === cidadeSelecionada) &&
-          cancelamento.motivo_cancelamento === item.descricao
-        );
-      }
-      return true; // se não tiver filtro, mostra todos os motivos
-    })
-    .map((item, index) => (
-      <tr
-        key={index}
-        className="link-tabela-bairros"
-        onClick={() =>  handleUserInteraction(() =>
-          setMotivoSelecionado(prev => prev === item.descricao ? null : item.descricao)
-    )}
-        style={{
-          cursor: 'pointer',
-          backgroundColor: motivoSelecionado === item.descricao ? '#f2f2f2' : 'white'
-        }}
-      >
-        <td className="h2-tabela-bairros-gerencial">{item.descricao}</td>
-        <td className="h2-tabela-bairros-gerencial">{item.total_cancelamentos}</td>
-      </tr>
-    ))}
-</tbody>
+                    {motivosCancelamentos
+                      .filter(item => {
+                        if (bairroSelecionado || cidadeSelecionada) {
+                          return cancelamentosDetalhados.some(cancelamento =>
+                            (!bairroSelecionado || cancelamento.bairro === bairroSelecionado) &&
+                            (!cidadeSelecionada || cancelamento.cidade_nome === cidadeSelecionada) &&
+                            cancelamento.motivo_cancelamento === item.descricao
+                          );
+                        }
+                        return true; // se não tiver filtro, mostra todos os motivos
+                      })
+                      .map((item, index) => (
+                        <tr
+                          key={index}
+                          className="link-tabela-bairros"
+                          onClick={() =>  handleUserInteraction(() =>
+                            setMotivoSelecionado(prev => prev === item.descricao ? null : item.descricao)
+                      )}
+                          style={{
+                            cursor: 'pointer',
+                            backgroundColor: motivoSelecionado === item.descricao ? '#f2f2f2' : 'white'
+                          }}
+                        >
+                          <td className="h2-tabela-bairros-gerencial">{item.descricao}</td>
+                          <td className="h2-tabela-bairros-gerencial">{item.total_cancelamentos}</td>
+                        </tr>
+                      ))}
+                  </tbody>
 
 
                     </table>
                 </div>
+                </div>
+
+                <div className='div2-gerencial-body1'>
+                  <div className='lista-div2-gerencial-body1'>
+                      <h1 className='h1-div-gerencial-gerencial'>Planos cancelados</h1>
+                      <table className="tabela-bairros-gerencial">
+                      <thead>
+                          <tr style={{ backgroundColor: 'white' }}>
+                          <th className='h1-tabela-bairros-gerencial'>Planos</th>
+                          <th className='h1-tabela-bairros-gerencial'>Total Cancelamentos</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                      {motivosCancelamentos
+                        .filter(item => {
+                          if (bairroSelecionado || cidadeSelecionada) {
+                            return cancelamentosDetalhados.some(cancelamento =>
+                              (!bairroSelecionado || cancelamento.bairro === bairroSelecionado) &&
+                              (!cidadeSelecionada || cancelamento.cidade_nome === cidadeSelecionada) &&
+                              cancelamento.motivo_cancelamento === item.descricao
+                            );
+                          }
+                          return true; // se não tiver filtro, mostra todos os motivos
+                        })
+                        .map((item, index) => (
+                          <tr
+                            key={index}
+                            className="link-tabela-bairros"
+                            onClick={() =>  handleUserInteraction(() =>
+                              setMotivoSelecionado(prev => prev === item.descricao ? null : item.descricao)
+                        )}
+                            style={{
+                              cursor: 'pointer',
+                              backgroundColor: motivoSelecionado === item.descricao ? '#f2f2f2' : 'white'
+                            }}
+                          >
+                            <td className="h2-tabela-bairros-gerencial">{item.descricao}</td>
+                            <td className="h2-tabela-bairros-gerencial">{item.total_cancelamentos}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+
+
+                      </table>
+                  </div>
                 </div>
 
 
@@ -895,9 +1016,6 @@ function DashboardChurnGerencial() {
                     ) : (
                       <p>Carregando atendimentos tipo 257...</p>
                     )}
-
-
-
 
                        </div>
                          
