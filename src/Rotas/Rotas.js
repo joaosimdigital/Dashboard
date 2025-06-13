@@ -14,11 +14,13 @@ import DashboardCancelamentosClone from '../Page/DashboardCancelamentosClone';
 import DashboardComercialgerencial from '../Page/DashboardComercialgerencial';
 import DashboardClientesgerencial from '../Page/DashboardClientesgerencial';
 import DashboardOperacionalGerencial from '../Page/DashboardOperacionalGerencial';
+import DashboardPerformanceComercial from '../Page/DashboardPerformanceComercial';
 
 const Rotas = () => {
   return (
     <Router>
       <Routes>
+        <Route path='/dashboardperformancecomercial' element={<DashboardPerformanceComercial />} />
         <Route path='/cancelamentotv' element={<DashboardCancelamentos />} />
         <Route path='/cancelamento-simone' element={<DashboardCancelamentosClone />} />
         <Route path='/comercialtv' element={<DashboardComercial />} />

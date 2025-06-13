@@ -1,0 +1,225 @@
+:root {
+  --primary: #1a1a1a; /* Fundo escuro principal */
+  --secondary: #b5c7ff; /* Azul claro para destaques */
+  --text: #ffffff; /* Texto padrão branco */
+  --white: #ffffff;
+  --light-gray: #2a2a2a; /* Fundo das áreas de conteúdo, substituindo o cinza claro */
+  --border: #3a3a3a; /* Linhas e divisões */
+  --shadow: rgba(0, 0, 0, 0.4); /* Sombra mais visível no fundo escuro */
+  --success: #28a745;
+  --error: #dc3545;
+  --gold: #ffd300;
+  --silver: #c0c0c0;
+  --bronze: #cd7f32;
+  --gradient-active: linear-gradient(180deg, #ff4d00, #ffd000);
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background-color: var(--primary);
+  color: var(--text);
+}
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 360px;
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 2rem 1rem;
+}
+
+.sidebar h2 {
+  font-size: 24px;
+  margin-bottom: 2rem;
+}
+
+.sidebar .b2c {
+  background-color: var(--secondary);
+  color: var(--primary);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+.sidebar button {
+  display: block;
+  width: 100%;
+  background: transparent;
+  color: var(--white);
+  border: none;
+  text-align: left;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.sidebar button:hover,
+.sidebar button.active {
+  background: var(--gradient-active);
+  color: var(--white);
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background-color: var(--light-gray);
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px var(--shadow);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card p {
+  font-size: 14px;
+  color: #ccc;
+  margin: 0 0 8px 0;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.card .up {
+  color: var(--success);
+  font-size: 14px;
+  margin-left: 8px;
+}
+
+.card .down {
+  color: var(--error);
+  font-size: 14px;
+  margin-left: 8px;
+}
+
+.rankings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.ranking-table {
+  background-color: var(--light-gray);
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px var(--shadow);
+  flex: 1 1 400px;
+}
+
+.ranking-table h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 18px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.ranking-table table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text);
+}
+
+.ranking-table th,
+.ranking-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.ranking-table tr:last-child td {
+  border-bottom: none;
+}
+
+.highlights {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+}
+
+.highlight-group h3 {
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.highlight-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.highlight-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5em;
+  background: linear-gradient(145deg, #1e1e1e, #2b2b2b);
+  border-radius: 16px;
+  padding: 1.4rem 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  flex: 1 1 300px;
+  min-width: 280px;
+  max-width: 600px;
+}
+
+.highlight-card .position {
+  font-weight: bold;
+  font-size: 1rem;
+  color: white;
+}
+
+.profile-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2.5px solid transparent;
+}
+
+.profile-img.red {
+  border-color: #ff4500; /* Vermelho/laranja como na imagem */
+}
+
+.highlight-card .info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.highlight-card .info .name {
+  font-weight: 600;
+  color: white;
+}
+
+.highlight-card .info .tag {
+  background: #3f3f3f;
+  color: white;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  width: fit-content;
+}
+
+
