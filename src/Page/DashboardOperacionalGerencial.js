@@ -11,6 +11,7 @@ function DashboardOperacionalGerencial() {
             const [totalOutrosMes, setTotalOutrosMes]  = useState(0);
                const [totalResumoMes, setTotalResumoMes]  = useState(0);
                const [totalInstalacaoHoje, setTotalInstalacaoHoje] = useState(0);
+                const [totalRecolhimentoHoje, setTotalRecolhimentoHoje] = useState(0);
 const [totalManutencaoHoje, setTotalManutencaoHoje] = useState(0);
 const [totalTrocaEndHoje, setTotalTrocaEndHoje] = useState(0);
 const [totalOutrosHoje, setTotalOutrosHoje] = useState(0);
@@ -77,39 +78,6 @@ const ordenarTabela = (dados, coluna, direcaoAtual = 'asc') => {
   const [dadosOriginais, setDadosOriginais] = useState([]);
 const [ordemCrescente, setOrdemCrescente] = useState(true);
 
-const fetchDadosCidades = async () => {
-  try {
-    const res = await fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade');
-    if (!res.ok) throw new Error('Erro ao buscar dados por cidade');
-    const data = await res.json();
-
-    const transformado = data.total_por_cidade
-      .map(cidade => {
-        const instalacoes = cidade.total_instalacoes || 0;
-        const manutencao = cidade.total_manutencoes || 0;
-        const trocaEndereco = cidade.total_trocas || 0;
-        const outros = cidade.total_outros || 0;
-        const total = instalacoes + manutencao + trocaEndereco + outros;
-
-        return {
-          cidade: cidade.cidade || 'Não informado',
-          instalacoes,
-          manutencao,
-          trocaEndereco,
-          outros,
-          total
-        };
-      })
-      .sort((a, b) => b.total - a.total); // Ordena do maior para o menor TOTAL
-
-    setDadosOriginais(transformado);       // Salva os dados ordenados
-    setDadosTabelaCidade(transformado);    // Já aparece ordenado no render
-
-  } catch (error) {
-    console.error('Erro ao carregar cidades:', error);
-  }
-};
-
 
 
   useEffect(() => {
@@ -152,7 +120,7 @@ const fetchDadosCidades = async () => {
     };
 
     buscarTotais();
-    fetchDadosCidades();
+
 
     const interval = setInterval(buscarTotais, 60000); // Atualiza a cada 60s
 
@@ -172,13 +140,35 @@ const buscarOrdens = async (tipo = "", escopo = "", cidade = "", bairro = "") =>
   const hoje = new Date();
 
   // Dia = ontem e hoje
-  if (escopo === "dia") {
-    const ontem = new Date(hoje);
-    ontem.setDate(hoje.getDate() - 1);
+if (escopo === "dia") {
+  const hoje = new Date();
+  const ontem = new Date(hoje);
+  ontem.setDate(hoje.getDate() - 1);
 
-    params.append("inicio", ontem.toISOString().split("T")[0]);
-    params.append("fim", hoje.toISOString().split("T")[0]);
-  }
+  // Início: ontem às 00:01
+  const inicio = new Date(
+    ontem.getFullYear(),
+    ontem.getMonth(),
+    ontem.getDate(),
+    0, 1, 0 // 00:01:00
+  );
+
+  // Fim: hoje às 23:59
+  const fim = new Date(
+    hoje.getFullYear(),
+    hoje.getMonth(),
+    hoje.getDate(),
+    23, 59, 59 // 23:59:59
+  );
+
+  // Para uso em URLs ou body de requisição
+  const format = (date) => date.toISOString().slice(0, 19).replace('T', ' ');
+
+  params.append("inicio", format(inicio)); // Ex: 2025-09-08 00:01:00
+  params.append("fim", format(fim));       // Ex: 2025-09-09 23:59:59
+}
+
+
 
 if (escopo === "d1") {
   const inicio = new Date();
@@ -278,6 +268,44 @@ if (escopo === "d3") {
 
 useEffect(() => {
 
+  const fetchDadosCidades = async () => {
+  try {
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade');
+    if (!res.ok) throw new Error('Erro ao buscar dados por cidade');
+    const data = await res.json();
+
+    const transformado = data.total_por_cidade
+      .map(cidade => {
+        const instalacoes = cidade.total_instalacoes || 0;
+        const manutencao = cidade.total_manutencoes || 0;
+        const trocaEndereco = cidade.total_trocas || 0;
+        const recolhimentos = cidade.total_recolhimentos || 0;
+        const outros = cidade.total_outros || 0;
+        const total = instalacoes + manutencao + trocaEndereco + outros + recolhimentos;
+
+
+        console.log(recolhimentos)
+        return {
+          cidade: cidade.cidade || 'Não informado',
+          instalacoes,
+          manutencao,
+          trocaEndereco,
+          recolhimentos,
+          outros,
+          total
+        };
+      })
+      .sort((a, b) => b.total - a.total); // Ordena do maior para o menor TOTAL
+
+    setDadosOriginais(transformado);       // Salva os dados ordenados
+    setDadosTabelaCidade(transformado);    // Já aparece ordenado no render
+
+  } catch (error) {
+    console.error('Erro ao carregar cidades:', error);
+  }
+};
+
+
    const ordensservico3 = async () => {
     try {
       fetch('http://38.224.145.3:3010/ordens-servico-aguardando-agendamento')
@@ -293,31 +321,6 @@ useEffect(() => {
 
   }}
 
-
-
-     const cidadeordensservico = async () => {
-      try {
-       fetch('http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Erro na resposta da API');
-        }
-        return response.json();
-      })
-      .then(data => {
-        const dadosFormatados = data.total_por_cidade.map(item => ({
-          cidade: item.cidade,
-          instalacoes: item.total_instalacoes,
-          manutencao: item.total_manutencoes,
-          trocaEndereco: item.total_trocas,
-          outros: item.total_outros
-        }));
-        setDadosTabelaCidade(dadosFormatados);
-
-      }) 
-      }  catch (error) {
-        console.error('Erro ao carregar dados D+1:', error);
-      }}
 
      const fetchDadosAmanha1 = async () => {
       try {
@@ -339,6 +342,7 @@ useEffect(() => {
 
         const data = await res.json();
         setDados2(data);
+        console.log(data)
       } catch (error) {
         console.error('Erro ao carregar dados D+1:', error);
       }
@@ -409,6 +413,14 @@ useEffect(() => {
     const data = await res.json();
     setTotalRecolhimentoMes(data.total_ordens_pendentes_aguardando_recolhimento || 0);
   };
+
+    const fetchRecolhimentoHoje = async () => {
+    const res = await fetch('http://38.224.145.3:3010/ordens-servico-recolhimento-hoje');
+    if (!res.ok) throw new Error('Erro ao buscar instalações');
+    const data = await res.json();
+    setTotalRecolhimentoHoje(data.total_ordens_pendentes_aguardando_instalacao || 0);
+  };
+
 
   const fetchManutencoes = async () => {
     const res = await fetch('http://38.224.145.3:3010/ordens-servico-manutencao-do-mes');
@@ -492,6 +504,7 @@ const fetchInstalacoesHoje = async () => {
         const instalacoes = bairro.total_instalacoes || 0;
         const manutencao = bairro.total_manutencoes || 0;
         const trocaEndereco = bairro.total_trocas || 0;
+        const recolhimentos = bairro.total_recolhimentos || 0;
         const outros = bairro.total_outros || 0;
         const total = instalacoes + manutencao + trocaEndereco + outros;
 
@@ -500,6 +513,7 @@ const fetchInstalacoesHoje = async () => {
           instalacoes,
           manutencao,
           trocaEndereco,
+          recolhimentos,
           outros,
           total
         };
@@ -518,7 +532,6 @@ const fetchInstalacoesHoje = async () => {
     try {
       await Promise.all([
         fetchRecolhimento(),
-        cidadeordensservico(),
         fetchInstalacoes(),
         fetchManutencoes(),
         fetchTrocas(),
@@ -537,7 +550,8 @@ const fetchInstalacoesHoje = async () => {
         fetchDadosAmanha4(),
         fetchDadosAmanha5(),
         fetchDadosAmanha6(),
-        
+        fetchRecolhimentoHoje(),
+        fetchDadosCidades()
       
       ]);
     } catch (error) {
@@ -638,10 +652,6 @@ const exportarCSV = () => {
                                  <h1  className='h4-card1-gerencial-geral'>{totalInstalacaoMes}</h1>
                                  </div>
 
-                                  <div className='row-card1-gerencial-geral'>
-                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento')}>RECOLHIMENTO</h1>
-                                 <h1  className='h4-card1-gerencial-geral'>{totalRecolhimentoMes}</h1>
-                                 </div>
 
                                   <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('troca')}>TROCAS END.</h1>
@@ -659,7 +669,10 @@ const exportarCSV = () => {
                                  <h1  className='h4-card1-gerencial-geral'>{totalOutrosMes}</h1>
                                  </div>
 
-                             
+                               <div className='row-card1-gerencial-geral'>
+                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento')}>RECOLHIMENTO</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalRecolhimentoMes}</h1>
+                                 </div>
       
                         </div>
                     </div>
@@ -676,6 +689,7 @@ const exportarCSV = () => {
                              
                                  </div>
 
+
                                   <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'dia')}>TROCAS END.</h1>
                                  <h1  className='h4-card1-gerencial-geral'>{totalTrocaEndHoje} | {totalResumoHoje > 0 ? `${Math.round((totalTrocaEndHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
@@ -686,13 +700,18 @@ const exportarCSV = () => {
                                  <h1  className='h4-card1-gerencial-geral'>{totalManutencaoHoje} | {totalResumoHoje > 0 ? `${Math.round((totalManutencaoHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
                                  </div>
 
+                                
 
                                   <div className='row-card1-gerencial-geral'>
                                 <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('outros', 'dia')}>OUTROS</h1>
                                  <h1  className='h4-card1-gerencial-geral'>{totalOutrosHoje} | {totalResumoHoje > 0 ? `${Math.round((totalOutrosHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
                                  </div>
 
-                             
+                                 <div className='row-card1-gerencial-geral'>
+                                <h1 className='h3-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'dia')}>RECOLHIMENTO</h1>
+                                 <h1  className='h4-card1-gerencial-geral'>{totalRecolhimentoHoje} | {totalResumoHoje > 0 ? `${Math.round((totalRecolhimentoHoje / totalResumoHoje) * 100)}%` : '0%'}</h1>
+
+                                 </div>
       
                         </div>
                     </div>
@@ -708,6 +727,7 @@ const exportarCSV = () => {
             <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'manutencao')}>MANUT.</th>
             <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'trocaEndereco')}>TROCA END.</th>
             <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'outros')}>OUTROS</th>
+                <th className="h6-card1-gerencial-geral" onClick={() => ordenarTabela(dadosTabelaCidade, 'trocaEndereco')}>RECOLHIMENTO</th>
           </tr>
         </thead>
         <tbody>
@@ -724,6 +744,7 @@ const exportarCSV = () => {
 <td onClick={() => buscarOrdens('manutencao', '', item.cidade)} className="h8-card1-gerencial-geral">{item.manutencao}</td>
 <td onClick={() => buscarOrdens('troca', '', item.cidade)} className="h8-card1-gerencial-geral">{item.trocaEndereco}</td>
 <td onClick={() => buscarOrdens('outros', '', item.cidade)} className="h8-card1-gerencial-geral">{item.outros}</td>
+<td onClick={() => buscarOrdens('recolhimento', '', item.cidade)} className="h8-card1-gerencial-geral">{item.recolhimentos}</td>
 
             </tr>
           ))}
@@ -745,6 +766,7 @@ const exportarCSV = () => {
           <th className="h6-card1-gerencial-geral">MANUT.</th>
           <th className="h6-card1-gerencial-geral">TROCA END.</th>
           <th className="h6-card1-gerencial-geral">OUTROS</th>
+           <th className="h6-card1-gerencial-geral">RECOLHIMENTO</th>
         </tr>
       </thead>
       <tbody>
@@ -765,6 +787,7 @@ const exportarCSV = () => {
 <td onClick={() => buscarOrdens('manutencao', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.manutencao}</td>
 <td onClick={() => buscarOrdens('troca', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.trocaEndereco}</td>
 <td onClick={() => buscarOrdens('outros', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.outros}</td>
+<td onClick={() => buscarOrdens('recolhimento', '', '', item.bairros)} className="h8-card1-gerencial-geral">{item.recolhimentos}</td>
 
           </tr>
         ))}
@@ -796,17 +819,24 @@ const exportarCSV = () => {
         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
           <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados.total_trocas}</h1>
-        </div>
+        </div>  
 
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
+         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
           <h1 className='h3-card1-gerencial-geral' >MANUTENÇÕES</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados.total_manutencoes}</h1>
         </div>
+
 
         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('outro', 'd1')}>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados.total_outros}</h1>
         </div>
+
+         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd1')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados.total_recolhimentos}</h1>
+        </div>
+
       </div>
     </div>
 
@@ -831,10 +861,20 @@ const exportarCSV = () => {
           <h1 className='h4-card1-gerencial-geral'>{dados2.total_manutencoes}</h1>
         </div>
 
+
+
         <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('outro', 'd2')}>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados2.total_outros}</h1>
         </div>
+
+
+          <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd2')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados2.total_recolhimentos}</h1>
+        </div>
+
+
       </div>
     </div>
 
@@ -860,10 +900,18 @@ const exportarCSV = () => {
           <h1 className='h4-card1-gerencial-geral'>{dados3.total_manutencoes}</h1>
         </div>
 
+
         <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('outro', 'd3')}>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados3.total_outros}</h1>
         </div>
+
+
+              <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd4')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados3.total_recolhimentos}</h1>
+        </div>
+
       </div>
     </div>
 
@@ -892,6 +940,12 @@ const exportarCSV = () => {
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados4.total_outros}</h1>
         </div>
+
+            <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd4')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados4.total_recolhimentos}</h1>
+        </div>
+
       </div>
     </div>
 
@@ -921,6 +975,12 @@ const exportarCSV = () => {
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados5.total_outros}</h1>
         </div>
+
+             <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd5')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados5.total_recolhimentos}</h1>
+        </div>
+
       </div>
     </div>
 
@@ -939,15 +999,25 @@ const exportarCSV = () => {
           <h1 className='h4-card1-gerencial-geral'>{dados6.total_trocas}</h1>
         </div>
 
+
         <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('manutencao', 'd6')}>
           <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados6.total_manutencoes}</h1>
         </div>
 
+        
+        
         <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('outro', 'd6')}>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados6.total_outros}</h1>
         </div>
+
+             <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd6')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{dados6.total_recolhimentos}</h1>
+        </div>
+
+
       </div>
     </div>
 
@@ -973,10 +1043,18 @@ const exportarCSV = () => {
           <h1 className='h4-card1-gerencial-geral'>{semAgenda.manutencoes}</h1>
         </div>
 
+
         <div className='row-card1-gerencial-geral'>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{semAgenda.outros}</h1>
         </div>
+
+           <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd1')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{semAgenda.manutencoes}</h1>
+        </div>
+
+
       </div>
     </div>
 
@@ -1005,6 +1083,12 @@ const exportarCSV = () => {
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{totais.outros}</h1>
         </div>
+
+              <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'inicio2017')}>
+          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
+          <h1 className='h4-card1-gerencial-geral'>{totais.manutencoes}</h1>
+        </div>
+
       </div>
     </div>
 
@@ -1022,6 +1106,7 @@ const exportarCSV = () => {
           <div className="sla-categoria">TROCAS END.</div>
           <div className="sla-categoria">MANUTENÇÕES</div>
           <div className="sla-categoria">OUTROS</div>
+             <div className="sla-categoria">RECOLHIMENTO</div>
         </div>
 
         <div className="sla-valores">
@@ -1029,6 +1114,7 @@ const exportarCSV = () => {
           <div className="sla-valor">{sla.trocas_endereco}</div>
           <div className="sla-valor">{sla.manutencoes}</div>
           <div className="sla-valor">{sla.outros}</div>
+           <div className="sla-valor">{sla.recolhimentos}</div>
         </div>
       </div>
     </div>

@@ -190,15 +190,34 @@
     font-family: 'Normal';
     margin-bottom: 0px;
     margin-top: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .h2-card-vendas-mes-painel{
-    width: 95%;
+    width: 100%;
     font-size: 50px;
     color: white;
-    text-align: center;
+    text-align: start;
     font-family: 'Bold';
     margin-top: -10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.h2-card-vendas-mes-painel1{
+    width: 35%;
+    font-size: 30px;
+    color: white;
+    text-align: center;
+    margin-top: 0px;
+    font-family: 'Bold';
+    margin-bottom: 0px;
+    border-left: 10px solid white;
+    padding-left: 35px;
 }
 
 
@@ -412,6 +431,15 @@
     align-items: center;
     background-color: #12B51D;
     border-radius: 5px;
+}
+
+
+.verde {
+  color: #12B51D;
+}
+
+.vermelho {
+  color: red;
 }
 
 
