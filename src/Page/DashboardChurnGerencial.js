@@ -23,7 +23,6 @@ function DashboardChurnGerencial() {
     const [projecao, setProjecao] = useState(0);
     const [cancelamentosPJ, setCancelamentosPJ] = useState(0);
     const [cancelamentosPF, setCancelamentosPF] = useState(0);
-    const [tipoPessoaSelecionado, setTipoPessoaSelecionado] = useState(null);
     const [churnUltimosMeses, setChurnUltimosMeses] = useState([]);
     const [churnPorBairro, setChurnPorBairro] = useState([]);
     const [churnPorCidade, setChurnPorCidade] = useState([]);
@@ -48,6 +47,7 @@ function DashboardChurnGerencial() {
     const [bairroSelecionado, setBairroSelecionado] = useState(null);
     const [limiteMeta, setLimiteMeta] = useState({ porcentagem_batida: 0, porcentagem_restante: 100 });
     const [statusMeta, setStatusMeta] = useState('');
+    const [tipoPessoaSelecionado, setTipoPessoaSelecionado] = useState('');
     const dataMeta = [
       { name: '', value: limiteMeta.porcentagem_batida },
       { name: 'Restante', value: limiteMeta.porcentagem_restante }
@@ -62,6 +62,7 @@ function DashboardChurnGerencial() {
         if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
         if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
         if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+          if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
         //if (dataInicial) url += `&data_inicial=${encodeURIComponent(dataInicial.toISOString().split('T')[0])}`;
         //if (dataFinal) url += `&data_final=${encodeURIComponent(dataFinal.toISOString().split('T')[0])}`;
     
@@ -85,6 +86,7 @@ function DashboardChurnGerencial() {
         if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
         if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
         if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+          if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
         //if (dataInicial) url += `&data_inicial=${encodeURIComponent(dataInicial.toISOString().split('T')[0])}`;
         //if (dataFinal) url += `&data_final=${encodeURIComponent(dataFinal.toISOString().split('T')[0])}`;
     
@@ -165,8 +167,9 @@ function DashboardChurnGerencial() {
           try {
             let url = `http://38.224.145.3:3007/churn-cidade?ano=${anoSelecionado}&mes=${mesSelecionado}`;
             if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+             if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
     
-            const response = await fetch(url);
+            const response = await fetch(url);  
             const data = await response.json();
             if (response.ok) setChurnPorCidade(data);
           } catch (error) { console.error('Erro:', error); }
@@ -187,38 +190,36 @@ function DashboardChurnGerencial() {
           } catch (error) { console.error('Erro:', error); }
         };
 
-        const fetchDowngradeAtendimentos = async () => {
-          try {
-            let url = `http://38.224.145.3:3007/atendimentos_tipo_downgrade?ano=${anoSelecionado}&mes=${mesSelecionado}`;
-            if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
-            if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
-            if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
-            if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
-            //if (dataInicial) url += `&data_inicial=${encodeURIComponent(dataInicial.toISOString().split('T')[0])}`;
-            //if (dataFinal) url += `&data_final=${encodeURIComponent(dataFinal.toISOString().split('T')[0])}`;
-        
-            const response = await fetch(url);
-            const data = await response.json();
-        
-            if (response.ok) {
-              const nomesMeses = [
-                'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-                'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-              ];
-        
-              const ultimos12Meses = data.meses.map(item => ({
-                mes: `${nomesMeses[item.mes - 1]}/${item.ano.toString().slice(-2)}`,
-                total: item.total_atendimentos
-              }));
-        
-              setDowngradeAtendimentos(ultimos12Meses);
-            } else {
-              console.error('Erro na requisição downgrade:', data.error);
-            }
-          } catch (error) {
-            console.error('Erro ao buscar atendimentos tipo downgrade:', error);
-          }
-        };
+    const fetchDowngradeAtendimentos = async () => {
+  try {
+    let url = `http://38.224.145.3:3007/atendimentos_tipo_downgrade?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+    if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+    if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (response.ok) {
+      const nomesMeses = [
+        'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+        'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+      ];
+
+      const ultimos12Meses = data.meses.map(item => ({
+        mes: `${nomesMeses[item.mes - 1]}/${item.ano.toString().slice(-2)}`,
+        PF: item.PF,
+        PJ: item.PJ
+      }));
+
+      setDowngradeAtendimentos(ultimos12Meses);
+    } else {
+      console.error('Erro na requisição downgrade:', data.error);
+    }
+  } catch (error) {
+    console.error('Erro ao buscar atendimentos tipo downgrade:', error);
+  }
+};
+
         
       const fetchMotivosCancelamento = async () => {
                   try {
@@ -247,6 +248,7 @@ function DashboardChurnGerencial() {
                   try {
                     let url = `http://38.224.145.3:3007/atendimentos_tipo?ano=${anoSelecionado}&mes=${mesSelecionado}`;
                     if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+                        if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
                    
                     const response = await fetch(url);
                     const data = await response.json();
@@ -284,6 +286,7 @@ function DashboardChurnGerencial() {
                     if (motivoSelecionado) {
                       url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
                     }
+                     if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
                   
                     const response = await fetch(url);
                     const data = await response.json();
@@ -304,6 +307,7 @@ function DashboardChurnGerencial() {
             if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
             if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
             if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+             if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
         
             const response = await fetch(url);
             const data = await response.json();
@@ -324,7 +328,8 @@ function DashboardChurnGerencial() {
             if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
             if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
             if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
-        
+              if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
+
             const response = await fetch(url);
             const data = await response.json();
         
@@ -360,6 +365,8 @@ function DashboardChurnGerencial() {
             if (bairroSelecionado) {
               url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
             }
+
+             if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
         
             const response = await fetch(url);
             const data = await response.json();
@@ -384,71 +391,85 @@ function DashboardChurnGerencial() {
           }
         };
           
-        const fetchCancelamentosDetalhados = async () => {
-          try {
-            const response = await fetch(`http://38.224.145.3:3007/churn-descricao?ano=${anoSelecionado}&mes=${mesSelecionado}`);
-            const data = await response.json();
-            if (response.ok) {
-              setCancelamentosDetalhados(data.cancelamentos_detalhados || []);
-            } else {
-              console.error('Erro ao buscar cancelamentos detalhados:', data.error);
-            }
-          } catch (error) {
-            console.error('Erro na requisição de cancelamentos detalhados:', error);
-          }
-        };
+      const fetchCancelamentosDetalhados = async () => {
+  try {
+    // Monta a URL com filtros
+    let url = `http://38.224.145.3:3007/churn-descricao?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+    
+    if (cidadeSelecionada) {
+      url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
+    }
+
+    if (bairroSelecionado) {
+      url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
+    }
+
+    if (motivoSelecionado) {
+      url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+    }
+
+    if (tipoPessoaSelecionado) {
+      url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
+    }
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (response.ok) {
+      setCancelamentosDetalhados(data.cancelamentos_detalhados || []);
+    } else {
+      console.error('Erro ao buscar cancelamentos detalhados:', data.error);
+    }
+  } catch (error) {
+    console.error('Erro na requisição de cancelamentos detalhados:', error);
+  }
+};
 
 
-        const fetchClientesRepetidos = async () => {
-          try {
-            const response = await fetch(`http://38.224.145.3:3007/clientes-repetidos-3meses?ano=${anoSelecionado}&mes=${mesSelecionado}`);
-            const data = await response.json();
-            if (response.ok && data.clientes_repetidos) {
-              setClientesRepetidos(data.clientes_repetidos);
-            } else {
-              console.error('Erro na resposta de clientes repetidos:', data.error);
-            }
-          } catch (error) {
-            console.error('Erro ao buscar clientes repetidos:', error);
-          }
-        };
+const fetchClientesRepetidos = async () => {
+  try {
+    let url = `http://38.224.145.3:3007/clientes-repetidos-3meses`;
+
+    // Adiciona tipo de pessoa se estiver selecionado
+    if (tipoPessoaSelecionado) {
+      url += `?tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
+    }
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (response.ok && data.clientes_repetidos) {
+      setClientesRepetidos(data.clientes_repetidos);
+    } else {
+      console.error('Erro na resposta de clientes repetidos:', data.error);
+    }
+  } catch (error) {
+    console.error('Erro ao buscar clientes repetidos:', error);
+  }
+};
 
 
-        const fetchClientesRepetidosAtendimento = async () => {
-          try {
-            const response = await fetch(`http://38.224.145.3:3007/clientes-repetidos-atendimentos?ano=${anoSelecionado}&mes=${mesSelecionado}`);
-            const data = await response.json();
-            if (response.ok && data.clientes_repetidos_atendimento) {
-              setClientesRepetidosAtendimento(data.clientes_repetidos_atendimento);
-            } else {
-              console.error('Erro na resposta de atendimentos repetidos:', data.error);
-            }
-          } catch (error) {
-            console.error('Erro na requisição de atendimentos repetidos:', error);
-          }
-        };
+      const fetchClientesRepetidosAtendimento = async () => {
+  try {
+    let url = `http://38.224.145.3:3007/clientes-repetidos-atendimentos?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+    
+    if (tipoPessoaSelecionado) {
+      url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
+    }
 
-        const fetchCancelamentosDetalhadosPorTipoPessoa = async (tipoPessoa) => {
-          try {
-            let url = `http://38.224.145.3:3007/cancelamentos-detalhados?ano=${anoSelecionado}&mes=${mesSelecionado}&tipo_pessoa=${tipoPessoa}`;
+    const response = await fetch(url);
+    const data = await response.json();
 
-            if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
-            if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
-            if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
+    if (response.ok && data.clientes_repetidos_atendimento) {
+      setClientesRepetidosAtendimento(data.clientes_repetidos_atendimento);
+    } else {
+      console.error('Erro na resposta de atendimentos repetidos:', data.error);
+    }
+  } catch (error) {
+    console.error('Erro na requisição de atendimentos repetidos:', error);
+  }
+};
 
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (response.ok) {
-              setCancelamentosDetalhados(data);
-            } else {
-              console.error('Erro ao buscar cancelamentos detalhados:', data.error);
-            }
-          } catch (error) {
-            console.error('Erro ao buscar cancelamentos detalhados:', error);
-          }
-        };
-        
 
         const fetchStatusMeta = async () => {
           try {
@@ -504,7 +525,7 @@ function DashboardChurnGerencial() {
 
         const handleClick = (tipo) => {
           setTipoPessoaSelecionado(tipo);
-          fetchCancelamentosDetalhadosPorTipoPessoa(tipo);
+       
         };
 
         useEffect(() => {
@@ -565,6 +586,21 @@ function DashboardChurnGerencial() {
           ))}
         </select>
       </div>
+
+       <div className='div-body-opcao1'>
+    <h1 className='h1-body-opcao'>Tipo Pessoa</h1>
+    <select
+      className='button-body-opcao'
+      value={tipoPessoaSelecionado}
+      onChange={(e) => handleUserInteraction(() => setTipoPessoaSelecionado(e.target.value))}
+    >
+      <option value="">Todos</option>
+      <option value="pf">Pessoa Física (PF)</option>
+      <option value="pj">Pessoa Jurídica (PJ)</option>
+    </select>
+  </div>
+
+
      {/*
       <div className='div-body-opcao1'>
         <h3 className='h1-body-opcao'>Data inicial</h3>
@@ -599,6 +635,7 @@ function DashboardChurnGerencial() {
     setMotivoSelecionado(null);
     setDataInicial(null);
     setDataFinal(null);
+    setTipoPessoaSelecionado('')
     setAnoSelecionado(currentYear);
     setMesSelecionado(currentMonth);
   })}
@@ -726,65 +763,72 @@ function DashboardChurnGerencial() {
                 </div>
 
 
-                <div className='div2-gerencial-body1'>
-                <div className='lista-div2-gerencial-body1'>
-                    <h1 className='h1-div-gerencial-gerencial'>Churn por Bairro</h1>
-                    <table className="tabela-bairros-gerencial">
-                    <thead>
-                        <tr style={{backgroundColor: 'white'}}>
-                        <th className='h1-tabela-bairros-gerencial'>Bairro</th>
-                        <th className='h1-tabela-bairros-gerencial'>
-                          Cancelamentos
-                          <span
-                            onClick={() => setOrdenarPorCancelamentos(prev => !prev)}
-                            style={{ cursor: 'pointer', marginLeft: 5 }}
-                            title="Ordenar por número de cancelamentos"
-                          >
-                            ↓
-                          </span>
-                        </th>
-                        <th className='h1-tabela-bairros-gerencial'>Clientes Ativos</th>
-                        <th className='h1-tabela-bairros-gerencial'>Churn Inad.</th>
-                        <th className='h1-tabela-bairros-gerencial'>Churn Opção</th>
-                        <th className='h1-tabela-bairros-gerencial'>Churn</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {churnPorBairro
-                    .filter(item => 
-                      (!cidadeSelecionada || item.cidade_nome === cidadeSelecionada) &&
-                      (!motivoSelecionado || cancelamentosDetalhados.some(cancel => 
-                        cancel.bairro === item.bairro_nome && cancel.motivo_cancelamento === motivoSelecionado
-                      ))
-                    )
-                    .sort((a, b) => ordenarPorCancelamentos ? b.total_cancelamentos - a.total_cancelamentos : 0)
-                    .map((item, index) => (
-                      <tr
-                        key={index}
-                        className='link-tabela-bairros'
-                        onClick={() => handleUserInteraction(() => {
-                          setBairroSelecionado(prev => prev === item.bairro_nome ? null : item.bairro_nome);
-                          setCidadeSelecionada(item.cidade_nome);
-                        })}
-                        style={{
-                          cursor: 'pointer',
-                          backgroundColor: bairroSelecionado === item.bairro_nome ? '#f2f2f2' : 'white'
-                        }}
-                      >
-                        <td className='h2-tabela-bairros-gerencial'>{item.bairro_nome}</td>
-                        <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
-                        <td className='h2-tabela-bairros-gerencial'>{item.total_clientes_ativos}</td>
-                        <td className='h2-tabela-bairros-gerencial'>{item.pct_pedido}%</td>
-                        <td className='h2-tabela-bairros-gerencial'>{item.pct_automatico}%</td>
-                        <td className='h2-tabela-bairros-gerencial'>{item.churn_rate}%</td>
-                      </tr>
-                  ))}
-                  </tbody>
+               <div className='div2-gerencial-body1'>
+  <div className='lista-div2-gerencial-body1'>
+    <h1 className='h1-div-gerencial-gerencial'>Churn por Bairro</h1>
 
+    <table className="tabela-bairros-gerencial">
+      <thead>
+        <tr style={{ backgroundColor: 'white' }}>
+          <th className='h1-tabela-bairros-gerencial'>Bairro</th>
+          <th className='h1-tabela-bairros-gerencial'>Tipo</th>
+          <th className='h1-tabela-bairros-gerencial'>
+            Cancelamentos
+            <span
+              onClick={() => setOrdenarPorCancelamentos(prev => !prev)}
+              style={{ cursor: 'pointer', marginLeft: 5 }}
+              title="Ordenar por número de cancelamentos"
+            >
+              ↓
+            </span>
+          </th>
+          <th className='h1-tabela-bairros-gerencial'>Clientes Ativos</th>
+          <th className='h1-tabela-bairros-gerencial'>Churn Inad.</th>
+          <th className='h1-tabela-bairros-gerencial'>Churn Opção</th>
+          <th className='h1-tabela-bairros-gerencial'>Churn</th>
+        </tr>
+      </thead>
 
-                    </table>
-                </div>
-                </div>
+      <tbody>
+        {churnPorBairro
+          .filter(item =>
+            (!cidadeSelecionada || item.cidade_nome === cidadeSelecionada) &&
+            (!motivoSelecionado || cancelamentosDetalhados.some(cancel =>
+              cancel.bairro === item.bairro_nome &&
+              cancel.motivo_cancelamento === motivoSelecionado
+            ))
+          )
+          .sort((a, b) =>
+            ordenarPorCancelamentos ? b.total_cancelamentos - a.total_cancelamentos : 0
+          )
+          .map((item, index) => (
+            <tr
+              key={index}
+              className='link-tabela-bairros'
+              onClick={() => handleUserInteraction(() => {
+                setBairroSelecionado(prev => prev === item.bairro_nome ? null : item.bairro_nome);
+                setCidadeSelecionada(item.cidade_nome);
+              })}
+              style={{
+                cursor: 'pointer',
+                backgroundColor: bairroSelecionado === item.bairro_nome ? '#f2f2f2' : 'white'
+              }}
+            >
+              <td className='h2-tabela-bairros-gerencial'>{item.bairro_nome}</td>
+              <td className='h2-tabela-bairros-gerencial'>
+                {item.tipo_pessoa === 'pf' ? 'PF' : item.tipo_pessoa === 'pj' ? 'PJ' : 'Todos'}
+              </td>
+              <td className='h2-tabela-bairros-gerencial'>{item.total_cancelamentos}</td>
+              <td className='h2-tabela-bairros-gerencial'>{item.total_clientes_ativos}</td>
+              <td className='h2-tabela-bairros-gerencial'>{item.pct_pedido}%</td>
+              <td className='h2-tabela-bairros-gerencial'>{item.pct_automatico}%</td>
+              <td className='h2-tabela-bairros-gerencial'>{item.churn_rate}%</td>
+            </tr>
+          ))}
+      </tbody>
+    </table>
+  </div>
+</div>
 
 
 
@@ -845,32 +889,49 @@ function DashboardChurnGerencial() {
                                 
                             {downgradeAtendimentos.length > 0 ? (
                                 <div style={{ marginTop: 30 }}>
-                                    <ResponsiveContainer width="90%" height={270}>
-                                    <BarChart data={downgradeAtendimentos}
-                                         onClick={(data) =>  handleUserInteraction(() => {
-                                          if (data && data.activeLabel) {
-                                            const [mesTexto, anoCurto] = data.activeLabel.split('/');
-                                            const mesesNomes = [
-                                              'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-                                              'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-                                            ];
-                                            const mesIndex = mesesNomes.indexOf(mesTexto);
-                                            if (mesIndex !== -1) {
-                                              setMesSelecionado(mesIndex + 1);
-                                              setAnoSelecionado(parseInt('20' + anoCurto)); // Ex: '25' vira 2025
-                                            }
-                                          }
-                                        })}
-                                      >
-                                        <CartesianGrid strokeDasharray="2 2" />
-                                        <XAxis dataKey="mes" tick={{ fill: '#fff' }} fontWeight='bold' />
-                                        <YAxis tick={{ fill: '#fff' }} />
-                                        <Tooltip />
-                                        <Bar dataKey="total"  fill="#F45742">
-                                        <LabelList dataKey="total" position="insideTop" fill="#fff" fontWeight='bold' />
-                                        </Bar>
-                                    </BarChart>
-                                    </ResponsiveContainer>
+                                  <ResponsiveContainer width="90%" height={270}>
+  <BarChart
+    data={downgradeAtendimentos}
+    onClick={(data) =>
+      handleUserInteraction(() => {
+        if (data && data.activeLabel) {
+          const [mesTexto, anoCurto] = data.activeLabel.split('/');
+          const mesesNomes = [
+            'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+            'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+          ];
+          const mesIndex = mesesNomes.indexOf(mesTexto);
+          if (mesIndex !== -1) {
+            setMesSelecionado(mesIndex + 1);
+            setAnoSelecionado(parseInt('20' + anoCurto));
+          }
+        }
+      })
+    }
+  >
+    <CartesianGrid strokeDasharray="2 2" />
+    <XAxis dataKey="mes" tick={{ fill: '#fff' }} fontWeight="bold" />
+    <YAxis tick={{ fill: '#fff' }} />
+    <Tooltip />
+    <Legend />
+
+    {/* PF */}
+    {(tipoPessoaSelecionado === 'pf' || tipoPessoaSelecionado === '') && (
+      <Bar dataKey="PF" name="Pessoa Física (PF)" fill="#F45742">
+        <LabelList dataKey="PF" position="insideTop" fill="#fff" fontWeight="bold" />
+      </Bar>
+    )}
+
+    {/* PJ */}
+    {(tipoPessoaSelecionado === 'pj' || tipoPessoaSelecionado === '') && (
+      <Bar dataKey="PJ" name="Pessoa Jurídica (PJ)" fill="#F45742">
+        <LabelList dataKey="PJ" position="insideTop" fill="#fff" fontWeight="bold" />
+      </Bar>
+    )}
+  </BarChart>
+</ResponsiveContainer>
+
+
                                 </div>
                                 ) : (
                                 <p>Carregando atendimentos tipo downgrade...</p>
