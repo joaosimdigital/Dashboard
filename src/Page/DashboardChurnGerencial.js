@@ -57,7 +57,7 @@ function DashboardChurnGerencial() {
 
     const fetchChurnMensal = async () => {
       try {
-        let url = `http://localhost:3007/churn-mensal?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+        let url = `http://38.224.145.3:3007/churn-mensal?ano=${anoSelecionado}&mes=${mesSelecionado}`;
     
         if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
         if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
@@ -81,7 +81,7 @@ function DashboardChurnGerencial() {
     
     const fetchLimiteMeta = async () => {
       try {
-        let url = `http://localhost:3007/limitemeta?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+        let url = `http://38.224.145.3:3007/limitemeta?ano=${anoSelecionado}&mes=${mesSelecionado}`;
     
         if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
         if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
@@ -108,7 +108,7 @@ function DashboardChurnGerencial() {
     
       const fetchChurnTipoPessoa = async () => {
         try {
-          let url = `http://localhost:3007/churn-mensal_tipo_pessoa?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+          let url = `http://38.224.145.3:3007/churn-mensal_tipo_pessoa?ano=${anoSelecionado}&mes=${mesSelecionado}`;
       
           if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
           if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
@@ -131,7 +131,7 @@ function DashboardChurnGerencial() {
       
       const fetchChurn3Meses = async () => {
         try {
-          let url = `http://localhost:3007/churn-mensal-3meses?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+          let url = `http://38.224.145.3:3007/churn-mensal-3meses?ano=${anoSelecionado}&mes=${mesSelecionado}`;
           
           if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
           if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
@@ -165,7 +165,7 @@ function DashboardChurnGerencial() {
       
         const fetchChurnPorCidade = async () => {
           try {
-            let url = `http://localhost:3007/churn-cidade?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+            let url = `http://38.224.145.3:3007/churn-cidade?ano=${anoSelecionado}&mes=${mesSelecionado}`;
             if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
              if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
     
@@ -177,7 +177,7 @@ function DashboardChurnGerencial() {
     
         const fetchChurnPorBairro = async () => {
           try {
-            let url = `http://localhost:3007/churn-bairro?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+            let url = `http://38.224.145.3:3007/churn-bairro?ano=${anoSelecionado}&mes=${mesSelecionado}`;
             if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
             if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
             if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
@@ -192,7 +192,7 @@ function DashboardChurnGerencial() {
 
     const fetchDowngradeAtendimentos = async () => {
   try {
-    let url = `http://localhost:3007/atendimentos_tipo_downgrade?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+    let url = `http://38.224.145.3:3007/atendimentos_tipo_downgrade?ano=${anoSelecionado}&mes=${mesSelecionado}`;
     if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
     if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
 
@@ -223,7 +223,7 @@ function DashboardChurnGerencial() {
         
       const fetchMotivosCancelamento = async () => {
                   try {
-                    let url = `http://localhost:3007/motivos_cancelamentos?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+                    let url = `http://38.224.145.3:3007/motivos_cancelamentos?ano=${anoSelecionado}&mes=${mesSelecionado}`;
                     if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
                     if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
                     if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
@@ -246,7 +246,7 @@ function DashboardChurnGerencial() {
                
                 const fetchReversaoCancelamento = async () => {
                   try {
-                    let url = `http://localhost:3007/atendimentos_tipo?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+                    let url = `http://38.224.145.3:3007/atendimentos_tipo?ano=${anoSelecionado}&mes=${mesSelecionado}`;
                     if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
                         if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
                    
@@ -275,7 +275,7 @@ function DashboardChurnGerencial() {
 
                 const fetchValorCancelamentoMensal = async () => {
                   try {
-                    let url = `http://localhost:3007/valor-cancelamento-mensal?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+                    let url = `http://38.224.145.3:3007/valor-cancelamento-mensal?ano=${anoSelecionado}&mes=${mesSelecionado}`;
                     
                     if (cidadeSelecionada) {
                       url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
@@ -303,7 +303,7 @@ function DashboardChurnGerencial() {
                 
         const fetchValorCancelamentoAnual = async () => {
           try {
-            let url = `http://localhost:3007/valor-cancelamento-anual?ano=${anoSelecionado}`;
+            let url = `http://38.224.145.3:3007/valor-cancelamento-anual?ano=${anoSelecionado}`;
             if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
             if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
             if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
@@ -323,7 +323,7 @@ function DashboardChurnGerencial() {
 
         const fetchChurnAnual = async () => {
           try {
-            let url = `http://localhost:3007/churn-mensal-12meses?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+            let url = `http://38.224.145.3:3007/churn-mensal-12meses?ano=${anoSelecionado}&mes=${mesSelecionado}`;
             
             if (cidadeSelecionada) url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
             if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
@@ -357,7 +357,7 @@ function DashboardChurnGerencial() {
       
         const fetchClientesHabilitados = async () => {
           try {
-            let url = `http://localhost:3007/total-clientes-habilitados-ultimos-12-meses?mes=${mesSelecionado}&ano=${anoSelecionado}`;
+            let url = `http://38.224.145.3:3007/total-clientes-habilitados-ultimos-12-meses?mes=${mesSelecionado}&ano=${anoSelecionado}`;
         
             if (cidadeSelecionada) {
               url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
@@ -394,7 +394,7 @@ function DashboardChurnGerencial() {
       const fetchCancelamentosDetalhados = async () => {
   try {
     // Monta a URL com filtros
-    let url = `http://localhost:3007/churn-descricao?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+    let url = `http://38.224.145.3:3007/churn-descricao?ano=${anoSelecionado}&mes=${mesSelecionado}`;
     
     if (cidadeSelecionada) {
       url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
@@ -428,7 +428,7 @@ function DashboardChurnGerencial() {
 
 const fetchClientesRepetidos = async () => {
   try {
-    let url = `http://localhost:3007/clientes-repetidos-3meses`;
+    let url = `http://38.224.145.3:3007/clientes-repetidos-3meses`;
 
     // Adiciona tipo de pessoa se estiver selecionado
     if (tipoPessoaSelecionado) {
@@ -451,7 +451,7 @@ const fetchClientesRepetidos = async () => {
 
       const fetchClientesRepetidosAtendimento = async () => {
   try {
-    let url = `http://localhost:3007/clientes-repetidos-atendimentos?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+    let url = `http://38.224.145.3:3007/clientes-repetidos-atendimentos?ano=${anoSelecionado}&mes=${mesSelecionado}`;
     
     if (tipoPessoaSelecionado) {
       url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
@@ -473,7 +473,7 @@ const fetchClientesRepetidos = async () => {
 
         const fetchStatusMeta = async () => {
           try {
-            const response = await fetch(`http://localhost:3007/meta?ano=${anoSelecionado}&mes=${mesSelecionado}`);
+            const response = await fetch(`http://38.224.145.3:3007/meta?ano=${anoSelecionado}&mes=${mesSelecionado}`);
             const data = await response.json();
             if (response.ok) {
               setStatusMeta(data.status); // "acima" ou "abaixo"
