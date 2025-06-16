@@ -3,10 +3,17 @@ import "../CSS/DashboardPerformanceComercial.css";
 
 function DashboardPerformanceComercial() {
   const [activeSection, setActiveSection] = useState("ranking-semanal");
+  const [activeBusiness, setActiveBusiness] = useState("B2C");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const vendasSemana = 434;
-  const vendasMes = 586;
-  const faturamentoMes = "R$ 94.200,00";
+  const handleBusinessChange = (business) => {
+    setActiveBusiness(business);
+    setDropdownOpen(false);
+  };
+
+  const vendasSemana = activeBusiness === "B2C" ? 434 : 250;
+  const vendasMes = activeBusiness === "B2C" ? 586 : 380;
+  const faturamentoMes = activeBusiness === "B2C" ? "R$ 94.200,00" : "R$ 62.500,00";
 
   const rankingVendas = [
     { nome: "João Silva", valor: 122 },
@@ -24,6 +31,7 @@ function DashboardPerformanceComercial() {
     { nome: "Joana Santos", valor: "R$ 14.800,00" },
   ];
 
+  
   const rankingFaturamentoMensal = [
     { nome: "Márcio Jr", valor: "R$ 27.380,10" },
     { nome: "Ruan de Jesus", valor: "R$ 18.111,00" },
@@ -43,7 +51,28 @@ function DashboardPerformanceComercial() {
   return (
     <div className="dashboard-container">
       <aside className="sidebar">
-        <h2>Dashboard Comercial <span className="b2c">B2C</span></h2>
+        <div className="dashboard-header">
+          <h2 onClick={() => setDropdownOpen(!dropdownOpen)}>
+            Dashboard Comercial <span className="business-type">{activeBusiness}</span>
+          </h2>
+          {dropdownOpen && (
+            <div className="business-dropdown">
+              <button
+                className={activeBusiness === "B2C" ? "active" : ""}
+                onClick={() => handleBusinessChange("B2C")}
+              >
+                B2C
+              </button>
+              <button
+                className={activeBusiness === "B2B" ? "active" : ""}
+                onClick={() => handleBusinessChange("B2B")}
+              >
+                B2B
+              </button>
+            </div>
+          )}
+        </div>
+
         <nav>
           <button
             className={activeSection === "ranking-semanal" ? "active" : ""}
@@ -89,15 +118,20 @@ function DashboardPerformanceComercial() {
               <table>
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Vendedor</th>
-                    <th>Vendas</th>
+                    <th><span className="icon">🏅</span> Posição</th>
+                    <th><span className="icon">👤</span> Vendedor</th>
+                    <th><span className="icon">📊</span> Vendas</th>
                   </tr>
                 </thead>
                 <tbody>
                   {rankingVendas.map((item, idx) => (
-                    <tr key={idx}>
-                      <td>{idx + 1}º</td>
+                    <tr key={idx} className={`pos-${idx + 1}`}>
+                      <td>
+                        {idx === 0 && <span className="medal gold">🥇</span>}
+                        {idx === 1 && <span className="medal silver">🥈</span>}
+                        {idx === 2 && <span className="medal bronze">🥉</span>}
+                        {idx > 2 && `${idx + 1}º`}
+                      </td>
                       <td>{item.nome}</td>
                       <td>{item.valor}</td>
                     </tr>
@@ -111,15 +145,20 @@ function DashboardPerformanceComercial() {
               <table>
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Vendedor</th>
-                    <th>Faturamento</th>
+                    <th><span className="icon">🏅</span> Posição</th>
+                    <th><span className="icon">👤</span> Vendedor</th>
+                    <th><span className="icon">💰</span> Faturamento</th>
                   </tr>
                 </thead>
                 <tbody>
                   {rankingFaturamento.map((item, idx) => (
-                    <tr key={idx}>
-                      <td>{idx + 1}º</td>
+                    <tr key={idx} className={`pos-${idx + 1}`}>
+                      <td>
+                        {idx === 0 && <span className="medal gold">🥇</span>}
+                        {idx === 1 && <span className="medal silver">🥈</span>}
+                        {idx === 2 && <span className="medal bronze">🥉</span>}
+                        {idx > 2 && `${idx + 1}º`}
+                      </td>
                       <td>{item.nome}</td>
                       <td>{item.valor}</td>
                     </tr>
@@ -128,6 +167,7 @@ function DashboardPerformanceComercial() {
               </table>
             </div>
           </section>
+
         )}
 
         {activeSection === "ranking-mensal" && (
