@@ -116,20 +116,23 @@
     width: 100%;
     text-align: center;
     margin-bottom: 0px;
-   
+   color: black;
    
 }
 
 .h1-tabela-bairros-gerencial{
     font-family: Bold;
     font-size: 20px;
+    color: black;
 }
 
 
 .h1-tabela-bairros-gerencial1{
     font-family: Bold;
     font-size: 18px;
+    color: black;
 }
+
 
 
 .grafico-card1-div-gerencial-body1{
@@ -161,7 +164,7 @@
     margin-left: 10px;
     margin-bottom: 0px;
     font-family: Bold;
-
+    color: black;
 }
 
 .h2-card1-div-gerencial-body1{
@@ -170,6 +173,7 @@
     font-family: Normal;
     font-size: 14px;
     margin-top: 0px;
+    color: black;
 
 }
 
@@ -275,6 +279,7 @@
     margin-bottom: 0px;
     font-family: Bold;
     text-align: center;
+    color: black;
 
 }
 
@@ -310,11 +315,13 @@
 
   .h2-tabela-bairros-gerencial{
     font-family: Normal;
+    color: black;
   }
 
   .h2-tabela-bairros-gerencial1{
     font-family: Normal;
     width: 50px;
+    color: black;
   }
 
   .link-tabela-bairros{
@@ -356,6 +363,7 @@
     font-family: Normal;
     font-size: 15px;
     text-align: center;
+    color: black;
   }
 
 
@@ -364,6 +372,7 @@
     font-family: Bold;
     font-size: 30px;
     text-align: center;
+    color: black;
   }
 
 
