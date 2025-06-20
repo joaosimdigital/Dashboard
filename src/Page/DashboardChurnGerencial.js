@@ -22,6 +22,8 @@ function DashboardChurnGerencial() {
   const [mesSelecionado, setMesSelecionado] = useState(currentMonth);
     const [churnMensal, setChurnMensal] = useState(null);
     const [projecao, setProjecao] = useState(0);
+     const hoje = new Date();
+  const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
     const [cancelamentosPJ, setCancelamentosPJ] = useState(0);
     const [cancelamentosPF, setCancelamentosPF] = useState(0);
     const [churnUltimosMeses, setChurnUltimosMeses] = useState([]);
@@ -787,8 +789,8 @@ const fetchPlanosCancelados = async () => {
     setDataInicial(null);
     setDataFinal(null);
     setTipoPessoaSelecionado('')
-    setAnoSelecionado(currentYear);
-    setMesSelecionado(currentMonth);
+    setDataInicial(primeiroDiaMes);
+  setDataFinal(hoje);
   })}
 >
   Limpar Filtros
