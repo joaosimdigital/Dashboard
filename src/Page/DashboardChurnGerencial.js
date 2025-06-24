@@ -226,9 +226,9 @@ function DashboardChurnGerencial() {
 
 
       
-    const fetchChurnPorCidade = async () => {
+ const fetchChurnPorCidade = async () => {
   try {
-    let url = `http://38.224.145.3:3007/churn-cidade`;
+    let url = `http://localhost:3007/churn-cidade`;
 
     const params = new URLSearchParams();
 
@@ -256,6 +256,7 @@ function DashboardChurnGerencial() {
     console.error('Erro ao buscar churn por cidade:', error);
   }
 };
+
 
     
   const fetchChurnPorBairro = async () => {

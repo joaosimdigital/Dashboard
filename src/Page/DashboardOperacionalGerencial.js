@@ -137,8 +137,6 @@ const buscarOrdens = async (tipo = "", escopo = "", cidade = "", bairro = "") =>
   if (cidade) params.append("cidade", cidade);
   if (bairro) params.append("bairro", bairro);
 
-  const hoje = new Date();
-
   // Dia = ontem e hoje
 if (escopo === "dia") {
   const hoje = new Date();
@@ -169,80 +167,63 @@ if (escopo === "dia") {
 }
 
 
-
 if (escopo === "d1") {
-  const inicio = new Date();
-  inicio.setDate(inicio.getDate() - 1); // amanhã
-  const fim = new Date();
-  fim.setDate(fim.getDate()); // depois de amanhã
+  const data = new Date();
+  data.setDate(data.getDate() + 1); // amanhã
 
-  params.append("inicio", inicio.toISOString().split("T")[0]);
-  params.append("fim", fim.toISOString().split("T")[0]);
+  params.append("inicio", data.toISOString().split("T")[0]);
+  params.append("fim", data.toISOString().split("T")[0]);
 }
+
 
 if (escopo === "d2") {
-  const inicio = new Date();
-  inicio.setDate(inicio.getDate()); // AMANHÃ
+  const data = new Date();
+  data.setDate(data.getDate() + 2); // amanhã
 
-  const fim = new Date();
-  fim.setDate(fim.getDate() + 3); // +3 DIAS
-
-  params.append("inicio", inicio.toISOString().split("T")[0]);
-  params.append("fim", fim.toISOString().split("T")[0]);
-}
-
-if (escopo === "inicio2017") {
-  const inicio = new Date("2017-01-01"); // fixo no primeiro dia de 2017
-  const fim = new Date(); // hoje
-
-  params.append("inicio", inicio.toISOString().split("T")[0]);
-  params.append("fim", fim.toISOString().split("T")[0]);
-  params.append("status", "pendente"); // filtra apenas ordens com status pendente
+  params.append("inicio", data.toISOString().split("T")[0]);
+  params.append("fim", data.toISOString().split("T")[0]);
 }
 
 
-
- 
-  // D3 = depois de amanhã até +3 dias
 if (escopo === "d3") {
-  const inicio = new Date();
-  inicio.setDate(inicio.getDate()); // amanhã
-  const fim = new Date();
-  fim.setDate(fim.getDate() + 4); // depois de amanhã
+  const data = new Date();
+  data.setDate(data.getDate() + 3); // amanhã
 
-  params.append("inicio", inicio.toISOString().split("T")[0]);
-  params.append("fim", fim.toISOString().split("T")[0]);
-}
-
-  if (escopo === "d4") {
-  const inicio = new Date();
-  inicio.setDate(inicio.getDate()); // amanhã
-  const fim = new Date();
-  fim.setDate(fim.getDate() + 5); // depois de amanhã
-
-  params.append("inicio", inicio.toISOString().split("T")[0]);
-  params.append("fim", fim.toISOString().split("T")[0]);
+  params.append("inicio", data.toISOString().split("T")[0]);
+  params.append("fim", data.toISOString().split("T")[0]);
 }
 
 
- if (escopo === "d5") {
-  const inicio = new Date();
-  inicio.setDate(inicio.getDate()); // amanhã
-  const fim = new Date();
-  fim.setDate(fim.getDate() + 6); // depois de amanhã
+if (escopo === "d4") {
+  const data = new Date();
+  data.setDate(data.getDate() + 4); // amanhã
 
-  params.append("inicio", inicio.toISOString().split("T")[0]);
-  params.append("fim", fim.toISOString().split("T")[0]);
+  params.append("inicio", data.toISOString().split("T")[0]);
+  params.append("fim", data.toISOString().split("T")[0]);
 }
+
+
+if (escopo === "d5") {
+  const data = new Date();
+  data.setDate(data.getDate() + 5); // amanhã
+
+  params.append("inicio", data.toISOString().split("T")[0]);
+  params.append("fim", data.toISOString().split("T")[0]);
+}
+
 
   if (escopo === "d6") {
-  const inicio = new Date();
-  inicio.setDate(inicio.getDate()); // amanhã
-  const fim = new Date();
-  fim.setDate(fim.getDate() + 7); // depois de amanhã
+  const data = new Date();
+  data.setDate(data.getDate() + 6); // amanhã
 
-  params.append("inicio", inicio.toISOString().split("T")[0]);
-  params.append("fim", fim.toISOString().split("T")[0]);
+  params.append("inicio", data.toISOString().split("T")[0]);
+  params.append("fim", data.toISOString().split("T")[0]);
+}
+
+
+  if (escopo === "d7") {
+ 
+  params.append("status", "aguardando_agendamento");
 }
 
 
@@ -907,7 +888,7 @@ const exportarCSV = () => {
         </div>
 
 
-              <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd4')}>
+              <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd3')}>
           <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados3.total_recolhimentos}</h1>
         </div>
@@ -1028,28 +1009,28 @@ const exportarCSV = () => {
       <h1 className='h2-card1-gerencial-geral'>{semAgenda.todos}</h1>
 
       <div className='div-card1-gerencial-geral1'>
-        <div className='row-card1-gerencial-geral'>
+        <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('instalacao', 'd7')}>
           <h1 className='h3-card1-gerencial-geral'>INSTALAÇÕES</h1>
           <h1 className='h4-card1-gerencial-geral'>{semAgenda.instalacoes}</h1>
         </div>
 
-        <div className='row-card1-gerencial-geral'>
+        <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('troca', 'd7')}>
           <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
           <h1 className='h4-card1-gerencial-geral'>{semAgenda.trocas_endereco}</h1>
         </div>
 
-        <div className='row-card1-gerencial-geral'>
+        <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('manutencao', 'd7')}>
           <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
           <h1 className='h4-card1-gerencial-geral'>{semAgenda.manutencoes}</h1>
         </div>
 
 
-        <div className='row-card1-gerencial-geral'>
+        <div className='row-card1-gerencial-geral'   onClick={() => buscarOrdens('outro', 'd7')}>
           <h1 className='h3-card1-gerencial-geral'>OUTROS</h1>
           <h1 className='h4-card1-gerencial-geral'>{semAgenda.outros}</h1>
         </div>
 
-           <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'd1')}>
+           <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('recolhimento', 'd7')}>
           <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
           <h1 className='h4-card1-gerencial-geral'>{semAgenda.manutencoes}</h1>
         </div>
