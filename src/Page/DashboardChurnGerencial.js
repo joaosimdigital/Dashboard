@@ -522,7 +522,7 @@ const fetchCancelamentosInstalacao = async () => {
     if (motivoSelecionado) params.append('motivo', motivoSelecionado);
     if (tipoPessoaSelecionado) params.append('tipo_pessoa', tipoPessoaSelecionado);
 
-    const url = `http://localhost:3007/churn-clientes-por-habilitacao?${params.toString()}`;
+    const url = `http://38.224.145.3:3007/churn-clientes-por-habilitacao?${params.toString()}`;
     const response = await fetch(url);
     const data = await response.json();
 
