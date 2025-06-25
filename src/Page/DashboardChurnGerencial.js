@@ -24,6 +24,9 @@ function DashboardChurnGerencial() {
     const [projecao, setProjecao] = useState(0);
     const [cancelamentosInstalacao, setCancelamentosInstalacao] = useState([]);
      const hoje = new Date();
+     const [filtroHabilitacaoMes, setFiltroHabilitacaoMes] = useState(null);
+const [filtroHabilitacaoAno, setFiltroHabilitacaoAno] = useState(null);
+const [mesSelecionadoGrafico, setMesSelecionadoGrafico] = useState(null); // para visual
   const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
     const [cancelamentosPJ, setCancelamentosPJ] = useState(0);
     const [cancelamentosPF, setCancelamentosPF] = useState(0);
@@ -31,9 +34,6 @@ function DashboardChurnGerencial() {
     const [churnPorBairro, setChurnPorBairro] = useState([]);
     const [churnPorCidade, setChurnPorCidade] = useState([]);
     const [diaSelecionado, setDiaSelecionado] = useState('');
-    const [filtroHabilitacaoMes, setFiltroHabilitacaoMes] = useState(null);
-const [filtroHabilitacaoAno, setFiltroHabilitacaoAno] = useState(null);
-
     const [dataInicial, setDataInicial] = useState(null);
     const [dataFinal, setDataFinal] = useState(null);
     const [downgradeAtendimentos, setDowngradeAtendimentos] = useState([]);
@@ -515,8 +515,10 @@ const fetchChurnAnual = async () => {
 const fetchCancelamentosInstalacao = async () => {
   try {
     const params = new URLSearchParams();
-    params.append('data_inicio', '2025-06-01');
-    params.append('data_fim', '2025-06-30');
+
+    // 👉 Usar dataInicial e dataFinal como base para filtrar o período
+    if (dataInicial) params.append('data_inicio', dataInicial.toISOString().split('T')[0]);
+    if (dataFinal) params.append('data_fim', dataFinal.toISOString().split('T')[0]);
     if (cidadeSelecionada) params.append('cidade', cidadeSelecionada);
     if (bairroSelecionado) params.append('bairro', bairroSelecionado);
     if (motivoSelecionado) params.append('motivo', motivoSelecionado);
@@ -553,6 +555,7 @@ const fetchCancelamentosInstalacao = async () => {
     console.error('Erro na requisição de cancelamentos por instalação:', error);
   }
 };
+
 
           
     const fetchCancelamentosDetalhados = async () => {
@@ -1338,49 +1341,78 @@ const fetchPlanosCancelados = async () => {
                        <div className='card-div-gerencial-body2'>
                            <h1 className='h1-div-gerencial-gerencial'>Mês de instalação</h1>
        
-                         {cancelamentosInstalacao.length > 0 ? (
-    <div style={{ marginTop: 30 }}>
-      <ResponsiveContainer width="95%" height={270}>
-        <BarChart
-          data={cancelamentosInstalacao}
+                       {cancelamentosInstalacao.length > 0 ? (
+  <div style={{ marginTop: 30 }}>
+    <ResponsiveContainer width="95%" height={270}>
+      <BarChart
+        data={cancelamentosInstalacao}
         onClick={(data) =>
-  handleUserInteraction(() => {
-    if (data && data.activeLabel) {
-      const [mesTexto, anoCurto] = data.activeLabel.split('/');
-      const mesesNomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-      const mesIndex = mesesNomes.indexOf(mesTexto);
-      if (mesIndex !== -1) {
-        const mes = mesIndex + 1;
-        const ano = parseInt('20' + anoCurto);
-        setFiltroHabilitacaoMes(mes);
-        setFiltroHabilitacaoAno(ano);
-      }
-    }
-  })
-}
+          handleUserInteraction(() => {
+            if (data && data.activeLabel) {
+              const [mesTexto, anoCurto] = data.activeLabel.split('/');
+              const mesesNomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+              const mesIndex = mesesNomes.indexOf(mesTexto);
+              if (mesIndex !== -1) {
+                const mes = mesIndex + 1;
+                const ano = parseInt('20' + anoCurto);
+                const chaveSelecionada = `${mes}/${ano}`;
+                const chaveAtual = mesSelecionadoGrafico ? `${mesSelecionadoGrafico.mes}/${mesSelecionadoGrafico.ano}` : null;
 
-        >
-          <CartesianGrid strokeDasharray="2 2" />
-          <XAxis dataKey="mes" tick={{ fill: 'black' }} fontWeight="bold" />
-          <YAxis tick={{ fill: 'black' }} />
-          <Tooltip
-            formatter={(value) => [`${value}`, 'Cancelamentos']}
-            labelFormatter={(label) => `Mês de instalação: ${label}`}
-            contentStyle={{
-              backgroundColor: '#333',
-              borderRadius: '10px',
-              color: '#fff',
-            }}
-          />
-          <Bar dataKey="total" fill="#F45742">
-            <LabelList dataKey="total" position="insideTop" fill="#fff" fontWeight="bold" />
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  ) : (
-    <p>Carregando cancelamentos por instalação...</p>
-  )}
+                if (chaveSelecionada === chaveAtual) {
+                  setFiltroHabilitacaoMes(null);
+                  setFiltroHabilitacaoAno(null);
+                  setMesSelecionadoGrafico(null);
+                } else {
+                  setFiltroHabilitacaoMes(mes);
+                  setFiltroHabilitacaoAno(ano);
+                  setMesSelecionadoGrafico({ mes, ano });
+                }
+              }
+            }
+          })
+        }
+      >
+        <CartesianGrid strokeDasharray="2 2" />
+        <XAxis dataKey="mes" tick={{ fill: 'black' }} fontWeight="bold" />
+        <YAxis tick={{ fill: 'black' }} />
+        <Tooltip
+          formatter={(value) => [`${value}`, 'Cancelamentos']}
+          labelFormatter={(label) => `Mês de instalação: ${label}`}
+          contentStyle={{
+            backgroundColor: '#333',
+            borderRadius: '10px',
+            color: '#fff',
+          }}
+        />
+        <Bar dataKey="total">
+          {cancelamentosInstalacao.map((entry, index) => {
+            const [mesTexto, anoCurto] = entry.mes.split('/');
+            const mesesNomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            const mesIndex = mesesNomes.indexOf(mesTexto) + 1;
+            const ano = parseInt('20' + anoCurto);
+
+            const isSelecionado =
+              mesSelecionadoGrafico &&
+              mesSelecionadoGrafico.mes === mesIndex &&
+              mesSelecionadoGrafico.ano === ano;
+
+            return (
+              <Cell
+                key={`cell-${index}`}
+                fill={isSelecionado ? '#B0B0B0' : '#F45742'} // cinza se selecionado, laranja padrão
+              />
+            );
+          })}
+          <LabelList dataKey="total" position="insideTop" fill="#fff" fontWeight="bold" />
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+) : (
+  <p>Carregando cancelamentos por instalação...</p>
+)}
+
+
                            </div>
        
                                </div>
