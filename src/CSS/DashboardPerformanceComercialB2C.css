@@ -1,14 +1,23 @@
+@font-face {
+    font-family: 'Bold'; 
+    src: url('..//Fontes/Poppins-Bold.ttf') format('opentype');
+  }
+
+  @font-face {
+    font-family: 'Normal'; 
+    src: url('../Fontes//Poppins-Regular.ttf') format('opentype'); 
+  }
+
 :root {
-  --primary: #1a1a1a; /* Fundo escuro principal */
+  --primary: #1a1a1a;
   --dashboard-content: #242424;
   --card-header: #1E1E1E;
-  --secondary: #b5c7ff; /* Azul claro para destaques */
+  --secondary: #b5c7ff;
   --span: #AEB9E1;
-  --text: #ffffff; /* Texto padrão branco */
+  --text: #ffffff;
   --white: #ffffff;
-  --light-gray: #2a2a2a; /* Fundo das áreas de conteúdo, substituindo o cinza claro */
-  --border: #3a3a3a; /* Linhas e divisões */
-  --shadow: rgba(0, 0, 0, 0.4); /* Sombra mais visível no fundo escuro */
+  --light-gray: #2a2a2a;
+  --border: #3a3a3a;
   --success: #28a745;
   --error: #dc3545;
   --gold: #ffd300;
@@ -19,9 +28,35 @@
 
 body {
   margin: 0;
-  font-family: "Segoe UI", sans-serif;
-  background-color: var(--primary);
+  font-family: 'Normal' !important;
+  background-color: var(--dashboard-content) !important;
   color: var(--text);
+  padding-left: 20px;
+  padding-top: 20px;
+
+}
+
+.dashboard-wrapper {
+  position: relative;
+}
+
+.smile-top-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 800px; /* Ajuste o tamanho conforme desejar */
+  opacity: 0.2; /* Exemplo de deixar mais suave */
+  transform: rotate(20deg);
+}
+
+.smile-bottom-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: none;
+  width: 800px;
+  opacity: 0.2;
+  transform: rotate(180deg);
 }
 
 .dashboard-container {
@@ -37,7 +72,7 @@ body {
 }
 
 .sidebar h2 {
-  font-size: 31px;
+  font-size: 28px;
   margin-bottom: 2rem;
 }
 
@@ -50,33 +85,56 @@ body {
   margin-left: 6px;
 }
 
-.sidebar button {
-  display: block;
-  width: 70%;
-  background-color:var(--card-header);
-  color: var(--white);
-  border: none;
-  font-size: 25px;
-  text-align: left;
-  padding: 26px;
-  border-bottom: 2px solid transparent;
-  margin-bottom: 8px;
-  border-radius: 12px;
-  transition: background 0.2s;
-  cursor: pointer;
+.sidebar nav {
+  margin-top: 8rem !important;
 }
 
-.sidebar button:hover,
-.sidebar button.active {
-  border-bottom: 5px solid transparent;
-  border-image: linear-gradient(to right, #ff7e5f, #feb47b); /* Exemplo de gradiente */
-  border-image-slice: 1;
+.sidebar button {
+  position: relative;
+  display: block;
+  width: 70%;
+  background-color: var(--dashboard-content);
   color: var(--white);
+  border: 1px solid rgba(131, 130, 130, 0.411);
+  font-size: 25px;
+  text-align: center;
+  padding: 26px;
+  margin-bottom: 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: color 0.3s, background-color 0.3s;
+  overflow: hidden;
+  z-index: 1;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Pseudo-elemento para o gradiente na parte de baixo */
+.sidebar button.active::after,
+.sidebar button:hover::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px; /* Espessura da linha gradiente */
+  width: 100%;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  background: linear-gradient(to right, #FF0000CC, #FFE500CC);
+  z-index: -1;
+}
+
+.sidebar button.active {
+  border: none;
+  background-color: var(--card-header);
+}
+
+.sidebar button:hover {
+  background-color: var(--card-header);
 }
 
 .dashboard-content {
   flex: 1;
-  padding: 2rem;
+  padding: 1.6rem;
   background-color: var(--dashboard-content);
 }
 
@@ -88,16 +146,18 @@ body {
   margin-left: 9rem;
 }
 
+.summary-cards .icon {
+  width: 17px;
+  height: 17px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
 .card {
   background-color: var(--card-header);
   padding: 1.5rem;
   border-radius: 11px;
   transition: transform 0.2s;
-  width: 250px;
-}
-
-.card:hover {
-  transform: translateY(-4px);
 }
 
 .card p {
@@ -108,7 +168,7 @@ body {
 
 .card h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 25px !important;
 }
 
 .card .up {
@@ -130,8 +190,8 @@ body {
 }
 
 .ranking-table {
-  background-color: var(--card-header);
-  padding: 1.5rem;
+  background-color: var(--dashboard-content);
+  padding-top: 1.5rem;
   border-radius: 12px;
   flex: 1 1 400px;
   margin-bottom: 1.5rem;
@@ -192,6 +252,17 @@ body {
   align-items: center;
 }
 
+.ranking-table tr.pos-1 {
+  background: linear-gradient(to bottom, #101010, #4E4E4E);
+  transform: scale(1.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  color: #fff; /* Deixa o texto branco por causa do fundo escuro */
+}
+
+.ranking-table tr.pos-1 td {
+  font-weight: bold;
+}
+
 .medal {
   display: inline-block;
   margin-right: 6px;
@@ -199,6 +270,7 @@ body {
 }
 
 .gold {
+  margin-left: 4px;
   color: #FFD700;
 }
 
@@ -227,23 +299,58 @@ body {
   gap: 1rem;
 }
 
+.header-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
 .highlight-card {
   display: flex;
   align-items: center;
-  gap: 1.5em;
-  background: linear-gradient(145deg, #1e1e1e, #2b2b2b);
+  gap: 2rem;
+  background: linear-gradient(to bottom, #101010, #4E4E4E);
   border-radius: 16px;
-  padding: 1.4rem 1.5rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  flex: 1 1 300px;
-  min-width: 280px;
-  max-width: 600px;
+  padding: 1rem 1.2rem;
+  flex-wrap: nowrap; /* Não deixa quebrar pra próxima linha */
+  width: 480px;
+  max-width: 90vw;
+  height:65px;
 }
 
 .highlight-card .position {
   font-weight: bold;
   font-size: 1rem;
   color: white;
+}
+
+.percentage-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background-color: rgba(0, 128, 0, 0.1); /* Verde com opacidade */
+  color: #00c853; /* Verde vivo para o texto */
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.percentage-badge.up::after {
+  content: '↑';
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+.percentage-badge.down {
+  background-color: rgba(255, 0, 0, 0.1); /* Vermelho claro com opacidade */
+  color: #d50000;
+}
+
+.percentage-badge.down::after {
+  content: '↓';
+  margin-left: 4px;
+  font-size: 12px;
 }
 
 .profile-img {
@@ -260,8 +367,9 @@ body {
 
 .highlight-card .info {
   display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
+  flex-direction: row; /* <-- Faz nome e tag ficarem lado a lado */
+  align-items: center;
+  gap: 0.8rem;
 }
 
 .highlight-card .info .name {
@@ -300,12 +408,21 @@ body {
 .business-dropdown button {
   background: transparent;
   border: none;
+  font-size: 12px;
   color: white;
   padding: 4px 8px;
   text-align: left;
   cursor: pointer;
+  border: 1px solid rgba(131, 130, 130, 0.411);
 }
 
 .business-dropdown button.active {
-  background: #555;
+  background: var(--card-header);
+}
+
+.profile-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }

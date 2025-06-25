@@ -14,13 +14,15 @@ import DashboardCancelamentosClone from '../Page/DashboardCancelamentosClone';
 import DashboardComercialgerencial from '../Page/DashboardComercialgerencial';
 import DashboardClientesgerencial from '../Page/DashboardClientesgerencial';
 import DashboardOperacionalGerencial from '../Page/DashboardOperacionalGerencial';
-import DashboardPerformanceComercial from '../Page/DashboardPerformanceComercial';
+import DashboardPerformanceComercialB2C from '../Page/DashboardPerformanceComercialB2C';
+import DashboardPerformanceComercialB2B from '../Page/DashboardPerformanceComercialB2B';
 
 const Rotas = () => {
   return (
     <Router>
       <Routes>
-        <Route path='/dashboardperformancecomercial' element={<DashboardPerformanceComercial />} />
+        <Route path='/dashboardperformancecomercialb2c' element={<DashboardPerformanceComercialB2C />} />
+        <Route path='/dashboardperformancecomercialb2b' element={<DashboardPerformanceComercialB2B />} />
         <Route path='/cancelamentotv' element={<DashboardCancelamentos />} />
         <Route path='/cancelamento-simone' element={<DashboardCancelamentosClone />} />
         <Route path='/comercialtv' element={<DashboardComercial />} />
