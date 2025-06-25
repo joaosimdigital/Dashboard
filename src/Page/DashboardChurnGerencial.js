@@ -228,7 +228,7 @@ function DashboardChurnGerencial() {
       
  const fetchChurnPorCidade = async () => {
   try {
-    let url = `http://localhost:3007/churn-cidade`;
+    let url = `http://38.224.145.3:3007/churn-cidade`;
 
     const params = new URLSearchParams();
 
