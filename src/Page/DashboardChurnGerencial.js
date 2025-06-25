@@ -22,6 +22,7 @@ function DashboardChurnGerencial() {
   const [mesSelecionado, setMesSelecionado] = useState(currentMonth);
     const [churnMensal, setChurnMensal] = useState(null);
     const [projecao, setProjecao] = useState(0);
+    const [cancelamentosInstalacao, setCancelamentosInstalacao] = useState([]);
      const hoje = new Date();
   const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
     const [cancelamentosPJ, setCancelamentosPJ] = useState(0);
@@ -30,6 +31,9 @@ function DashboardChurnGerencial() {
     const [churnPorBairro, setChurnPorBairro] = useState([]);
     const [churnPorCidade, setChurnPorCidade] = useState([]);
     const [diaSelecionado, setDiaSelecionado] = useState('');
+    const [filtroHabilitacaoMes, setFiltroHabilitacaoMes] = useState(null);
+const [filtroHabilitacaoAno, setFiltroHabilitacaoAno] = useState(null);
+
     const [dataInicial, setDataInicial] = useState(null);
     const [dataFinal, setDataFinal] = useState(null);
     const [downgradeAtendimentos, setDowngradeAtendimentos] = useState([]);
@@ -453,15 +457,21 @@ const fetchChurnAnual = async () => {
   try {
     const params = new URLSearchParams();
 
-    if (anoSelecionado) params.append('ano', anoSelecionado);
+    const anoAtual = new Date().getFullYear();
+
+    // Define o período fixo de 01/01 a 31/12 do ano atual
+    const dataInicio = `${anoAtual}-01-01`;
+    const dataFim = `${anoAtual}-12-31`;
+
+    params.append('data_inicio', dataInicio);
+    params.append('data_fim', dataFim);
+    params.append('ano', anoAtual); // Ainda útil para filtrar corretamente no backend
+
     if (mesSelecionado) params.append('mes', mesSelecionado);
     if (cidadeSelecionada) params.append('cidade', cidadeSelecionada);
     if (bairroSelecionado) params.append('bairro', bairroSelecionado);
     if (motivoSelecionado) params.append('motivo', motivoSelecionado);
     if (tipoPessoaSelecionado) params.append('tipo_pessoa', tipoPessoaSelecionado);
-     // ✅ Correção aqui: 'data_inicio' e 'data_fim' (não 'data_inicial' e 'data_final')
-    if (dataInicial) params.append('data_inicio', dataInicial.toISOString().split('T')[0]);
-    if (dataFinal) params.append('data_fim', dataFinal.toISOString().split('T')[0]);
 
     const url = `http://38.224.145.3:3007/churn-mensal-12meses?${params.toString()}`;
 
@@ -474,11 +484,24 @@ const fetchChurnAnual = async () => {
         'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
       ];
 
-      const dadosFormatados = data.map(item => ({
-        mes: `${nomesMeses[item.mes - 1]}/${item.ano.toString().slice(-2)}`,
-        churn: item.churn_mensal,
-        total_cancelamentos: item.total_cancelamentos
-      }));
+      const mapaAPI = {};
+      data.forEach(item => {
+        mapaAPI[item.mes] = {
+          churn: item.churn_mensal,
+          total_cancelamentos: item.total_cancelamentos
+        };
+      });
+
+      const dadosFormatados = Array.from({ length: 12 }, (_, index) => {
+        const mes = index + 1;
+        const label = `${nomesMeses[index]}/${anoAtual.toString().slice(-2)}`;
+        const dados = mapaAPI[mes] || { churn: 0, total_cancelamentos: 0 };
+        return {
+          mes: label,
+          churn: dados.churn,
+          total_cancelamentos: dados.total_cancelamentos
+        };
+      });
 
       setChurnAnual(dadosFormatados);
     } else {
@@ -489,45 +512,47 @@ const fetchChurnAnual = async () => {
   }
 };
 
-        
-      const fetchClientesHabilitados = async () => {
+const fetchCancelamentosInstalacao = async () => {
   try {
     const params = new URLSearchParams();
-
-    if (mesSelecionado) params.append('mes', mesSelecionado);
-    if (anoSelecionado) params.append('ano', anoSelecionado);
+    params.append('data_inicio', '2025-06-01');
+    params.append('data_fim', '2025-06-30');
     if (cidadeSelecionada) params.append('cidade', cidadeSelecionada);
     if (bairroSelecionado) params.append('bairro', bairroSelecionado);
+    if (motivoSelecionado) params.append('motivo', motivoSelecionado);
     if (tipoPessoaSelecionado) params.append('tipo_pessoa', tipoPessoaSelecionado);
-     // ✅ Correção aqui: 'data_inicio' e 'data_fim' (não 'data_inicial' e 'data_final')
-    if (dataInicial) params.append('data_inicio', dataInicial.toISOString().split('T')[0]);
-    if (dataFinal) params.append('data_fim', dataFinal.toISOString().split('T')[0]);
 
-    const url = `http://38.224.145.3:3007/total-clientes-habilitados-ultimos-12-meses?${params.toString()}`;
-
+    const url = `http://localhost:3007/churn-clientes-por-habilitacao?${params.toString()}`;
     const response = await fetch(url);
     const data = await response.json();
 
-    if (response.ok && data.total_clientes_habilitados) {
-      const nomesMeses = [
-        'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-        'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-      ];
+    if (response.ok) {
+      const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-      const dadosFormatados = data.total_clientes_habilitados.map(item => ({
-        mes: `${nomesMeses[item.mes - 1]}/${item.ano.toString().slice(-2)}`,
-        total: parseInt(item.total_clientes_habilitados)
+      const agrupados = {};
+      data.clientes_cancelados.forEach(cliente => {
+        const dataHab = new Date(cliente.data_habilitacao);
+        const mes = nomesMeses[dataHab.getMonth()];
+        const ano = dataHab.getFullYear().toString().slice(-2);
+        const chave = `${mes}/${ano}`;
+
+        if (!agrupados[chave]) agrupados[chave] = 0;
+        agrupados[chave]++;
+      });
+
+      const dadosFormatados = Object.entries(agrupados).map(([mes, total]) => ({
+        mes,
+        total
       }));
 
-      setClientesHabilitados12Meses(dadosFormatados);
+      setCancelamentosInstalacao(dadosFormatados);
     } else {
-      console.error('Erro na resposta:', data.error);
+      console.error('Erro ao buscar clientes:', data.error);
     }
   } catch (error) {
-    console.error('Erro ao buscar habilitações:', error);
+    console.error('Erro na requisição de cancelamentos por instalação:', error);
   }
 };
-
 
           
     const fetchCancelamentosDetalhados = async () => {
@@ -672,9 +697,9 @@ const fetchPlanosCancelados = async () => {
             fetchMotivosCancelamento,
             fetchReversaoCancelamento,
             fetchValorCancelamentoMensal,
+            fetchCancelamentosInstalacao,
             fetchValorCancelamentoAnual,
             fetchChurnAnual,
-            fetchClientesHabilitados,
             fetchCancelamentosDetalhados,
             fetchClientesRepetidos,
             fetchClientesRepetidosAtendimento,
@@ -1313,37 +1338,49 @@ const fetchPlanosCancelados = async () => {
                        <div className='card-div-gerencial-body2'>
                            <h1 className='h1-div-gerencial-gerencial'>Mês de instalação</h1>
        
-                         {clientesHabilitados12Meses.length > 0 ? (
-                            <div style={{ marginTop: 30 }}>
-                              <ResponsiveContainer width="95%" height={270}>
-                                <BarChart data={clientesHabilitados12Meses}      onClick={(data) =>  handleUserInteraction(() => {
-                                                            if (data && data.activeLabel) {
-                                                              const [mesTexto, anoCurto] = data.activeLabel.split('/');
-                                                              const mesesNomes = [
-                                                                'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-                                                                'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-                                                              ];
-                                                              const mesIndex = mesesNomes.indexOf(mesTexto);
-                                                              if (mesIndex !== -1) {
-                                                                setMesSelecionado(mesIndex + 1);
-                                                                setAnoSelecionado(parseInt('20' + anoCurto)); // Ex: '25' vira 2025
-                                                              }
-                                                            }
-                                                          })}
-                                                        >
-                                  <CartesianGrid strokeDasharray="2 2" />
-                                  <XAxis dataKey="mes" tick={{ fill: 'black' }} fontWeight='bold' />
-                                  <YAxis tick={{ fill: 'black' }} />
-                                  <Tooltip />
-                                  <Bar dataKey="total" fill="#F45742">
-                                    <LabelList dataKey="total" position="insideTop" fill="#fff" fontWeight='bold' />
-                                  </Bar>
-                                </BarChart>
-                              </ResponsiveContainer>
-                            </div>
-                          ) : (
-                            <p>Carregando clientes habilitados...</p>
-                          )}
+                         {cancelamentosInstalacao.length > 0 ? (
+    <div style={{ marginTop: 30 }}>
+      <ResponsiveContainer width="95%" height={270}>
+        <BarChart
+          data={cancelamentosInstalacao}
+        onClick={(data) =>
+  handleUserInteraction(() => {
+    if (data && data.activeLabel) {
+      const [mesTexto, anoCurto] = data.activeLabel.split('/');
+      const mesesNomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+      const mesIndex = mesesNomes.indexOf(mesTexto);
+      if (mesIndex !== -1) {
+        const mes = mesIndex + 1;
+        const ano = parseInt('20' + anoCurto);
+        setFiltroHabilitacaoMes(mes);
+        setFiltroHabilitacaoAno(ano);
+      }
+    }
+  })
+}
+
+        >
+          <CartesianGrid strokeDasharray="2 2" />
+          <XAxis dataKey="mes" tick={{ fill: 'black' }} fontWeight="bold" />
+          <YAxis tick={{ fill: 'black' }} />
+          <Tooltip
+            formatter={(value) => [`${value}`, 'Cancelamentos']}
+            labelFormatter={(label) => `Mês de instalação: ${label}`}
+            contentStyle={{
+              backgroundColor: '#333',
+              borderRadius: '10px',
+              color: '#fff',
+            }}
+          />
+          <Bar dataKey="total" fill="#F45742">
+            <LabelList dataKey="total" position="insideTop" fill="#fff" fontWeight="bold" />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  ) : (
+    <p>Carregando cancelamentos por instalação...</p>
+  )}
                            </div>
        
                                </div>
@@ -1366,29 +1403,36 @@ const fetchPlanosCancelados = async () => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                                {cancelamentosDetalhados
-                                                  .filter(item => 
-                                                    (!motivoSelecionado || item.motivo_cancelamento === motivoSelecionado) &&
-                                                    (!cidadeSelecionada || item.cidade_nome === cidadeSelecionada) &&
-                                                    (!bairroSelecionado || item.bairro === bairroSelecionado)
-                                                  )
-                                                  .map((item, index) => (
-                                                    <tr key={index} className='link-tabela-bairros'>
-                                                      <td className='h2-tabela-bairros-gerencial'>{item.nome_razaosocial}</td>
-                                                      <td className='h2-tabela-bairros-gerencial'>{item.bairro}</td>
-                                                      <td className='h2-tabela-bairros-gerencial'>{item.cidade_nome}</td>
-                                                      <td className='h2-tabela-bairros-gerencial'>{item.motivo_cancelamento}</td>
-                                                      
-                                                      <td className='h2-tabela-bairros-gerencial'>
-                                                        {parseFloat(item.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                                      </td>
-                                                      <td className='h2-tabela-bairros-gerencial'>{item.tipo_pessoa.toUpperCase()}</td>
-                                                      <td className='h2-tabela-bairros-gerencial'>
-                                                        {new Date(item.data_cancelamento).toLocaleDateString('pt-BR')}
-                                                      </td>
-                                                      <td className='h2-tabela-bairros-gerencial'>{item.observacao}</td>
-                                                    </tr>
-                                                ))}
+                                     {cancelamentosDetalhados
+  .filter(item => {
+    const dataHab = new Date(item.data_habilitacao);
+    const mesHab = dataHab.getMonth() + 1;
+    const anoHab = dataHab.getFullYear();
+
+    return (
+      (!motivoSelecionado || item.motivo_cancelamento === motivoSelecionado) &&
+      (!cidadeSelecionada || item.cidade_nome === cidadeSelecionada) &&
+      (!bairroSelecionado || item.bairro === bairroSelecionado) &&
+      (!filtroHabilitacaoMes || mesHab === filtroHabilitacaoMes) &&
+      (!filtroHabilitacaoAno || anoHab === filtroHabilitacaoAno)
+    );
+  })
+  .map((item, index) => (
+    <tr key={index} className='link-tabela-bairros'>
+      <td className='h2-tabela-bairros-gerencial'>{item.nome_razaosocial}</td>
+      <td className='h2-tabela-bairros-gerencial'>{item.bairro}</td>
+      <td className='h2-tabela-bairros-gerencial'>{item.cidade_nome}</td>
+      <td className='h2-tabela-bairros-gerencial'>{item.motivo_cancelamento}</td>
+      <td className='h2-tabela-bairros-gerencial'>
+        {parseFloat(item.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+      </td>
+      <td className='h2-tabela-bairros-gerencial'>{item.tipo_pessoa.toUpperCase()}</td>
+      <td className='h2-tabela-bairros-gerencial'>
+        {new Date(item.data_cancelamento).toLocaleDateString('pt-BR')}
+      </td>
+      <td className='h2-tabela-bairros-gerencial'>{item.observacao}</td>
+    </tr>
+))}
                                               </tbody>
 
                                   </table>
