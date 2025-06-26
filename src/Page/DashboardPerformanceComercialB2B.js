@@ -58,7 +58,7 @@ function DashboardPerformanceComercialB2B() {
 
   const fetchTopVendedores = async () => {
   try {
-    const url = `http://localhost:3011/top-vendedores-mensais`;
+    const url = `http://38.224.145.3:3002/top-vendedores-mensais`;
     const response = await fetch(url);
     const data = await response.json();
 
@@ -108,7 +108,7 @@ useEffect(() => {
 
   const fetchTopVendedoresSemana = async () => {
     try {
-      const url = `http://localhost:3011/top-vendedores-semanais`;
+      const url = `http://38.224.145.3:3002/top-vendedores-semanais`;
       const response = await fetch(url);
       const data = await response.json();
 
