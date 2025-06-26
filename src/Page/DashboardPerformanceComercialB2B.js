@@ -58,18 +58,18 @@ function DashboardPerformanceComercialB2B() {
 
   const fetchTopVendedores = async () => {
   try {
-    const url = `http://38.224.145.3:3002/top-vendedores-mensais`;
+    const url = `http://localhost:3011/top-vendedores-mensais`;
     const response = await fetch(url);
     const data = await response.json();
 
     if (response.ok) {
       setTopVendedores(data.vendedores_top_mes);
-      setTotalMesAtual(data.totais?.atual?.vendas || 0);
-      setTotalMesAnterior(data.totais?.anterior?.vendas || 0);
+      setTotalMesAtual(data.totais?.atual?.vendas_pj || 0);
+      setTotalMesAnterior(data.totais?.anterior?.vendas_pj || 0);
 
-      setFaturamentoMesAtual(parseCurrency(data.totais?.atual?.faturamento));
+      setFaturamentoMesAtual(parseCurrency(data.totais?.atual?.faturamento_pj));
       setFaturamentoMesAnterior(
-        parseCurrency(data.totais?.anterior?.faturamento)
+        parseCurrency(data.totais?.anterior?.faturamento_pj)
       );
 
       const totalVendasMes = data.vendedores_top_mes.reduce(
@@ -108,20 +108,20 @@ useEffect(() => {
 
   const fetchTopVendedoresSemana = async () => {
     try {
-      const url = `http://38.224.145.3:3002/top-vendedores-semanais`;
+      const url = `http://localhost:3011/top-vendedores-semanais`;
       const response = await fetch(url);
       const data = await response.json();
 
       if (response.ok) {
         setTopVendedoresSemana(data.vendedores_top_semana);
-        setTotalSemanaAtual(data.totais?.atual?.vendas || 0);
-        setTotalSemanaAnterior(data.totais?.anterior?.vendas || 0);
+        setTotalSemanaAtual(data.totais?.atual?.vendas_pj || 0);
+        setTotalSemanaAnterior(data.totais?.anterior?.vendas_pj || 0);
 
         setFaturamentoSemanaAtual(
-          parseCurrency(data.totais?.atual?.faturamento)
+          parseCurrency(data.totais?.atual?.faturamento_pj)
         );
         setFaturamentoSemanaAnterior(
-          parseCurrency(data.totais?.anterior?.faturamento)
+          parseCurrency(data.totais?.anterior?.faturamento_pj)
         );
 
         const totalVendasSemana = data.vendedores_top_semana.reduce(
@@ -163,7 +163,7 @@ useEffect(() => {
         fetchDataForSection(nextSection); // Busca dados ao trocar
         return nextSection;
       });
-    }, 30000); // Troca a cada 10 segundos
+    }, 30000); // Troca a cada 30 segundos
 
     return () => clearInterval(interval);
   }, []);
@@ -273,7 +273,7 @@ useEffect(() => {
           {activeSection === "ranking-semanal" && (
             <section className="rankings">
               <div className="ranking-table">
-                <h3>Ranking por Vendas (Top 5)</h3>
+                <h3>Ranking por Vendas</h3>
                 <table>
                   <thead>
                     <tr>
@@ -330,7 +330,7 @@ useEffect(() => {
               </div>
 
               <div className="ranking-table">
-                <h3>Ranking por Faturamento (Top 5)</h3>
+                <h3>Ranking por Faturamento</h3>
                 <table>
                   <thead>
                     <tr>
@@ -400,7 +400,7 @@ useEffect(() => {
           {activeSection === "ranking-mensal" && (
             <section className="rankings">
               <div className="ranking-table">
-                <h3>Ranking por Vendas (Top 5)</h3>
+                <h3>Ranking por Vendas</h3>
                 <table>
                   <thead>
                     <tr>
@@ -457,7 +457,7 @@ useEffect(() => {
               </div>
 
               <div className="ranking-table">
-                <h3>Ranking por Faturamento (Top 5)</h3>
+                <h3>Ranking por Faturamento</h3>
                 <table>
                   <thead>
                     <tr>
@@ -549,7 +549,11 @@ useEffect(() => {
                               className="profile-photo"
                             />
                           ) : (
-                            vendedor.vendedor.charAt(0)
+                            <img
+                              src={imgPerson}
+                              alt="perfil"
+                              className="profile-photo-person"
+                            />
                           );
                         })()}
                       </div>
@@ -584,7 +588,11 @@ useEffect(() => {
                                 className="profile-photo"
                               />
                             ) : (
-                              vendedor.vendedor.charAt(0)
+                              <img
+                                src={imgPerson}
+                                alt="perfil"
+                                className="profile-photo-person"
+                              />
                             )}
                           </div>
                           <div className="info">
@@ -627,7 +635,11 @@ useEffect(() => {
                                 className="profile-photo"
                               />
                             ) : (
-                              vendedor.vendedor.charAt(0)
+                              <img
+                                src={imgPerson}
+                                alt="perfil"
+                                className="profile-photo-person"
+                              />
                             );
                           })()}
                         </div>

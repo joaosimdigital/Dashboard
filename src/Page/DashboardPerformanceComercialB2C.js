@@ -57,18 +57,18 @@ function DashboardPerformanceComercialB2C() {
 
   const fetchTopVendedores = async () => {
     try {
-      const url = `http://38.224.145.3:3002/top-vendedores-mensais`;
+      const url = `http://localhost:3011/top-vendedores-mensais`;
       const response = await fetch(url);
       const data = await response.json();
 
       if (response.ok) {
         setTopVendedores(data.vendedores_top_mes);
-        setTotalMesAtual(data.totais?.atual?.vendas || 0);
-        setTotalMesAnterior(data.totais?.anterior?.vendas || 0);
+        setTotalMesAtual(data.totais?.atual?.vendas_pf || 0);
+        setTotalMesAnterior(data.totais?.anterior?.vendas_pf || 0);
 
-        setFaturamentoMesAtual(parseCurrency(data.totais?.atual?.faturamento));
+        setFaturamentoMesAtual(parseCurrency(data.totais?.atual?.faturamento_pf));
         setFaturamentoMesAnterior(
-          parseCurrency(data.totais?.anterior?.faturamento)
+          parseCurrency(data.totais?.anterior?.faturamento_pf)
         );
 
         const totalVendasMes = data.vendedores_top_mes.reduce(
@@ -107,20 +107,20 @@ function DashboardPerformanceComercialB2C() {
 
   const fetchTopVendedoresSemana = async () => {
     try {
-      const url = `http://38.224.145.3:3002/top-vendedores-semanais`;
+      const url = `http://localhost:3011/top-vendedores-semanais`;
       const response = await fetch(url);
       const data = await response.json();
 
       if (response.ok) {
         setTopVendedoresSemana(data.vendedores_top_semana);
-        setTotalSemanaAtual(data.totais?.atual?.vendas || 0);
-        setTotalSemanaAnterior(data.totais?.anterior?.vendas || 0);
+        setTotalSemanaAtual(data.totais?.atual?.vendas_pf || 0);
+        setTotalSemanaAnterior(data.totais?.anterior?.vendas_pf || 0);
 
         setFaturamentoSemanaAtual(
-          parseCurrency(data.totais?.atual?.faturamento)
+          parseCurrency(data.totais?.atual?.faturamento_pf)
         );
         setFaturamentoSemanaAnterior(
-          parseCurrency(data.totais?.anterior?.faturamento)
+          parseCurrency(data.totais?.anterior?.faturamento_pf)
         );
 
         const totalVendasSemana = data.vendedores_top_semana.reduce(
@@ -162,7 +162,7 @@ function DashboardPerformanceComercialB2C() {
         fetchDataForSection(nextSection); // Busca dados ao trocar
         return nextSection;
       });
-    }, 30000); // Troca a cada 10 segundos
+    }, 30000); // Troca a cada 30 segundos
 
     return () => clearInterval(interval);
   }, []);
