@@ -313,10 +313,9 @@ body {
   background: linear-gradient(to bottom, #101010, #4E4E4E);
   border-radius: 16px;
   padding: 1rem 1.2rem;
-  flex-wrap: nowrap; /* Não deixa quebrar pra próxima linha */
-  width: 480px;
-  max-width: 90vw;
-  height:65px;
+  flex: 1 1 300px; /* <-- Flexível até 300px mínimo */
+  min-width: 260px;
+  height: 65px;
 }
 
 .highlight-card .position {
