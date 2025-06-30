@@ -1221,8 +1221,8 @@ export const datageral = [
     "data": "jun/25",
     "base": "GERAL",
     "indicador": "META DE NÚMERO CLIENTES ATIVOS",
-    "super_meta": "26090",
-    "meta": "25745"
+    "super_meta": "26500",
+    "meta": "25968"
   },
   {
     "data": "jun/25",
