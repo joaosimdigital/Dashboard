@@ -65,14 +65,14 @@ body {
 }
 
 .sidebar {
-  width: 360px;
+  width: 605px;
   background-color: var(--dashboard-content);
   color: var(--white);
   padding: 2rem 1rem;
 }
 
 .sidebar h2 {
-  font-size: 28px;
+  font-size: 48px;
   margin-bottom: 2rem;
 }
 
@@ -96,9 +96,9 @@ body {
   background-color: var(--dashboard-content);
   color: var(--white);
   border: 1px solid rgba(131, 130, 130, 0.411);
-  font-size: 25px;
+  font-size: 34px;
   text-align: center;
-  padding: 26px;
+  padding: 34px;
   margin-bottom: 20px;
   border-radius: 30px;
   cursor: pointer;
@@ -147,8 +147,8 @@ body {
 }
 
 .summary-cards .icon {
-  width: 17px;
-  height: 17px;
+  width: 24px;
+  height: 24px;
   margin-right: 8px;
   vertical-align: middle;
 }
@@ -161,25 +161,25 @@ body {
 }
 
 .card p {
-  font-size: 14px;
+  font-size: 28px;
   color: #ccc;
   margin: 0 0 8px 0;
 }
 
 .card h2 {
   margin: 0;
-  font-size: 25px !important;
+  font-size: 48px !important;
 }
 
 .card .up {
   color: var(--success);
-  font-size: 14px;
+  font-size: 16px;
   margin-left: 8px;
 }
 
 .card .down {
   color: var(--error);
-  font-size: 14px;
+  font-size: 16px;
   margin-left: 8px;
 }
 
@@ -200,7 +200,7 @@ body {
 .ranking-table h3 {
   margin-top: 0;
   margin-bottom: 1rem;
-  font-size: 18px;
+  font-size: 28px;
   color: var(--text);
 }
 
@@ -221,7 +221,7 @@ body {
   text-align: left;
   padding: 0.75rem;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 24px;
 }
 
 .ranking-table .icon {
@@ -231,7 +231,7 @@ body {
 .ranking-table td {
   padding: 0.75rem;
   border-bottom: 1px solid var(--border);
-  font-size: 14px;
+  font-size: 18px;
 }
 
 .ranking-table tbody tr:last-child td {
@@ -266,7 +266,7 @@ body {
 .medal {
   display: inline-block;
   margin-right: 6px;
-  font-size: 16px;
+  font-size: 22px;
 }
 
 .gold {
@@ -290,7 +290,8 @@ body {
 
 .highlight-group h3 {
   color: white;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 32px;
 }
 
 .highlight-row {
@@ -300,8 +301,8 @@ body {
 }
 
 .header-icon {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   margin-right: 6px;
   vertical-align: middle;
 }
@@ -312,7 +313,7 @@ body {
   gap: 2rem;
   background: linear-gradient(to bottom, #101010, #4E4E4E);
   border-radius: 16px;
-  padding: 1rem 1.2rem;
+  padding: 2rem 2.2rem;
   flex: 1 1 300px; /* <-- Flexível até 300px mínimo */
   min-width: 260px;
   height: 65px;
@@ -322,6 +323,7 @@ body {
   font-weight: bold;
   font-size: 1rem;
   color: white;
+  font-size: 30px;
 }
 
 .percentage-badge {
@@ -353,8 +355,8 @@ body {
 }
 
 .profile-img {
-  width: 48px;
-  height: 48px;
+  width: 86px;
+  height: 86px;
   border-radius: 50%;
   object-fit: cover;
   border: 2.5px solid transparent;
@@ -374,12 +376,13 @@ body {
 .highlight-card .info .name {
   font-weight: 600;
   color: white;
+  font-size: 30px;
 }
 
 .highlight-card .info .tag {
   background: #3f3f3f;
   color: white;
-  font-size: 12px;
+  font-size: 22px;
   padding: 4px 12px;
   border-radius: 12px;
   width: fit-content;
@@ -391,7 +394,7 @@ body {
 }
 
 .business-type {
-  font-size: 18px;
+  font-size: 28px;
   color: var(--span) 
 }
 
