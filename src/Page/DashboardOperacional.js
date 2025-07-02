@@ -45,7 +45,8 @@ export default function DashboardOperacional() {
   { mes: 'mar/25', meta: 820 },
   { mes: 'abr/25', meta: 830 },
   { mes: 'mai/25', meta: 840 },
-  { mes: 'jun/25', meta: 850 }
+  { mes: 'jun/25', meta: 850 },
+   { mes: 'jul/25', meta: 860 }
 ];
 
 
@@ -331,7 +332,7 @@ const atingiuMeta1 = totalExecutado >= total2;
                                 <div
                                   className='div-meta-card-dados-principais'
                                   style={{
-                                    backgroundColor: atingiuMetaHoje ? 'red' : '12B51D',
+                                    backgroundColor: atingiuMetaHoje ? 'red' : 'red',
                                     transition: '0.3s ease',
                                     color: '#fff',
 
