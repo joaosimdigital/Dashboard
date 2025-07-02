@@ -55,9 +55,18 @@ function DashboardPerformanceComercialB2C() {
     }
   };
 
+  // Filtra vendedores que não devem aparecer no ranking
+  const filtrarVendedoresIndesejados = (vendedores) => {
+    const nomesBloqueados = ["bruna b2b", "anderson b2b"];
+    return vendedores.filter(
+      (vendedor) =>
+        !nomesBloqueados.includes(vendedor.vendedor.toLowerCase().trim())
+    );
+  };
+
   const fetchTopVendedores = async () => {
     try {
-      const url = `http://38.224.145.3:3002/top-vendedores-mensais`;
+      const url = `http://38.224.145.3:3002/top-vendedores-mensais-b2c`;
       const response = await fetch(url);
       const data = await response.json();
 
@@ -107,7 +116,7 @@ function DashboardPerformanceComercialB2C() {
 
   const fetchTopVendedoresSemana = async () => {
     try {
-      const url = `http://38.224.145.3:3002/top-vendedores-semanais`;
+      const url = `http://38.224.145.3:3002/top-vendedores-semanais-b2c`;
       const response = await fetch(url);
       const data = await response.json();
 
@@ -574,7 +583,7 @@ function DashboardPerformanceComercialB2C() {
                       const foto = getImageByVendedor(vendedor.vendedor);
                       return (
                         <div className="highlight-card">
-                          <span className="position">1º</span>
+                          <span className="position">2º</span>
                           <div className="profile-img red">
                             {foto ? (
                               <img
@@ -655,7 +664,7 @@ function DashboardPerformanceComercialB2C() {
                     .slice(0, 1)
                     .map((vendedor, idx) => (
                       <div key={idx} className="highlight-card">
-                        <span className="position">1º</span>
+                        <span className="position">2º</span>
                         <div className="profile-img red">
                           {(() => {
                             const foto = getImageByVendedor(vendedor.vendedor);

@@ -56,6 +56,15 @@ function DashboardPerformanceComercialB2B() {
     }
   };
 
+  // Filtra vendedores que não devem aparecer no ranking
+const filtrarVendedoresIndesejados = (vendedores) => {
+  const nomesBloqueados = ["bruna b2b", "anderson b2b"];
+  return vendedores.filter(
+    (vendedor) =>
+      !nomesBloqueados.includes(vendedor.vendedor.toLowerCase().trim())
+  );
+};
+
   const fetchTopVendedores = async () => {
   try {
     const url = `http://38.224.145.3:3002/top-vendedores-mensais`;
@@ -63,7 +72,7 @@ function DashboardPerformanceComercialB2B() {
     const data = await response.json();
 
     if (response.ok) {
-      setTopVendedores(data.vendedores_top_mes);
+      setTopVendedores(filtrarVendedoresIndesejados(data.vendedores_top_mes));
       setTotalMesAtual(data.totais?.atual?.vendas_pj || 0);
       setTotalMesAnterior(data.totais?.anterior?.vendas_pj || 0);
 
@@ -113,7 +122,7 @@ useEffect(() => {
       const data = await response.json();
 
       if (response.ok) {
-        setTopVendedoresSemana(data.vendedores_top_semana);
+        setTopVendedoresSemana(filtrarVendedoresIndesejados(data.vendedores_top_semana));
         setTotalSemanaAtual(data.totais?.atual?.vendas_pj || 0);
         setTotalSemanaAnterior(data.totais?.anterior?.vendas_pj || 0);
 
@@ -579,7 +588,7 @@ useEffect(() => {
                       const foto = getImageByVendedor(vendedor.vendedor);
                       return (
                         <div className="highlight-card">
-                          <span className="position">1º</span>
+                          <span className="position">2º</span>
                           <div className="profile-img red">
                             {foto ? (
                               <img
@@ -665,7 +674,7 @@ useEffect(() => {
                     .slice(0, 1)
                     .map((vendedor, idx) => (
                       <div key={idx} className="highlight-card">
-                        <span className="position">1º</span>
+                        <span className="position">2º</span>
                         <div className="profile-img red">
                           {(() => {
                             const foto = getImageByVendedor(vendedor.vendedor);

@@ -107,6 +107,8 @@ const [mesSelecionadoGrafico, setMesSelecionadoGrafico] = useState(null); // par
 };
 
 
+
+
     const fetchLimiteMeta = async () => {
       try {
         let url = `http://38.224.145.3:3007/limitemeta?ano=${anoSelecionado}&mes=${mesSelecionado}`;
@@ -115,8 +117,8 @@ const [mesSelecionadoGrafico, setMesSelecionadoGrafico] = useState(null); // par
         if (bairroSelecionado) url += `&bairro=${encodeURIComponent(bairroSelecionado)}`;
         if (motivoSelecionado) url += `&motivo=${encodeURIComponent(motivoSelecionado)}`;
           if (tipoPessoaSelecionado) url += `&tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
-        //if (dataInicial) url += `&data_inicial=${encodeURIComponent(dataInicial.toISOString().split('T')[0])}`;
-        //if (dataFinal) url += `&data_final=${encodeURIComponent(dataFinal.toISOString().split('T')[0])}`;
+        if (dataInicial) url += `&data_inicio=${encodeURIComponent(dataInicial.toISOString().split('T')[0])}`;
+        if (dataFinal) url += `&data_fim=${encodeURIComponent(dataFinal.toISOString().split('T')[0])}`;
     
         const response = await fetch(url);
         const data = await response.json();
