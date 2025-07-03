@@ -903,7 +903,7 @@ const fetchAtendimentosUltimos6Meses = async () => {
 
   useEffect(() => {
     fetchAll(false);
-    const intervalo = setInterval(() => fetchAll(false), 2000);
+    const intervalo = setInterval(() => fetchAll(false), 10000);
     return () => clearInterval(intervalo);
   }, [
     anoSelecionado,
