@@ -1461,5 +1461,236 @@ export const datageral = [
     "indicador": "META DE CHURN (BASE INICIAL DO MÊS)",
     "super_meta": "0.015",
     "meta": "0.015"
-  }
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "META DE NÚMERO CLIENTES ATIVOS",
+    "super_meta": "27123",
+    "meta": "26432"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "INCREMENTO DE CLIENTES NA BASE",
+    "super_meta": "623",
+    "meta": "464"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "% de crescimento ao mês passado",
+    "super_meta": "2.4%",
+    "meta": "1.8%"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "Faturamento mensal",
+    "super_meta": "R$ 3.48M",
+    "meta": "R$ 3.43M"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "TICKET MÉDIO GERAL",
+    "super_meta": "R$ 130.00",
+    "meta": "R$ 130.00"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "Valor incremento de faturamento",
+    "super_meta": "R$ 80,990.00",
+    "meta": "R$ 60,320.00"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "META DE NOVOS CLIENTES (ativação)",
+    "super_meta": "1.03",
+    "meta": "860"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "META DE % DE ATIVAÇÕES X VENDAS",
+    "super_meta": "0.85",
+    "meta": "0.85"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "META DE NOVAS VENDAS GERAL",
+    "super_meta": "1.212",
+    "meta": "1.012"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "META DE NOVAS VENDAS B2C",
+    "super_meta": "1.091",
+    "meta": "911"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "META DE NOVAS VENDAS B2B",
+    "super_meta": "121",
+    "meta": "101"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "NÚMERO DE CANCELAMENTOS (BASE)",
+    "super_meta": "407",
+    "meta": "396"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "CANCELAMENTOS (POR SOLICITAÇÃO)",
+    "super_meta": "244",
+    "meta": "238"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "CANCELAMENTOS (INADIMPLENCIA)",
+    "super_meta": "163",
+    "meta": "158"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "META DE CHURN (BASE FINAL DO MÊS)",
+    "super_meta": "1.5%",
+    "meta": "1.5%"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "META DE CHURN (BASE INICIAL DO MÊS)",
+    "super_meta": "1.5%",
+    "meta": "1.5%"
+  },
+  {
+    "data": "jul/25",
+    "base": "GERAL",
+    "indicador": "META DE TAXA DE RETENÇÃO CS",
+    "super_meta": "0.35",
+    "meta": "0.35"
+  },
+  {
+    "data": "jul/25",
+    "base": "SC",
+    "indicador": "META DE NÚMERO CLIENTES ATIVOS",
+    "super_meta": "24981",
+    "meta": "24290"
+  },
+  {
+    "data": "jul/25",
+    "base": "SC",
+    "indicador": "INCREMENTO DE CLIENTES NA BASE",
+    "super_meta": "455",
+    "meta": "296"
+  },
+  {
+    "data": "jul/25",
+    "base": "SC",
+    "indicador": "META DE NOVAS VENDAS",
+    "super_meta": "982",
+    "meta": "782"
+  },
+  {
+    "data": "jul/25",
+    "base": "SC",
+    "indicador": "META DE NOVAS VENDAS B2C",
+    "super_meta": "704",
+    "meta": "704"
+  },
+  {
+    "data": "jul/25",
+    "base": "SC",
+    "indicador": "META DE NOVAS VENDAS B2B",
+    "super_meta": "78",
+    "meta": "78"
+  },
+  {
+    "data": "jul/25",
+    "base": "SC",
+    "indicador": "META DE NOVOS CLIENTES (ativação)",
+    "super_meta": "830",
+    "meta": "660"
+  },
+  {
+    "data": "jul/25",
+    "base": "SC",
+    "indicador": "META - NÚMERO DE CANCELAMENTOS (BASE)",
+    "super_meta": "375",
+    "meta": "364"
+  },
+  {
+    "data": "jul/25",
+    "base": "SC",
+    "indicador": "META DE CHURN (BASE FINAL DO MÊS)",
+    "super_meta": "1.5%",
+    "meta": "1.5%"
+  },
+  {
+    "data": "jul/25",
+    "base": "RS",
+    "indicador": "META DE NÚMERO CLIENTES ATIVOS",
+    "super_meta": "2142",
+    "meta": "2142"
+  },
+  {
+    "data": "jul/25",
+    "base": "RS",
+    "indicador": "INCREMENTO DE CLIENTES NA BASE",
+    "super_meta": "168",
+    "meta": "168"
+  },
+  {
+    "data": "jul/25",
+    "base": "RS",
+    "indicador": "META DE NOVAS VENDAS",
+    "super_meta": "230",
+    "meta": "230"
+  },
+  {
+    "data": "jul/25",
+    "base": "RS",
+    "indicador": "META DE NOVAS VENDAS B2C",
+    "super_meta": "207",
+    "meta": "207"
+  },
+  {
+    "data": "jul/25",
+    "base": "RS",
+    "indicador": "META DE NOVAS VENDAS B2B",
+    "super_meta": "23",
+    "meta": "23"
+  },
+  {
+    "data": "jul/25",
+    "base": "RS",
+    "indicador": "META DE NOVOS CLIENTES (ativação)",
+    "super_meta": "200",
+    "meta": "200"
+  },
+  {
+    "data": "jul/25",
+    "base": "RS",
+    "indicador": "META - NÚMERO DE CANCELAMENTOS (BASE)",
+    "super_meta": "32",
+    "meta": "32"
+  },
+  {
+    "data": "jul/25",
+    "base": "RS",
+    "indicador": "META DE CHURN (BASE FINAL DO MÊS)",
+    "super_meta": "1.50%",
+    "meta": "1.50%"
+  },
 ];
