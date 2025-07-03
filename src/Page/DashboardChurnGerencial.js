@@ -93,7 +93,7 @@ function DashboardChurnGerencial() {
   const diasRestantes = dias % 30;
 
   const partes = [];
-  if (meses > 0) partes.push(`${meses} mês${meses > 1 ? "es" : ""}`);
+  if (meses > 0) partes.push(`${meses} mes${meses > 1 ? "es" : ""}`);
   if (diasRestantes > 0) partes.push(`${diasRestantes} dia${diasRestantes > 1 ? "s" : ""}`);
 
   return partes.length > 0 ? partes.join(" e ") : "0 dias";
