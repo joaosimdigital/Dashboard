@@ -1481,7 +1481,7 @@ export const datageral = [
     "base": "GERAL",
     "indicador": "% de crescimento ao mês passado",
     "super_meta": "2.4%",
-    "meta": "1.8%"
+    "meta": "1.80%"
   },
   {
     "data": "jul/25",
@@ -1508,7 +1508,7 @@ export const datageral = [
     "data": "jul/25",
     "base": "GERAL",
     "indicador": "META DE NOVOS CLIENTES (ativação)",
-    "super_meta": "1.03",
+    "super_meta": "1030",
     "meta": "860"
   },
   {
@@ -1522,14 +1522,14 @@ export const datageral = [
     "data": "jul/25",
     "base": "GERAL",
     "indicador": "META DE NOVAS VENDAS GERAL",
-    "super_meta": "1.212",
-    "meta": "1.012"
+    "super_meta": "1212",
+    "meta": "1012"
   },
   {
     "data": "jul/25",
     "base": "GERAL",
     "indicador": "META DE NOVAS VENDAS B2C",
-    "super_meta": "1.091",
+    "super_meta": "1091",
     "meta": "911"
   },
   {

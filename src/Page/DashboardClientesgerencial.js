@@ -1138,29 +1138,34 @@ const buscarCancelamentosAutomaticoUltimos = async (mes, ano) => {
                     <h1 className='h2-card2-div--geral-dados'>{crescimento}%</h1>
                   </div>
 
-                  <div className='card3-div--geral-dados'>
-                    <h1 className='h1-card2-div--geral-dados'>Meta</h1>
-                    <h1 className='h2-card2-div--geral-dados'>
-                      {crescimentoSelecionado ? (parseFloat(crescimentoSelecionado.meta) * 100).toFixed(2) + '%' : '—'}
-                    </h1>
-                    <h2 className='h3-card2-div--geral-dados'>
-                      {crescimentoSelecionado
-                        ? `${((parseFloat(crescimento) / (parseFloat(crescimentoSelecionado.meta) * 100)) * 100).toFixed(2)}%`
-                        : '—'}
-                    </h2>
-                  </div>
+                 <div className='card3-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Meta</h1>
+  <h1 className='h2-card2-div--geral-dados'>
+    {crescimentoSelecionado
+      ? parseFloat(crescimentoSelecionado.meta).toFixed(2) + '%'
+      : '—'}
+  </h1>
+  <h2 className='h3-card2-div--geral-dados'>
+    {crescimentoSelecionado
+      ? `${((parseFloat(crescimento) / parseFloat(crescimentoSelecionado.meta)) * 100).toFixed(2)}%`
+      : '—'}
+  </h2>
+</div>
 
-                  <div className='card3-div--geral-dados'>
-                    <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
-                    <h1 className='h2-card2-div--geral-dados'>
-                      {crescimentoSelecionado ? (parseFloat(crescimentoSelecionado.super_meta) * 100).toFixed(2) + '%' : '—'}
-                    </h1>
-                    <h2 className='h3-card2-div--geral-dados'>
-                      {crescimentoSelecionado
-                        ? `${((parseFloat(crescimento) / (parseFloat(crescimentoSelecionado.super_meta) * 100)) * 100).toFixed(2)}%`
-                        : '—'}
-                    </h2>
-                  </div>
+         <div className='card3-div--geral-dados'>
+  <h1 className='h1-card2-div--geral-dados'>Super Meta</h1>
+  <h1 className='h2-card2-div--geral-dados'>
+    {crescimentoSelecionado
+      ? parseFloat(crescimentoSelecionado.super_meta).toFixed(2) + '%'
+      : '—'}
+  </h1>
+  <h2 className='h3-card2-div--geral-dados'>
+    {crescimentoSelecionado
+      ? `${((parseFloat(crescimento) / parseFloat(crescimentoSelecionado.super_meta)) * 100).toFixed(2)}%`
+      : '—'}
+  </h2>
+</div>
+
 
 
 
