@@ -3,7 +3,7 @@ import "../CSS/DashboardPerformanceComercialB2C.css";
 import imgCoin from "../Images/coin.png";
 import imgSales from "../Images/sales.png";
 import imgEyes from "../Images/eyes.png";
-import imgPersona from "../Images/persona.png";
+import imgPerson from "../Images/person.png";
 import imgTrophy from "../Images/trophy.png";
 import imgPurpleSales from "../Images/purple-sales.png";
 import imgSmileSim from "../Images/sim-smille.png";
@@ -295,7 +295,7 @@ function DashboardPerformanceComercialB2C() {
                       </th>
                       <th>
                         <img
-                          src={imgPersona}
+                          src={imgPerson}
                           alt="Vendedor"
                           className="header-icon"
                         />
@@ -352,7 +352,7 @@ function DashboardPerformanceComercialB2C() {
                       </th>
                       <th>
                         <img
-                          src={imgPersona}
+                          src={imgPerson}
                           alt="Vendedor"
                           className="header-icon"
                         />
@@ -422,7 +422,7 @@ function DashboardPerformanceComercialB2C() {
                       </th>
                       <th>
                         <img
-                          src={imgPersona}
+                          src={imgPerson}
                           alt="Vendedor"
                           className="header-icon"
                         />
@@ -479,7 +479,7 @@ function DashboardPerformanceComercialB2C() {
                       </th>
                       <th>
                         <img
-                          src={imgPersona}
+                          src={imgPerson}
                           alt="Vendedor"
                           className="header-icon"
                         />
@@ -593,7 +593,7 @@ function DashboardPerformanceComercialB2C() {
                               />
                             ) : (
                               <img
-                                src={imgPersona}
+                                src={imgPerson}
                                 alt="perfil"
                               />
                             )}
@@ -638,7 +638,10 @@ function DashboardPerformanceComercialB2C() {
                                 className="profile-photo"
                               />
                             ) : (
-                              vendedor.vendedor.charAt(0)
+                              <img
+                                src={imgPerson}
+                                alt="perfil"
+                              />
                             );
                           })()}
                         </div>
@@ -675,7 +678,10 @@ function DashboardPerformanceComercialB2C() {
                                 className="profile-photo"
                               />
                             ) : (
-                              vendedor.vendedor.charAt(0)
+                              <img
+                                src={imgPerson}
+                                alt="perfil"
+                              />
                             );
                           })()}
                         </div>
