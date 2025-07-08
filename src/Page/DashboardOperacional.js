@@ -209,9 +209,9 @@ const atingiuMeta1 = totalExecutado >= total2;
 
 
   return (
-    <div>
+       <div className='body-principal'>
 
-            <div>
+            <div >
 
                 <div className='row-div-instalacao-manutencao'>
                     
