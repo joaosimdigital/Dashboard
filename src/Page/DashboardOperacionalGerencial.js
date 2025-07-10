@@ -1018,7 +1018,7 @@ const exportarCSV = () => {
 
         <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('troca', 'd7')}>
           <h1 className='h3-card1-gerencial-geral'>TROCAS END.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{semAgenda.trocas_endereco}</h1>
+          <h1 className='h4-card1-gerencial-geral'>{semAgenda.trocas}</h1>
         </div>
 
         <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('manutencao', 'd7')}>
