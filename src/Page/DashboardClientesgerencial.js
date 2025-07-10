@@ -477,7 +477,7 @@ const fetchValorPago = async () => {
 
 const fetchNovosClientes = async (mes, ano) => {
   try {
-    const response = await fetch(`http://38.224.145.3:3009/total-clientes-habilitados-ultimos4meses?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/total-clientes-habilitados-ultimos4?mes=${mes}&ano=${ano}${estadoParam}`);
     const data = await response.json();
 
     const dadosFormatados = data.dados.map((item) => ({
@@ -495,7 +495,7 @@ const fetchNovosClientes = async (mes, ano) => {
 
  const fetchTotalClientesNovos = async (mes, ano) => {
   try {
-    const response = await fetch(`http://38.224.145.3:3009/total-clientes-habilitados-mespassado?mes=${mes}&ano=${ano}${estadoParam}`);
+    const response = await fetch(`http://38.224.145.3:3009/total-clientes-habilitados?mes=${mes}&ano=${ano}${estadoParam}`);
     const data = await response.json();
 
     setTotal(parseInt(data.total_clientes_habilitados));
