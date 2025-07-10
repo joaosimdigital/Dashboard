@@ -1032,10 +1032,7 @@ const exportarCSV = () => {
           <h1 className='h4-card1-gerencial-geral'>{semAgenda.outros}</h1>
         </div>
 
-           <div className='row-card1-gerencial-geral'  onClick={() => buscarOrdens('recolhimento', 'd7')}>
-          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{semAgenda.recolhimentos}</h1>
-        </div>
+      
 
 
       </div>
@@ -1067,10 +1064,7 @@ const exportarCSV = () => {
           <h1 className='h4-card1-gerencial-geral'>{totais.outros}</h1>
         </div>
 
-              <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('recolhimento', 'inicio2017')}>
-          <h1 className='h3-card1-gerencial-geral' >RECOLHIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{totais.recolhimentos}</h1>
-        </div>
+        
 
       </div>
     </div>
