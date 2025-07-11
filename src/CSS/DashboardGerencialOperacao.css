@@ -244,6 +244,12 @@ body {
   position: relative;
 }
 
+.operacao-card-nobottom strong {
+  color: #686868 !important;
+  font-family: "Heebo";
+  font-weight: 600;
+}
+
 .operacao-divider {
   width: 100%;
   height: 2px;
@@ -304,7 +310,6 @@ body {
   margin-bottom: 0.75rem;
 }
 
-
 .operacao-big-number {
   font-size: 64px;
   font-weight: 700;
@@ -354,8 +359,14 @@ body {
 
 .operacao-chart-donut {
   flex: 1 1 300px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  padding: 1.2rem;
+  flex: 1;
   min-width: 400px;
-  max-width: 730px;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .donut-chart-container {
@@ -366,12 +377,13 @@ body {
 
 .donut-legend {
   list-style: none;
+  font-family: "Heebo";
   padding: 0;
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 15px;
 }
 
 .donut-legend li {
