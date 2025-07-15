@@ -244,6 +244,26 @@ body {
   position: relative;
 }
 
+.operacao-card-nobottom-center {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 9px;
+  border: 1px solid #f3f3f3;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.048);
+  flex: 1;
+  min-width: 250px;
+  position: relative;
+}
+
+.operacao-card-nobottom-center h4 {
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+  color: #686868;
+  font-family: "Heebo";
+  margin-bottom: 0.75rem;
+}
+
 .operacao-card-nobottom strong {
   color: #686868 !important;
   font-family: "Heebo";
@@ -294,11 +314,13 @@ body {
   display: flex;
   justify-content: center !important;
   font-weight: 600;
-  font-size: 26px;
+  font-size: 18px;
   color: #686868;
   font-family: "Heebo";
   margin-bottom: 0.75rem;
 }
+
+
 
 .operacao-card-nobottom h4 {
   font-size: 2rem;
@@ -314,8 +336,22 @@ body {
   font-size: 64px;
   font-weight: 700;
   font-family: "Heebo";
-  text-align: center;
+  text-align: center; 
+  display: flex;
+  justify-content: center;
+  margin-top: 4rem;
+  
 }
+
+.operacao-big-number-nomargin {
+  font-size: 64px;
+  font-weight: 700;
+  font-family: "Heebo";
+  text-align: center; 
+  display: flex;
+  justify-content: center;
+}
+
 
 .operacao-bar-chart {
   width: 100%;
@@ -340,7 +376,7 @@ body {
 
 .operacao-state-installations strong {
   font-size: 1.5rem;
-  color: #212121;
+  color: #686868;
 }
 
 .operacao-state-installations p {
@@ -399,6 +435,12 @@ body {
   border-radius: 50%;
   display: inline-block;
   margin-right: 8px;
+}
+
+.legend-dot span {
+  font-family: "Heebo" !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
 }
 
 .legend-dot.black { background-color: #000; }

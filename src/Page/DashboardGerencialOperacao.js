@@ -23,8 +23,34 @@ function DashboardGerencialOperacao() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalOrdensServico, setTotalOrdensServico] = useState(null);
+  const [osPorBairro, setOsPorBairro] = useState([]);
+  const [percentualMetaInstalacao, setPercentualMetaInstalacao] =
+    useState(null);
+  const [percentualMetaManutencao, setPercentualMetaManutencao] =
+    useState(null);
+
   const [totalManutencoes, setTotalManutencoes] = useState(null);
   const [totalInstalacoes, setTotalInstalacoes] = useState(null);
+  const [instalacoesSC, setInstalacoesSC] = useState(null);
+  const [instalacoesRS, setInstalacoesRS] = useState(null);
+  const [manutencoesSC, setManutencoesSC] = useState(null);
+  const [manutencoesRS, setManutencoesRS] = useState(null);
+  const [
+    clientesHabilitadosUltimos3Meses,
+    setClientesHabilitadosUltimos3Meses,
+  ] = useState([]);
+
+  const [totalClientesHabilitadosHoje, setTotalClientesHabilitadosHoje] =
+    useState(null);
+  const [totalClientesHabilitadosSC, setTotalClientesHabilitadosSC] =
+    useState(null);
+  const [totalClientesHabilitadosRS, setTotalClientesHabilitadosRS] =
+    useState(null);
+  const [totalManutencoesSC, setTotalManutencoesSC] = useState(null);
+  const [totalManutencoesRS, setTotalManutencoesRS] = useState(null);
+
+  const [cidadeData, setCidadeData] = useState([]);
+
   const filterRef = useRef();
   const gradients = ["url(#gradOrange)", "url(#gradBlack)", "url(#gradRed)"];
   const gradientIdPF = "colorPF";
@@ -49,23 +75,23 @@ function DashboardGerencialOperacao() {
     );
   };
 
- const [tipoPessoaData, setTipoPessoaData] = useState([
-  { name: "Pessoa Física", value: 0, fill: "#f47621" },
-  { name: "Pessoa Jurídica", value: 0, fill: "#212121" },
- ]);
+  // Meta de instalações por mês
+  const metasInstalacaoPorMes = {
+    6: 850, // Junho
+    7: 860, // Julho
+    8: 870, // Agosto
+    9: 880, // Setembro
+    10: 895, // Outubro
+    11: 900, // Novembro
+    12: 910, // Dezembro
+  };
 
-  const trimestreData = [
-    { name: "Mar 2025", value: 805 },
-    { name: "Abr 2025", value: 962 },
-    { name: "Mai 2025", value: 404 },
-  ];
+  const [tipoPessoaData, setTipoPessoaData] = useState([
+    { name: "Pessoa Física", value: 0, fill: "#f47621" },
+    { name: "Pessoa Jurídica", value: 0, fill: "#212121" },
+  ]);
 
-  const cidadeData = [
-    { name: "Florianópolis", value: 238, color: "#212121" },
-    { name: "Caxias do Sul", value: 189, color: "#f97316" },
-    { name: "São José", value: 98, color: "#facc15" },
-    { name: "Palhoça", value: 32, color: "#dc2626" },
-  ];
+  const [trimestreData, setTrimestreData] = useState([]);
 
   const usuariosFechamento = [
     { nome: "(RECOLHIMENTO) LUIS ALEXANDRE", qtd: 491 },
@@ -81,14 +107,6 @@ function DashboardGerencialOperacao() {
     { nome: "RECOLHIMENTO DE EQUIPAMENTO POR CAN...", qtd: 887 },
     { nome: "INSTALAÇÃO GPON (PRÉDIO ADAPTADO)", qtd: 733 },
     { nome: "APOIO TÉCNICO ORDEM DE SERVIÇO", qtd: 690 },
-  ];
-
-  const osPorBairro = [
-    { nome: "INGLESES DO RIO VERMELHO", qtd: 48 },
-    { nome: "SÃO JOÃO DO RIO VERMELHO", qtd: 43 },
-    { nome: "CACHOEIRA DO BOM JESUS", qtd: 38 },
-    { nome: "CANASVIEIRAS", qtd: 33 },
-    { nome: "JURERÊ", qtd: 26 },
   ];
 
   const mediaProducao = [
@@ -145,7 +163,7 @@ function DashboardGerencialOperacao() {
     },
   ];
 
-  const totalCidade = cidadeData.reduce((sum, item) => sum + item.value, 0);
+  const [totalCidade, setTotalCidade] = useState(0);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -167,34 +185,255 @@ function DashboardGerencialOperacao() {
     item.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
- useEffect(() => {
-  const fetchTotais = async () => {
-    try {
-      const response = await fetch("http://localhost:3011/totais-os-mes-e-geral");
-      const data = await response.json();
+  useEffect(() => {
+    const fetchTotais = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3011/totais-os-mes-e-geral"
+        );
+        const data = await response.json();
 
-      // Atualiza Totais Gerais
-      setTotalOrdensServico(data.totais_mes.total_ordens_servico_mes);
-      setTotalInstalacoes(data.totais_mes.total_instalacoes_mes);
-      setTotalManutencoes(data.totais_mes.total_manutencoes_mes);
+        // Atualiza Totais Gerais
+        setTotalOrdensServico(data.totais_mes.total_ordens_servico_mes);
+        setTotalInstalacoes(data.totais_mes.total_instalacoes_mes);
+        setTotalManutencoes(data.totais_mes.total_manutencoes_mes);
 
-      // Atualiza gráfico de Tipo de Pessoa
-      const pfTotal = data.totais_por_tipo_pessoa.pf?.totais_mes.total_ordens_servico_mes || 0;
-      const pjTotal = data.totais_por_tipo_pessoa.pj?.totais_mes.total_ordens_servico_mes || 0;
+        // Atualiza gráfico de Tipo de Pessoa
+        const pfTotal =
+          data.totais_por_tipo_pessoa.pf?.totais_mes.total_ordens_servico_mes ||
+          0;
+        const pjTotal =
+          data.totais_por_tipo_pessoa.pj?.totais_mes.total_ordens_servico_mes ||
+          0;
 
-      setTipoPessoaData([
-        { name: "Pessoa Física", value: pfTotal, fill: "#f47621" },
-        { name: "Pessoa Jurídica", value: pjTotal, fill: "#212121" },
-      ]);
+        setTipoPessoaData([
+          { name: "Pessoa Física", value: pfTotal, fill: "#f47621" },
+          { name: "Pessoa Jurídica", value: pjTotal, fill: "#212121" },
+        ]);
+      } catch (error) {
+        console.error("Erro ao buscar dados de totais:", error);
+      }
+    };
 
-    } catch (error) {
-      console.error("Erro ao buscar dados de totais:", error);
+    fetchTotais();
+  }, []);
+
+  useEffect(() => {
+    const fetchTotaisPorEstado = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3011/ordens-servico-do-mes-por-estado"
+        );
+        const data = await response.json();
+
+        const estados = data.total_por_estado;
+
+        const sc = estados.find((e) => e.estado === "Santa Catarina");
+        const rs = estados.find((e) => e.estado === "Rio Grande do Sul");
+
+        setInstalacoesSC(sc ? sc.total_instalacoes : 0);
+        setInstalacoesRS(rs ? rs.total_instalacoes : 0);
+        setManutencoesSC(sc ? sc.total_manutencoes : 0);
+        setManutencoesRS(rs ? rs.total_manutencoes : 0);
+      } catch (error) {
+        console.error("Erro ao buscar totais por estado:", error);
+      }
+    };
+
+    fetchTotaisPorEstado();
+  }, []);
+
+  useEffect(() => {
+    const fetchClientesHabilitados = async () => {
+      try {
+        const [resHoje, resSC, resRS] = await Promise.all([
+          fetch("http://localhost:3011/total-clientes-habilitados-mes"),
+          fetch("http://localhost:3011/total-clientes-habilitados-sc"),
+          fetch("http://localhost:3011/total-clientes-habilitados-rs"),
+        ]);
+
+        const dataHoje = await resHoje.json();
+        const dataSC = await resSC.json();
+        const dataRS = await resRS.json();
+
+        setTotalClientesHabilitadosHoje(dataHoje.total_clientes_habilitados);
+        setTotalClientesHabilitadosSC(dataSC.total_clientes_habilitados);
+        setTotalClientesHabilitadosRS(dataRS.total_clientes_habilitados);
+      } catch (error) {
+        console.error("Erro ao buscar clientes habilitados:", error);
+      }
+    };
+
+    fetchClientesHabilitados();
+  }, []);
+
+  useEffect(() => {
+    const fetchTotalClientesHabilitadosSC = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3011/total-clientes-habilitados-executado-sc"
+        );
+        const data = await response.json();
+        setTotalManutencoesSC(Number(data.total_manutencoes));
+      } catch (error) {
+        console.error(
+          "Erro ao buscar total de clientes habilitados SC:",
+          error
+        );
+      }
+    };
+
+    const fetchTotalManutencoesRS = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3011/total-clientes-habilitados-executado-rs"
+        );
+        const data = await response.json();
+        setTotalManutencoesRS(Number(data.total_manutencoes));
+      } catch (error) {
+        console.error("Erro ao buscar total de manutenções RS:", error);
+      }
+    };
+
+    fetchTotalClientesHabilitadosSC();
+    fetchTotalManutencoesRS();
+  }, []);
+
+  useEffect(() => {
+    const fetchClientesHabilitadosUltimos3Meses = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3011/total-clientes-habilitados-ultimos-3-meses"
+        );
+        const data = await response.json();
+
+        // Cria nomes amigáveis para o gráfico
+        const mesesNomes = [
+          "Jan",
+          "Fev",
+          "Mar",
+          "Abr",
+          "Mai",
+          "Jun",
+          "Jul",
+          "Ago",
+          "Set",
+          "Out",
+          "Nov",
+          "Dez",
+        ];
+
+        const formattedData = data.total_clientes_habilitados.map((item) => ({
+          name: `${mesesNomes[item.mes - 1]} ${item.ano}`,
+          value: Number(item.total_clientes_habilitados),
+        }));
+
+        setTrimestreData(formattedData);
+      } catch (error) {
+        console.error(
+          "Erro ao buscar clientes habilitados últimos 3 meses:",
+          error
+        );
+      }
+    };
+
+    fetchClientesHabilitadosUltimos3Meses();
+  }, []);
+
+  useEffect(() => {
+    const fetchOrdensServicoPorCidade = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3011/ordens-servico-do-mes-por-cidade"
+        );
+        const data = await response.json();
+
+        // Mapeamento de cores fixas por cidade
+        const coresPorCidade = {
+          Florianópolis: "#000000",
+          "Caxias do Sul": "#FB7424",
+          "São José": "#F4DF1E",
+          Palhoça: "#E4482D",
+        };
+
+        const formattedData = data.total_por_cidade
+          .filter((item) =>
+            ["Florianópolis", "Caxias do Sul", "São José", "Palhoça"].includes(
+              item.cidade
+            )
+          )
+          .map((item) => ({
+            name: item.cidade,
+            value: item.total_geral,
+            color: coresPorCidade[item.cidade] || "#999999",
+          }));
+
+        const total = formattedData.reduce((sum, item) => sum + item.value, 0);
+
+        setCidadeData(formattedData);
+        setTotalCidade(total);
+      } catch (error) {
+        console.error("Erro ao buscar ordens de serviço por cidade:", error);
+      }
+    };
+
+    fetchOrdensServicoPorCidade();
+  }, []);
+
+  useEffect(() => {
+    const fetchOrdensServicoPorBairro = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3011/ordens-servico-do-mes-por-bairro"
+        );
+        const data = await response.json();
+
+        const bairrosComOS = data.total_por_bairro
+          .filter((bairro) => bairro.total_geral >= 1)
+          .sort((a, b) => b.total_geral - a.total_geral)
+          .map((bairro) => ({
+            nome: bairro.bairro || "Sem bairro",
+            qtd: bairro.total_geral,
+          }));
+
+        setOsPorBairro(bairrosComOS);
+      } catch (error) {
+        console.error("Erro ao buscar ordens de serviço por bairro:", error);
+      }
+    };
+
+    fetchOrdensServicoPorBairro();
+  }, []);
+
+  useEffect(() => {
+    if (
+      totalClientesHabilitadosSC !== null &&
+      totalClientesHabilitadosRS !== null
+    ) {
+      const totalInstalacoes =
+        Number(totalClientesHabilitadosSC) + Number(totalClientesHabilitadosRS);
+
+      const mesAtual = new Date().getMonth() + 1; // Mês atual (1-12)
+      const metaMes = metasInstalacaoPorMes[mesAtual] || 1; // Previne divisão por zero
+
+      const percentual = ((totalInstalacoes / metaMes) * 100).toFixed(1);
+      setPercentualMetaInstalacao(percentual);
     }
-  };
+  }, [totalClientesHabilitadosSC, totalClientesHabilitadosRS]);
 
-  fetchTotais();
-}, []);
+  useEffect(() => {
+    if (totalManutencoesSC !== null && totalManutencoesRS !== null) {
+      const totalManutencoes =
+        Number(totalManutencoesSC) + Number(totalManutencoesRS);
+      const metaMensalManutencao = 1200;
 
+      const percentual = (
+        (totalManutencoes / metaMensalManutencao) *
+        100
+      ).toFixed(1);
+      setPercentualMetaManutencao(percentual);
+    }
+  }, [totalManutencoesSC, totalManutencoesRS]);
 
   return (
     <div className="operacao-wrapper">
@@ -385,7 +624,9 @@ function DashboardGerencialOperacao() {
             <div className="operacao-card operacao-big-number-card">
               <h4>Total de Ordens de Serviços</h4>
               <div className="operacao-big-number">
-                {totalOrdensServico !== null ? totalOrdensServico.toLocaleString() : "Carregando..."}
+                {totalOrdensServico !== null
+                  ? totalOrdensServico.toLocaleString()
+                  : "Carregando..."}
               </div>
             </div>
 
@@ -421,7 +662,7 @@ function DashboardGerencialOperacao() {
                   />
                   <YAxis
                     tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => `${value.toFixed(1)} mil`}
+                    tickFormatter={(value) => value.toLocaleString()}
                     axisLine={false}
                     tickLine={false}
                   />
@@ -450,30 +691,48 @@ function DashboardGerencialOperacao() {
         <h3>Instalações</h3>
         <div className="operacao-card-container">
           <div className="operacao-summary-cards">
-            <div className="operacao-card-nobottom">
+            <div className="operacao-card-nobottom-center">
               <h4>Instalações por estado</h4>
               <div className="operacao-state-installations">
                 <div>
                   <strong>SC</strong>
-                  <p>438</p>
+                  <p>
+                    {totalClientesHabilitadosSC !== null
+                      ? totalClientesHabilitadosSC.toLocaleString()
+                      : "Carregando..."}
+                  </p>
                 </div>
                 <div>
                   <strong>RS</strong>
-                  <p>269</p>
+                  <p>
+                    {totalClientesHabilitadosRS !== null
+                      ? totalClientesHabilitadosRS.toLocaleString()
+                      : "Carregando..."}
+                  </p>
                 </div>
               </div>
             </div>
 
             <div className="operacao-card operacao-big-number-card">
               <h4>Total de Instalações</h4>
-              <div className="operacao-big-number">
-                {totalInstalacoes !== null ? totalInstalacoes.toLocaleString() : "Carregando..."}
+              <div className="operacao-big-number-nomargin">
+                {totalClientesHabilitadosSC !== null &&
+                totalClientesHabilitadosRS !== null
+                  ? (
+                      Number(totalClientesHabilitadosSC) +
+                      Number(totalClientesHabilitadosRS)
+                    ).toLocaleString()
+                  : "Carregando..."}
               </div>
             </div>
 
-            <div className="operacao-card-nobottom operacao-big-number-card">
+            <div className="operacao-card-nobottom-center operacao-big-number-card">
               <h4>% atingido da Meta</h4>
-              <div className="operacao-big-number">48%</div>
+              <div className="operacao-big-number-nomargin">
+                {percentualMetaInstalacao !== null
+                  ? `${percentualMetaInstalacao}%`
+                  : "Carregando..."}
+              </div>
             </div>
           </div>
         </div>
@@ -483,30 +742,46 @@ function DashboardGerencialOperacao() {
         <h3>Manutenções</h3>
         <div className="operacao-card-container">
           <div className="operacao-summary-cards">
-            <div className="operacao-card-nobottom">
+            <div className="operacao-card-nobottom-center">
               <h4>Manutenções por estado</h4>
               <div className="operacao-state-installations">
                 <div>
                   <strong>SC</strong>
-                  <p>350</p>
+                  <p>
+                    {totalManutencoesSC !== null
+                      ? totalManutencoesSC.toLocaleString()
+                      : "Carregando..."}
+                  </p>
                 </div>
                 <div>
                   <strong>RS</strong>
-                  <p>310</p>
+                  <p>
+                    {totalManutencoesRS !== null
+                      ? totalManutencoesRS.toLocaleString()
+                      : "Carregando..."}
+                  </p>
                 </div>
               </div>
             </div>
 
             <div className="operacao-card operacao-big-number-card">
               <h4>Total de Manutenções</h4>
-              <div className="operacao-big-number">
-                {totalManutencoes !== null ? totalManutencoes.toLocaleString() : "Carregando..."}
+              <div className="operacao-big-number-nomargin">
+                {totalManutencoesSC !== null && totalManutencoesRS !== null
+                  ? (
+                      Number(totalManutencoesSC) + Number(totalManutencoesRS)
+                    ).toLocaleString()
+                  : "Carregando..."}
               </div>
             </div>
 
-            <div className="operacao-card-nobottom operacao-big-number-card">
+            <div className="operacao-card-nobottom-center operacao-big-number-card">
               <h4>% atingido da Meta</h4>
-              <div className="operacao-big-number">36%</div>
+              <div className="operacao-big-number-nomargin">
+                {percentualMetaManutencao !== null
+                  ? `${percentualMetaManutencao}%`
+                  : "Carregando..."}
+              </div>
             </div>
           </div>
         </div>
@@ -589,7 +864,10 @@ function DashboardGerencialOperacao() {
             </ResponsiveContainer>
             <ul className="donut-legend">
               {cidadeData.map((entry, index) => {
-                const percent = ((entry.value / totalCidade) * 100).toFixed(1);
+                const percent =
+                  totalCidade > 0
+                    ? ((entry.value / totalCidade) * 100).toFixed(1)
+                    : 0;
                 return (
                   <li key={index}>
                     <span
@@ -606,7 +884,10 @@ function DashboardGerencialOperacao() {
 
         {/* OS por bairro */}
         <div className="operacao-card-nobottom operacao-table-card">
-          <div className="operacao-table-wrapper">
+          <div
+            className="operacao-table-wrapper"
+            style={{ maxHeight: "260px", overflowY: "auto" }} // Scroll vertical
+          >
             <table className="operacao-table">
               <thead>
                 <tr className="tr-space-between">
@@ -616,16 +897,29 @@ function DashboardGerencialOperacao() {
                 </tr>
               </thead>
               <tbody>
-                {osPorBairro.map((bairro, index) => (
+                {osPorBairro.slice(0, 5).map((bairro, index) => (
                   <tr key={index}>
                     <td>
                       {index + 1}. {bairro.nome}
                     </td>
+                    <td></td>
                     <td>
-                      <strong>{bairro.qtd}</strong>
+                      <strong>{bairro.qtd.toLocaleString()}</strong>
                     </td>
                   </tr>
                 ))}
+                {osPorBairro.length > 5 &&
+                  osPorBairro.slice(5).map((bairro, index) => (
+                    <tr key={index + 5}>
+                      <td>
+                        {index + 6}. {bairro.nome}
+                      </td>
+                      <td></td>
+                      <td>
+                        <strong>{bairro.qtd.toLocaleString()}</strong>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
