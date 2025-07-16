@@ -40,7 +40,8 @@ export default function DashboardComercial() {
   { mes: 'mar/25', meta: 965 },
   { mes: 'abr/25', meta: 976 },
   { mes: 'mai/25', meta: 988 },
-  { mes: 'jun/25', meta: 1000 }
+  { mes: 'jun/25', meta: 1000 },
+   { mes: 'jul/25', meta: 1012 }
 ];
 
 
