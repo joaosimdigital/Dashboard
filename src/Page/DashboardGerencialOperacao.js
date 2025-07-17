@@ -21,9 +21,16 @@ function DashboardGerencialOperacao() {
   const [showFilter, setShowFilter] = useState(false);
   const [activeSubFilter, setActiveSubFilter] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [motivosFechamento, setMotivosFechamento] = useState([]);
+
   const [selectedItems, setSelectedItems] = useState([]);
+  const [usuariosFechamento, setUsuariosFechamento] = useState([]);
+  const [ultimasOS, setUltimasOS] = useState([]);
+
   const [totalOrdensServico, setTotalOrdensServico] = useState(null);
   const [osPorBairro, setOsPorBairro] = useState([]);
+  const [tiposOS, setTiposOS] = useState([]);
+
   const [percentualMetaInstalacao, setPercentualMetaInstalacao] =
     useState(null);
   const [percentualMetaManutencao, setPercentualMetaManutencao] =
@@ -51,6 +58,9 @@ function DashboardGerencialOperacao() {
 
   const [cidadeData, setCidadeData] = useState([]);
 
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState("");
+
   const filterRef = useRef();
   const gradients = ["url(#gradOrange)", "url(#gradBlack)", "url(#gradRed)"];
   const gradientIdPF = "colorPF";
@@ -75,6 +85,16 @@ function DashboardGerencialOperacao() {
     );
   };
 
+  const openModal = (text) => {
+    setModalContent(text);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalContent("");
+  };
+
   // Meta de instalações por mês
   const metasInstalacaoPorMes = {
     6: 850, // Junho
@@ -93,74 +113,12 @@ function DashboardGerencialOperacao() {
 
   const [trimestreData, setTrimestreData] = useState([]);
 
-  const usuariosFechamento = [
-    { nome: "(RECOLHIMENTO) LUIS ALEXANDRE", qtd: 491 },
-    { nome: "(RECOLHIMENTO) JOÃO DOS SANTOS", qtd: 363 },
-    { nome: "(INST.)(TAPERA) ADRIANO DA SILVA", qtd: 318 },
-    { nome: "(INST.)(SUL) RAFAEL DE SOUZA", qtd: 313 },
-    { nome: "(MANUTENÇÃO/INST.)(INGLESES) MICHEL PAIVA", qtd: 306 },
-  ];
-
-  const tiposOS = [
-    { nome: "SEM ACESSO (SEM SINAL GPON)", qtd: 1788 },
-    { nome: "INSTALAÇÃO GPON", qtd: 1491 },
-    { nome: "RECOLHIMENTO DE EQUIPAMENTO POR CAN...", qtd: 887 },
-    { nome: "INSTALAÇÃO GPON (PRÉDIO ADAPTADO)", qtd: 733 },
-    { nome: "APOIO TÉCNICO ORDEM DE SERVIÇO", qtd: 690 },
-  ];
-
   const mediaProducao = [
     { nome: "JOÃO SILVA DOS SANTOS", diasUteis: 34, total: 87 },
     { nome: "JOSÉ DE SOUZA SILVA", diasUteis: 32, total: 83 },
     { nome: "MARIANA SANTOS MEDEIROS", diasUteis: 28, total: 78 },
     { nome: "JORGE ARAGÃO DE OLIVEIRA", diasUteis: 21, total: 77 },
     { nome: "MARIA BRAGA DE JESUS", diasUteis: 19, total: 69 },
-  ];
-
-  const motivosFechamento = [
-    { motivo: "INSTALAÇÃO - CONCLUÍDA NO PADRÃO", qtd: 53 },
-    { motivo: "SEM ACESSO/TROCA DE DROP - CAMINHÃO...", qtd: 17 },
-    { motivo: "TROCA DE ENDEREÇO - CABO NOVO", qtd: 15 },
-    { motivo: "UPGRADE REALIZADO COM SUCESSO", qtd: 10 },
-    { motivo: "MANUTENÇÃO - REALIZADA COM SUCESSO", qtd: 7 },
-  ];
-
-  const ultimasOS = [
-    {
-      nome: "ÉBER ROSSI",
-      tipo: "INSTALAÇÃO GPON (PREDIO ADAPTADO)",
-      descricaoAbertura: "ID CLIENTE SERVIÇO: 53689 PLANO...",
-      descricaoFechamento: "Cliente satisfeito com a instala...",
-      link: "#",
-    },
-    {
-      nome: "ANGELO FARIA LIMA",
-      tipo: "INSTALAÇÃO GPON",
-      descricaoAbertura: "ID CLIENTE SERVIÇO: 52796 PLANO...",
-      descricaoFechamento: "Finalizado via API",
-      link: "#",
-    },
-    {
-      nome: "ZINGA MERCADO LTDA",
-      tipo: "DESISTÊNCIA INSTALAÇÃO",
-      descricaoAbertura: "ID CLIENTE SERVIÇO: 54052 PLANO...",
-      descricaoFechamento: "Inviabilidade técnica",
-      link: "#",
-    },
-    {
-      nome: "JOANA SILVEIRA",
-      tipo: "MANUTENÇÃO CLIENTE",
-      descricaoAbertura: "Cliente deseja realocar equipam...",
-      descricaoFechamento: "Passado um cabo novo",
-      link: "#",
-    },
-    {
-      nome: "MARIANA FERREIRA",
-      tipo: "APOIO TÉCNICO ORDEM DE SERVIÇO",
-      descricaoAbertura: "Apoio ao técnico Adriano.",
-      descricaoFechamento: "Atividade de apoio realizado",
-      link: "#",
-    },
   ];
 
   const [totalCidade, setTotalCidade] = useState(0);
@@ -188,34 +146,118 @@ function DashboardGerencialOperacao() {
   useEffect(() => {
     const fetchTotais = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:3011/totais-os-mes-e-geral"
-        );
+        const response = await fetch("http://localhost:3011/ordens-servico");
         const data = await response.json();
 
-        // Atualiza Totais Gerais
-        setTotalOrdensServico(data.totais_mes.total_ordens_servico_mes);
-        setTotalInstalacoes(data.totais_mes.total_instalacoes_mes);
-        setTotalManutencoes(data.totais_mes.total_manutencoes_mes);
+        // Atualiza apenas o total de ordens de serviço no mês
+        setTotalOrdensServico(Number(data.total_os_mes));
 
-        // Atualiza gráfico de Tipo de Pessoa
-        const pfTotal =
-          data.totais_por_tipo_pessoa.pf?.totais_mes.total_ordens_servico_mes ||
-          0;
-        const pjTotal =
-          data.totais_por_tipo_pessoa.pj?.totais_mes.total_ordens_servico_mes ||
-          0;
+        // Zera ou ignora os demais, pois o endpoint não retorna mais estes dados
+        setTotalInstalacoes(0);
+        setTotalManutencoes(0);
 
-        setTipoPessoaData([
-          { name: "Pessoa Física", value: pfTotal, fill: "#f47621" },
-          { name: "Pessoa Jurídica", value: pjTotal, fill: "#212121" },
-        ]);
+        // Se estiver usando gráfico de tipo de pessoa, pode zerar ou esconder
+        setTipoPessoaData([]);
       } catch (error) {
         console.error("Erro ao buscar dados de totais:", error);
       }
     };
 
     fetchTotais();
+  }, []);
+
+  useEffect(() => {
+    const fetchTipoPessoaData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3011/total-clientes-os-por-tipo"
+        );
+        const data = await response.json();
+
+        const formattedData = [
+          {
+            name: "Pessoa Física",
+            value: data.pf || 0,
+          },
+          {
+            name: "Pessoa Jurídica",
+            value: data.pj || 0,
+          },
+        ];
+
+        setTipoPessoaData(formattedData);
+      } catch (error) {
+        console.error("Erro ao buscar dados de tipo de pessoa:", error);
+      }
+    };
+
+    fetchTipoPessoaData();
+  }, []);
+
+  useEffect(() => {
+    const fetchTiposOS = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3011/ordens-servico-por-tipo"
+        );
+        const data = await response.json();
+
+        const formattedData = data.map((item) => ({
+          nome: item.tipo_os,
+          qtd: Number(item.quantidade),
+        }));
+
+        setTiposOS(formattedData);
+      } catch (error) {
+        console.error("Erro ao buscar tipos de OS do mês atual:", error);
+      }
+    };
+
+    fetchTiposOS();
+  }, []);
+
+  useEffect(() => {
+    const fetchOrdensPorUsuario = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3011/ordens-por-usuario"
+        );
+        const data = await response.json();
+
+        const formattedData = data.map((item) => ({
+          nome: item.usuario,
+          qtd: parseInt(item.total_ordens, 10),
+        }));
+
+        setUsuariosFechamento(formattedData);
+      } catch (error) {
+        console.error("Erro ao buscar ordens por usuário:", error);
+      }
+    };
+
+    fetchOrdensPorUsuario();
+  }, []);
+
+  useEffect(() => {
+    const fetchMotivosFechamento = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3011/motivos-fechamento-os"
+        );
+        const data = await response.json();
+
+        const formattedData = data.map((item) => ({
+          motivo: item.motivo_fechamento,
+          qtd: parseInt(item.quantidade, 10),
+        }));
+
+        setMotivosFechamento(formattedData);
+      } catch (error) {
+        console.error("Erro ao buscar motivos de fechamento:", error);
+      }
+    };
+
+    fetchMotivosFechamento();
   }, []);
 
   useEffect(() => {
@@ -300,14 +342,13 @@ function DashboardGerencialOperacao() {
   }, []);
 
   useEffect(() => {
-    const fetchClientesHabilitadosUltimos3Meses = async () => {
+    const fetchOrdensServicoUltimos3Meses = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3011/total-clientes-habilitados-ultimos-3-meses"
+          "http://localhost:3011/ordens-servico-ultimos-3-meses"
         );
         const data = await response.json();
 
-        // Cria nomes amigáveis para o gráfico
         const mesesNomes = [
           "Jan",
           "Fev",
@@ -323,21 +364,43 @@ function DashboardGerencialOperacao() {
           "Dez",
         ];
 
-        const formattedData = data.total_clientes_habilitados.map((item) => ({
+        const formattedData = data.map((item) => ({
           name: `${mesesNomes[item.mes - 1]} ${item.ano}`,
-          value: Number(item.total_clientes_habilitados),
+          value: parseInt(item.total_os),
         }));
 
         setTrimestreData(formattedData);
       } catch (error) {
-        console.error(
-          "Erro ao buscar clientes habilitados últimos 3 meses:",
-          error
-        );
+        console.error("❌ Erro ao buscar OS dos últimos 3 meses:", error);
       }
     };
 
-    fetchClientesHabilitadosUltimos3Meses();
+    fetchOrdensServicoUltimos3Meses();
+  }, []);
+
+  useEffect(() => {
+    const fetchOrdensDetalhadas = async () => {
+      try {
+        const response = await fetch("http://localhost:3011/ordens-detalhadas");
+        const data = await response.json();
+
+        // Mapear os dados para o formato usado no JSX
+        const formatted = data.map((item) => ({
+          nome: item.nome_razaosocial,
+          tipo: item.tipo_os,
+          descricaoAbertura: item.descricao_abertura,
+          descricaoFechamento: item.descricao_fechamento,
+          // Se quiser um link real, adapte aqui. Por enquanto deixo '#' vazio.
+          link: "#",
+        }));
+
+        setUltimasOS(formatted);
+      } catch (error) {
+        console.error("Erro ao buscar ordens detalhadas:", error);
+      }
+    };
+
+    fetchOrdensDetalhadas();
   }, []);
 
   useEffect(() => {
@@ -952,7 +1015,7 @@ function DashboardGerencialOperacao() {
           </table>
         </div>
 
-        <div className="operacao-card-nobottom operacao-table-card">
+        <div className="operacao-card-nobottom operacao-table-card operacao-table-wrapper">
           <table className="operacao-table">
             <thead>
               <tr className="tr-space-between">
@@ -977,7 +1040,7 @@ function DashboardGerencialOperacao() {
       </section>
 
       <section className="operacao-section operacao-final-section">
-        <div className="operacao-card-nobottom operacao-table-card">
+        <div className="operacao-card-nobottom operacao-table-card operacao-table-wrapper">
           <h4>Últimas Ordens de Serviço</h4>
           <table className="operacao-table large">
             <thead>
@@ -996,8 +1059,28 @@ function DashboardGerencialOperacao() {
                     {index + 1}. {item.nome}
                   </td>
                   <td>{item.tipo}</td>
-                  <td>{item.descricaoAbertura}</td>
-                  <td>{item.descricaoFechamento}</td>
+                  <td>
+                    <span
+                      className="descricao-limitada"
+                      onClick={() => openModal(item.descricaoAbertura || "")}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {(item.descricaoAbertura || "").length > 50
+                        ? (item.descricaoAbertura || "").slice(0, 50) + "..."
+                        : item.descricaoAbertura || ""}
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      className="descricao-limitada"
+                      onClick={() => openModal(item.descricaoFechamento || "")}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {(item.descricaoFechamento || "").length > 50
+                        ? (item.descricaoFechamento || "").slice(0, 50) + "..."
+                        : item.descricaoFechamento || ""}
+                    </span>
+                  </td>
                   <td>
                     <a
                       href={item.link}
@@ -1012,6 +1095,18 @@ function DashboardGerencialOperacao() {
             </tbody>
           </table>
         </div>
+
+        {/* ✅ MODAL */}
+        {showModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <button onClick={closeModal} className="close-button">
+                x
+              </button>
+              <p>{modalContent}</p>
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );
