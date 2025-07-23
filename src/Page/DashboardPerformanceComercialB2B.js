@@ -221,7 +221,7 @@ useEffect(() => {
             <div className="card">
               <p>
                 <img src={imgEyes} alt="Vendas na Semana" className="icon" />
-                Vendas na Semana
+                Semana Anterior
               </p>
               <h2>
                 {totalSemanaAtual}{" "}
