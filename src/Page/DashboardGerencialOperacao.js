@@ -22,6 +22,7 @@ function DashboardGerencialOperacao() {
   const [activeSubFilter, setActiveSubFilter] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [motivosFechamento, setMotivosFechamento] = useState([]);
+  const [tipoPessoaFiltro, setTipoPessoaFiltro] = useState("");
 
   const [selectedItems, setSelectedItems] = useState([]);
   const [usuariosFechamento, setUsuariosFechamento] = useState([]);
@@ -35,6 +36,14 @@ function DashboardGerencialOperacao() {
     useState(null);
   const [percentualMetaManutencao, setPercentualMetaManutencao] =
     useState(null);
+
+  // Cópias locais dos dados brutos vindos da API
+  const [allTiposOS, setAllTiposOS] = useState([]);
+  const [allUsuariosFechamento, setAllUsuariosFechamento] = useState([]);
+  const [allMotivosFechamento, setAllMotivosFechamento] = useState([]);
+  const [allUltimasOS, setAllUltimasOS] = useState([]);
+  const [allCidadeData, setAllCidadeData] = useState([]);
+  const [allOsPorBairro, setAllOsPorBairro] = useState([]);
 
   const [totalManutencoes, setTotalManutencoes] = useState(null);
   const [totalInstalacoes, setTotalInstalacoes] = useState(null);
@@ -59,6 +68,8 @@ function DashboardGerencialOperacao() {
   const [cidadeData, setCidadeData] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
+  const [selectedTipoPessoa, setSelectedTipoPessoa] = useState([]);
+
   const [modalContent, setModalContent] = useState("");
 
   const filterRef = useRef();
@@ -78,6 +89,16 @@ function DashboardGerencialOperacao() {
     "Sem acesso (com sinal GPON)",
     "Troca de equipamento",
   ];
+
+  const tipoPerson = ["Pessoa Física", "Pessoa Jurídica"];
+
+  const toggleTipoPessoa = (tipo) => {
+  setSelectedTipoPessoa((prev) =>
+    prev.includes(tipo)
+      ? prev.filter((t) => t !== tipo)
+      : [...prev, tipo]
+  );
+};
 
   const toggleItem = (item) => {
     setSelectedItems((prev) =>
@@ -143,76 +164,84 @@ function DashboardGerencialOperacao() {
     item.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  useEffect(() => {
-    const fetchTotais = async () => {
-      try {
-        const response = await fetch("http://localhost:3011/ordens-servico");
-        const data = await response.json();
-
-        // Atualiza apenas o total de ordens de serviço no mês
-        setTotalOrdensServico(Number(data.total_os_mes));
-
-        // Zera ou ignora os demais, pois o endpoint não retorna mais estes dados
-        setTotalInstalacoes(0);
-        setTotalManutencoes(0);
-
-        // Se estiver usando gráfico de tipo de pessoa, pode zerar ou esconder
-        setTipoPessoaData([]);
-      } catch (error) {
-        console.error("Erro ao buscar dados de totais:", error);
+  const fetchTotais = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (tipoPessoaFiltro) {
+        params.append("tipoPessoa", tipoPessoaFiltro);
       }
-    };
 
+      const response = await fetch(
+        `http://localhost:3011/ordens-servico?${params}`
+      );
+      const data = await response.json();
+
+      setTotalOrdensServico(Number(data.total_os_mes));
+      setTotalInstalacoes(0);
+      setTotalManutencoes(0);
+      setTipoPessoaData([]);
+    } catch (error) {
+      console.error("Erro ao buscar dados de totais:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchTotais();
-  }, []);
+  }, [tipoPessoaFiltro]);
+
+  const fetchTotalClientesPorTipo = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (tipoPessoaFiltro) {
+        params.append("tipoPessoa", tipoPessoaFiltro);
+      }
+
+      const response = await fetch(
+        `http://localhost:3011/total-clientes-os-por-tipo?${params}`
+      );
+      const data = await response.json();
+
+      setTipoPessoaData([
+        { name: "PF", value: data.pf || 0 },
+        { name: "PJ", value: data.pj || 0 },
+      ]);
+    } catch (error) {
+      console.error("Erro ao buscar total de clientes PF/PJ:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchTipoPessoaData = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3011/total-clientes-os-por-tipo"
-        );
-        const data = await response.json();
+    fetchTotalClientesPorTipo();
+  }, [tipoPessoaFiltro]);
 
-        const formattedData = [
-          {
-            name: "Pessoa Física",
-            value: data.pf || 0,
-          },
-          {
-            name: "Pessoa Jurídica",
-            value: data.pj || 0,
-          },
-        ];
+  // dentro do componente DashboardGerencialOperacao
 
-        setTipoPessoaData(formattedData);
-      } catch (error) {
-        console.error("Erro ao buscar dados de tipo de pessoa:", error);
+  const fetchTiposOS = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (selectedItems.length > 0) {
+        params.append("tiposOS", selectedItems.join(","));
       }
-    };
 
-    fetchTipoPessoaData();
-  }, []);
+      const response = await fetch(
+        `http://localhost:3011/ordens-servico-por-tipo?${params}`
+      );
+
+      const data = await response.json();
+
+      const formattedData = data.map((item) => ({
+        nome: item.tipo_os,
+        qtd: Number(item.quantidade),
+      }));
+
+      setTiposOS(formattedData);
+      setAllTiposOS(formattedData);
+    } catch (error) {
+      console.error("Erro ao buscar tipos de OS do mês atual:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchTiposOS = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3011/ordens-servico-por-tipo"
-        );
-        const data = await response.json();
-
-        const formattedData = data.map((item) => ({
-          nome: item.tipo_os,
-          qtd: Number(item.quantidade),
-        }));
-
-        setTiposOS(formattedData);
-      } catch (error) {
-        console.error("Erro ao buscar tipos de OS do mês atual:", error);
-      }
-    };
-
     fetchTiposOS();
   }, []);
 
@@ -341,42 +370,47 @@ function DashboardGerencialOperacao() {
     fetchTotalManutencoesRS();
   }, []);
 
-  useEffect(() => {
-    const fetchOrdensServicoUltimos3Meses = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3011/ordens-servico-ultimos-3-meses"
-        );
-        const data = await response.json();
-
-        const mesesNomes = [
-          "Jan",
-          "Fev",
-          "Mar",
-          "Abr",
-          "Mai",
-          "Jun",
-          "Jul",
-          "Ago",
-          "Set",
-          "Out",
-          "Nov",
-          "Dez",
-        ];
-
-        const formattedData = data.map((item) => ({
-          name: `${mesesNomes[item.mes - 1]} ${item.ano}`,
-          value: parseInt(item.total_os),
-        }));
-
-        setTrimestreData(formattedData);
-      } catch (error) {
-        console.error("❌ Erro ao buscar OS dos últimos 3 meses:", error);
+  const fetchOrdensServicoUltimos3Meses = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (tipoPessoaFiltro) {
+        params.append("tipoPessoa", tipoPessoaFiltro);
       }
-    };
 
+      const response = await fetch(
+        `http://localhost:3011/ordens-servico-ultimos-3-meses?${params}`
+      );
+      const data = await response.json();
+
+      const mesesNomes = [
+        "Jan",
+        "Fev",
+        "Mar",
+        "Abr",
+        "Mai",
+        "Jun",
+        "Jul",
+        "Ago",
+        "Set",
+        "Out",
+        "Nov",
+        "Dez",
+      ];
+
+      const formattedData = data.map((item) => ({
+        name: `${mesesNomes[item.mes - 1]} ${item.ano}`,
+        value: parseInt(item.total_os),
+      }));
+
+      setTrimestreData(formattedData);
+    } catch (error) {
+      console.error("❌ Erro ao buscar OS dos últimos 3 meses:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchOrdensServicoUltimos3Meses();
-  }, []);
+  }, [tipoPessoaFiltro]);
 
   useEffect(() => {
     const fetchOrdensDetalhadas = async () => {
@@ -554,7 +588,10 @@ function DashboardGerencialOperacao() {
                       </li>
                       <li>Usuário fechamento ➔</li>
                       <li>OS por localização ➔</li>
-                      <li>Tipo de pessoa ➔</li>
+                      <li onClick={() => setActiveSubFilter("tipoPessoa")}>
+                        Tipo de pessoa ➔
+                      </li>
+
                       <li>Média de produção ➔</li>
                       <li>Motivo fechamento ➔</li>
                     </ul>
@@ -592,6 +629,38 @@ function DashboardGerencialOperacao() {
                     <button
                       className="operacao-apply-filter-button"
                       onClick={() => {
+                        fetchTiposOS(); // busca os dados filtrados
+                        setActiveSubFilter(null);
+                        setShowFilter(false);
+                      }}
+                    >
+                      Aplicar
+                    </button>
+                  </div>
+                )}
+
+                {activeSubFilter === "tipoPessoa" && (
+                  <div className="operacao-subfilter">
+                    <h4>Tipo de Pessoa</h4>
+                    <div className="operacao-subfilter-list">
+                      {["pf", "pj"].map((tipo, idx) => (
+                        <label key={idx} className="operacao-subfilter-item">
+                          <input
+                            type="checkbox"
+                            checked={tipoPessoaFiltro === tipo}
+                            onChange={() => setTipoPessoaFiltro(tipo)}
+                          />
+                          {tipo === "pf" ? "Pessoa Física" : "Pessoa Jurídica"}
+                        </label>
+                      ))}
+                    </div>
+                    <button
+                      className="operacao-apply-filter-button"
+                      onClick={() => {
+                        fetchOrdensServicoUltimos3Meses();
+                        fetchTotais();
+                        fetchTotalClientesPorTipo();
+
                         setActiveSubFilter(null);
                         setShowFilter(false);
                       }}
