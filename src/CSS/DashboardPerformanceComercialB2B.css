@@ -29,11 +29,7 @@
 body {
   margin: 0;
   font-family: 'Normal' !important;
-  background-color: var(--dashboard-content) !important;
   color: var(--text);
-  padding-left: 20px;
-  padding-top: 20px;
-
 }
 
 .dashboard-wrapper {
@@ -319,7 +315,7 @@ body {
   padding: 2rem 2.2rem;
   flex: 1 1 300px; /* <-- Flexível até 300px mínimo */
   min-width: 260px;
-  height: 65px;
+  height: 80px;
 }
 
 .highlight-card .position {
@@ -385,13 +381,13 @@ body {
 .highlight-card .info .name {
   font-weight: 600;
   color: white;
-  font-size: 30px;
+  font-size: 26px;
 }
 
 .highlight-card .info .tag {
   background: #3f3f3f;
   color: white;
-  font-size: 22px;
+  font-size: 20px;
   padding: 4px 12px;
   border-radius: 12px;
   width: fit-content;
