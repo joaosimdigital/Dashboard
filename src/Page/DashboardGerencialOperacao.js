@@ -26,6 +26,10 @@ function DashboardGerencialOperacao() {
 
   const [selectedItems, setSelectedItems] = useState([]);
   const [usuariosFechamento, setUsuariosFechamento] = useState([]);
+  const [bairroFiltro, setBairroFiltro] = useState("");
+  const [mediaProducao, setMediaProducao] = useState([]);
+
+  const [bairroFiltroTemp, setBairroFiltroTemp] = useState("");
   const [ultimasOS, setUltimasOS] = useState([]);
 
   const [totalOrdensServico, setTotalOrdensServico] = useState(null);
@@ -39,11 +43,14 @@ function DashboardGerencialOperacao() {
 
   // Cópias locais dos dados brutos vindos da API
   const [allTiposOS, setAllTiposOS] = useState([]);
-  const [allUsuariosFechamento, setAllUsuariosFechamento] = useState([]);
-  const [allMotivosFechamento, setAllMotivosFechamento] = useState([]);
-  const [allUltimasOS, setAllUltimasOS] = useState([]);
-  const [allCidadeData, setAllCidadeData] = useState([]);
-  const [allOsPorBairro, setAllOsPorBairro] = useState([]);
+
+  const [activeFilters, setActiveFilters] = useState({
+    tipoOS: false,
+    usuarioFechamento: false,
+    bairro: false,
+    tipoPessoa: false,
+    motivoFechamento: false,
+  });
 
   const [totalManutencoes, setTotalManutencoes] = useState(null);
   const [totalInstalacoes, setTotalInstalacoes] = useState(null);
@@ -64,11 +71,24 @@ function DashboardGerencialOperacao() {
     useState(null);
   const [totalManutencoesSC, setTotalManutencoesSC] = useState(null);
   const [totalManutencoesRS, setTotalManutencoesRS] = useState(null);
+  const [bairrosFiltroSelecionados, setBairrosFiltroSelecionados] = useState(
+    []
+  );
+  const [bairroSearchTerm, setBairroSearchTerm] = useState("");
+  const [usuariosFiltroSelecionados, setUsuariosFiltroSelecionados] = useState(
+    []
+  );
 
+  const [usuarioFiltro, setUsuarioFiltro] = useState("");
+  const [usuarioFiltroTemp, setUsuarioFiltroTemp] = useState("");
   const [cidadeData, setCidadeData] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedTipoPessoa, setSelectedTipoPessoa] = useState([]);
+  const [
+    motivosFechamentoFiltroSelecionados,
+    setMotivosFechamentoFiltroSelecionados,
+  ] = useState([]);
 
   const [modalContent, setModalContent] = useState("");
 
@@ -90,15 +110,13 @@ function DashboardGerencialOperacao() {
     "Troca de equipamento",
   ];
 
-  const tipoPerson = ["Pessoa Física", "Pessoa Jurídica"];
+  const tipoFechamento = ["INSTALAÇÃO - OS DUPLICADA"];
 
   const toggleTipoPessoa = (tipo) => {
-  setSelectedTipoPessoa((prev) =>
-    prev.includes(tipo)
-      ? prev.filter((t) => t !== tipo)
-      : [...prev, tipo]
-  );
-};
+    setSelectedTipoPessoa((prev) =>
+      prev.includes(tipo) ? prev.filter((t) => t !== tipo) : [...prev, tipo]
+    );
+  };
 
   const toggleItem = (item) => {
     setSelectedItems((prev) =>
@@ -127,20 +145,381 @@ function DashboardGerencialOperacao() {
     12: 910, // Dezembro
   };
 
+  const usuariosFechamentoOptions = [
+    "(RECOLHIMENTO) LUIS ALEXANDRE ALVES FROES",
+    "(RECOLHIMENTO) ANDERSON DE CARVALHO",
+    "(INST.)(SUL) RAFAEL ARAUJO FREE - 04 O.S sábado 100%",
+    "(INST.)(INGLESES)MARCELO CALISTO 4 OS DIA sábado 50%",
+    "(INST.)(TAPERA) ADRIANO FREE 4 OS - sábado 50%",
+    "(INST.)(LESTE/ITACORUBI) HIAGO 4 OS DIA sábado 50%",
+    "(INST.)(SÃO JOÃO) GUILHERME FREE 4 OS - sábado 50%",
+    "(INST.)(INGLESES) LUCAS DALBERTO - 4 OS - sábado 50%",
+    "JESSICA - EQUIPE COC",
+    "(INST.)(SERRA/DESVIO RIZZO) MARCOS 4 OS (SYNC)",
+    "(INST.)(INGLESES) ESTEVÃO 4 OS POR DIA sábado 50%",
+    "(INST.)(VARGEM) PATRICK REIS SILVA - 4 OS POR DIA Sábado 50%",
+    "(MANUTENÇÃO/inst.) (INGLESES/SÃO JOÃO) MARCO JULES - 4 OS sábado 50%",
+    "(INST.)(CTN SUL) PABLO (FEX) 3 OS POR DIA (2 manhã/1 tarde)",
+    "(INST.)(SÃO JOÃO) MARLON DE VARGAS 3 OS sábado 50%(1 manhã/2 tarde)",
+    "(MANUTENÇÃO/inst.)(INGLESES) WILLIAM FERREIRA - 4 OS sábado 50%",
+    "(INST.)BACKOFFICE - SERGIO 4 OS POR DIA (MACEDOS)",
+    "(INST.)BACKOFFICE - ARIEL 4 OS POR DIA (MACEDOS)",
+    "(INST.)(CTN NORTE) JOSEVAN (FEX) 3 OS POR DIA (2 manhã/1 tarde)",
+    "GABRIELLI - EQUIPE COC",
+    "KELY -EQUIPE COC",
+    "(INST.)BACKOFFICE- CARLOS 4 OS POR DIA (MACEDO)",
+    "(INST.)BACKOFFICE - RHUAN (MACEDOS)",
+    "(INST.)(SERRA/ANA RECH) GUSTAVO 4 OS (SYNC)",
+    "(INST.)(VARGEM) PAULO - 4 OS sábado 50%",
+    "(INST.)(SERRA/PLANALTO) JEAN FREE 4 OS POR DIA) sábado 50%",
+    "(INST.)BACKOFFICE- ADAO 4 OS POR DIA (MACEDOS)",
+    "(MANUTENÇÃO/inst.)(NORTE)MARCELO WAGNER - 4 OS sábado 50%",
+    "(INST.)BACKOFFICE - AUGUSTO 4 OS POR DIA (MACEDOS)",
+    "(INST.)BACKOFFICE - RAYNNER 2 OS POR DIA (MACEDOS)",
+    "(INST.)(LAGOA/ITACORUBI) ITALO THAIRON 4 OS POR DIA (SYNC)",
+    "(INST.)(CTN NORTE)MAX BARROS 4 OS POR DIA sábado 50%",
+    "SILVANO LÍDER DE CAMPO",
+    "(INST.)(CTN NORTE)MAX GOMES 4 OS POR DIA sábado 50%",
+    "(SERRA) SISTEMA PREDIAL - EZEQUIEL (FIBRA/ENGENHARIA)",
+    "(FIBRA/NORTE) JACKSON - (ENGENHARIA)",
+    "VICTOR - EQUIPE COC",
+    "EDSON - TÉCNICO DE DADOS (CENTRO/SUL/CTN) sábado 50%",
+    "(INST.)(SERRA/ANA RECH) CLAUDIO 3 OS DIA sábado 50%",
+    "(FIBRA/NORTE) CAIO CASTRO - (ENGENHARIA)",
+    "DENISON - TÉCNICO DE DADOS (CTN/NORTE) sábado 50%",
+    "(MANUTENÇÃO/inst.)(VARGEM/NORTE) ARTHUR - 4 OS sábado 50%",
+    "(INST.)(CTN SUL) WESLEY 4 OS POR DIA sábado 50%",
+    "(INST.)(SERRA/DESVIO RIZZO) PAULO CORREA 3 OS DIA (SYNC)",
+    "(INST.)FELIPE GONÇALVES 4 OS POR DIA (SYNC)",
+    "PAULO SERGIO LÍDER DE CAMPO",
+    "DIEGO - TÉCNICO DE DADOS (CENTRO/SUL/CTN) sábado 50%",
+    "(FIBRA/CTN) DIOGO - (ENGENHARIA)",
+    "ROGER FRANCISCO GALVINO",
+    "(INST.)(SÃO JOÃO) LORHAN FREE 4 OS - sábado 50%",
+    "ALESSANDRO LÍDER DE DADOS",
+    "ALLAN XAVIER - TROCA DE POSTE (ENGENHARIA)",
+    "(MANUTENÇÃO/inst.)(INGLESES) JULIO - 4 OS - Sábado 50%",
+    "LEONARDO JOSÉ ASSUMPÇÃO PONTES",
+    "(INST.)(SERRA/DESVIO RIZZO) DIEGO 4 OS sábado 50%",
+    "(FIBRA/SERRA)RAFAEL(ENGENHARIA)",
+    "(FIBRA/NORTE) IGOR - (ENGENHARIA)",
+    "(FIBRA/SERRA)CASSIANO(ENGENHARIA)",
+    "(INST.)(INGLESES) BRUNO DORNELLES 4 OS POR DIA (SYNC)",
+    "(INST.)(CENTRO) TIAGO GOSSLER 4 OS POR DIA (SYNC)",
+    "(FIBRA/NORTE) LEONEL (AUX FIBRA) (ENGENHARIA)",
+    "NEI - EQUIPE COC",
+    "JOÃO PEDRO SANTOS",
+    "JENIFER QUIMIELI BORGES MARTINS",
+    "GRACIELE - EQUIPE COC",
+    "ALINE AZAMBUJA B2B",
+    "SISTEMA PREDIAL - ALAN DARWINS (FIBRA/ENGENHARIA)",
+    "JULIANA CLARK - EQUIPE COC",
+    "NATASHA AMARAL ROSA",
+    "MATEUS TEOTONIO DA SILVEIRA.",
+    "ELISIANE DE ALMEIDA",
+    "Matheus Padilha Batista",
+    "SISTEMA PREDIAL - JOÃO J E ASSISTÊNCIA - (FIBRA/ENGENHARIA)",
+    "(INST.)(JOÃO PAULO) MARCIO 4 OS POR DIA (SYNC)",
+    "RODRIGO FERNANDO GEREMIAS - CGR",
+    "RAFAELA PITALUGA JARDIM",
+    "VANESSA DE LIMA RODRIGUES",
+    "NATALIA DANIELE DA ROSA",
+    "SISTEMA PREDIAL - RODRIGO (J E ASSISTÊNCIA) - (FIBRA/ENGENHARIA)",
+    "(FIBRA/CTN) EDUARDO - (ENGENHARIA)",
+    "PAMELA EDUARDA DOS SANTOS BATISTA",
+    "VITORIA SANTOS DE SOUSA",
+    "BAYER MARIANO",
+    "MARCELO CAVALCANTI",
+    "(FIBRA/CTN) MARCOS (AUX FIBRA)(ENGENHARIA)",
+    "LANES MARQUES NAKANO - PROJETOS",
+    "ROBERTO VILELA",
+    "NATHANI SILVA SANTOS",
+    "VINICIUS DE ASSIS MENDES",
+    "Felipe Amaral Rosa",
+    "GESSYCA QUINTEIRO RODRIGUES",
+    "VIVIAN VIESSER FERREIRA",
+    "ALESSANDRA MARIA SOUSA SILVA",
+    "CRISTINA FONTANA PIMENTEL",
+    "JAQUELINE BARRIQUELO RIOS",
+    "ABRIL MORENO",
+    "ROMULO WALLACE NASCIMENTO DE ARAUJO",
+    "MATHEUS PEREIRA CABRAL TRINDADE - CGR",
+    "BARBARA BONOTTO SANTOS",
+    "EVELYN VARGAS RIBEIRO",
+    "BRUNA PORTO B2B",
+    "LUÍS FRANÇA (REDE SUL TELECOM) (ENGENHARIA)",
+    "ELOÁ DANTAS PEREIRA",
+    "DEIVSAN PATRICK ANDRADE DOS SANTOS",
+    "GEOVANE GLAESER SEVERINO",
+    "ICARO ALEXANDRE PARADA TEIXEIRA",
+    "BRENO SOUZA DE MELO",
+    "(SERRA)SISTEMA PREDIAL-JARDEL",
+    "VANESSA MACHADO LEME",
+    "PATRICK SILVA SOUZA PEREIRA",
+  ];
+
+  const motivosFechamentoOptions = [
+    "INSTALAÇÃO - TUBULAÇÃO OBSTRUÍDA",
+    "INSTALAÇÃO GPON - LINK DEDICADO (NÃO CONCLUÍDO)",
+    "INSTALAÇÃO GPON - LINK DEDICADO (CONCLUÍDO)",
+    "INSTALAÇÃO - DESISTÊNCIA DO ATENDIMENTO",
+    "INSTALAÇÃO - METRAGEM EXCEDENTE",
+    "INSTALAÇÃO - INVIABILIDADE",
+    "INSTALAÇÃO - DESISTÊNCIA OUTRAS OPERADORAS",
+    "INSTALAÇÃO - CTO LOTADA",
+    "INSTALAÇÃO - CONCLUÍDA SEM PADRÃO",
+    "INSTALAÇÃO - CONCLUÍDA NO PADRÃO",
+    "INSTALAÇÃO - CABO EXISTENTE",
+    "INSTALAÇÃO - AUSÊNCIA DE RETORNO CLIENTE",
+    "INSTALAÇÃO - OS DUPLICADA",
+    "TROCA DE EQUIPAMENTO - DANIFICADO PELO CLIENTE(QUEBRADO)",
+    "TROCA DE EQUIPAMENTO - EQUIPAMENTO QUEIMADO",
+    "TROCA DE EQUIPAMENTO - FONTE QUEIMADA",
+    "TROCA DE EQUIPAMENTO - MOLHADO",
+    "TROCA DE EQUIPAMENTO - ATUALIZAÇÃO TECNOLOGIA",
+    "SEM ACESSO/TROCA DE CONECTOR - ATENUADO/SUJEIRA",
+    "SEM ACESSO/TROCA DE DROP - VANDALISMO",
+    "SEM ACESSO/TROCA DE DROP - TROCA DE POSTE",
+    "SEM ACESSO/TROCA DE DROP - OUTRAS OPERADORAS",
+    "SEM ACESSO/TROCA DE DROP - FOGO NA REDE",
+    "SEM ACESSO/TROCA DE DROP - CAMINHÃO CARGA ALTA",
+    "SEM ACESSO/TROCA DE DROP - CABO BAIXO",
+    "SEM ACESSO/TROCA DE CONECTOR - QUEBRADO",
+    "SEM ACESSO/TROCA DE CONECTOR - MAL CONECTADO",
+    "SEM ACESSO/TROCA DE CONECTOR - DESCONECTADO NA CTO",
+    "SEM ACESSO/TROCA DE CONECTOR - DANIFICADO PELO CLIENTE",
+    "SEM ACESSO - OS DUPLICADA",
+    "SEM ACESSO - NÃO REALIZADO",
+    "SEM ACESSO - FONTE QUEIMADA",
+    "SEM ACESSO - EQUIPAMENTO MOLHADO",
+    "SEM ACESSO - DESISTÊNCIA DO ATENDIMENTO",
+    "SEM ACESSO - TROCA DE EQUIPAMENTO",
+    "SEM ACESSO - SEM CONTATO COM CLIENTE",
+    "SEM ACESSO - CTO EM LOS",
+    "INSTALAÇÃO - NECESSÁRIO EXPANSÃO",
+    "TUBULAÇÃO OBSTRUÍDA",
+    "TUBULAÇÃO CHEIA/SATURADA",
+    "RETRABALHO MANUTENÇÃO REALIZADA COM SUCESSO",
+    "RETRABALHO MANUTENÇÃO NÃO REALIZADA",
+    "APOIO TÉCNICO - NÃO REALIZADO",
+    "MANUTENÇÃO - DESISTÊNCIA CLIENTE",
+    "APOIO TÉCNICO - REALIZADO",
+    "MANUTENÇÃO - NÃO CONCLUÍDA",
+    "MANUTENÇÃO - CONCLUÍDA",
+    "MANUTENÇÃO - NÃO REALIZADA",
+    "MANUTENÇÃO - REALIZAÇÃO COM SUCESSO",
+    "MANUTENÇÃO - AUSÊNCIA DE RETORNO",
+    "MANUTENÇÃO - NECESSÁRIA POR CULPA DO CLIENTE",
+    "INSTALAÇÃO - NECESSÁRIO SISTEMA PREDIAL",
+    "TROCA DE ENDEREÇO - CTO LOTADA",
+    "TROCA DE ENDEREÇO - TUBULAÇÃO OBSTRUÍDA",
+    "TROCA DE ENDEREÇO - DESISTÊNCIA DO CLIENTE",
+    "TROCA DE ENDEREÇO - CABO NOVO",
+    "TROCA DE ENDEREÇO - CABO JÁ EXISTENTE NO LOCAL",
+    "TROCA DE ENDEREÇO - METRAGEM EXCEDENTE",
+    "TROCA DE ENDEREÇO - AUSÊNCIA DE RETORNO CLIENTE",
+    "DESISTÊNCIA DO CLIENTE",
+    "RETRABALHO INSTALAÇÃO REALIZADA COM SUCESSO",
+    "RETRABALHO INSTALAÇÃO NÃO REALIZADA",
+    "UPGRADE NÃO REALIZADO",
+    "UPGRADE REALIZADO COM SUCESSO",
+    "TROCA DE EQUIPAMENTO - REALIZADA",
+    "TROCA DE EQUIPAMENTO - NÃO REALIZADA",
+    "UPGRADE - COM CABO DE REDE",
+    "UPGRADE - SEM CABO DE REDE.",
+    "AUDITORIA DE INSTALAÇÂO REALIZADA",
+    "AUDITORIA DE INSTALAÇÂO NÃO REALIZADA",
+    "CONFERÊNCIA - REALIZADA COM SUCESSO",
+    "CONFERÊNCIA - NÃO REALIZADA",
+    "SISTEMA PREDIAL - NÃO AUTORIZAD",
+    "SISTEMA PREDIAL - DG SATURADO",
+    "SISTEMA PREDIAL - REALIZADO",
+    "SISTEMA PREDIAL - SEM PORTAS DISPONÍVEIS",
+    "SISTEMA PREDIAL - TUBULAÇÃO OBSTRUÍDA",
+    "SISTEMA PREDIAL - TUBULAÇÃO SATURADA",
+    "SISTEMA PREDIAL - DESISTÊNCIA DO CLIENTE",
+    "SISTEMA PREDIAL - DG SATURADO",
+    "SISTEMA PREDIAL - NÃO AUTORIZADA",
+    "SISTEMA PREDIAL - SEM RETORNO",
+    "SISTEMA PREDIAL - SEM VIABILIDADE",
+    "SISTEMA PREDIAL NÃO REALIZADA",
+    "INSTALAÇÃO EQUIPAMENTO - NÃO CONCLUÍDA",
+    "INSTALAÇÃO EQUIPAMENTO CONCLUÍDA",
+    "EQUIPAMENTO RECOLHIDO",
+    "EQUIPAMENTO NÃO RECOLHIDO",
+    "SISTEMA PREDIAL - OS DUPLICADA",
+    "SISTEMA PREDIAL - TUBULAÇÃO OBSTRUÍDA",
+    "SISTEMA PREDIAL - TUBULAÇÃO SATURADA",
+    "AUDITORIA SISTEMA PREDIAL (FIBRA) REALIZADA",
+    "AUDITORIA SISTEMA PREDIAL (FIBRA) NÃO REALIZADA",
+    "SISTEMA PREDIAL - ABERTO INDEVIDAMENTE",
+    "EQUIPAMENTO PERDIDO",
+    "INFRAESTRUTURA INTERNA (CLIENTE)",
+    "TROCA DE CÔMODO - AUSÊNCIA DE RETORNO CLIENTE",
+    "TROCA DE CÔMODO NÃO REALIZADA",
+    "TROCA DE CÔMODO REALIZADA COM SUCESSO",
+    "INFRAESTRUTURA EXTERNA (CLIENTE)",
+    "FOLGA BANCO DE HORAS REALIZADA",
+    "FOLGA BANCO DE HORAS NÃO REALIZADA",
+    "AJUSTE DE COMODATO",
+    "INSTALAÇÃO EQUIPAMENTO B2B - TUBULAÇÃO OBSTRUÍDA",
+    "INSTALAÇÃO EQUIPAMENTO B2B - REALIZADO",
+    "INSTALAÇÃO EQUIPAMENTO B2B - DESISTÊNCIA DO CLIENTE",
+    "INSTALAÇÃO EQUIPAMENTO B2B - CLIENTE AUSENTE",
+    "INSTALAÇÃO EQUIPAMENTO B2B - NÃO REALIZADA",
+    "INSTALAÇÃO EQUIPAMENTO B2B - SEM CONTATO COM CLIENTE",
+    "APOIO AO ALMOXARIFADO REALIZADO",
+    "APOIO AO ALMOXARIFADO NÃO REALIZADO",
+    "VIABILIDADE TÉCNICA (CLIENTES) NÃO REALIZADO",
+    "VIABILIDADE TÉCNICA (CLIENTES) REALIZADO",
+    "REUNIÃO NÃO REALIZADA",
+    "REUNIÃO REALIZADA",
+    "ACOMPANHAMENTO DE EVENTOS/FEIRAS REALIZADO",
+    "ACOMPANHAMENTO DE EVENTOS/FEIRAS NÃO REALIZADO",
+    "FOLGA PRÉ PLANTÃO REALIZADA",
+    "FOLGA PRÉ PLANTÃO NÃO REALIZADA",
+    "LANÇAMENTO CABO B2B - OS DUPLICADA",
+    "LANÇAMENTO CABO B2B - DESISTÊNCIA DO ATENDIMENTO",
+    "LANÇAMENTO CABO B2B - CONCLUÍDA",
+    "SINAL GPON ATENUADO (CLIENTE) NÃO REALIZADO",
+    "SINAL GPON ATENUADO (CLIENTE) REALIZADO",
+    "BOLETOS NÃO ENTREGUES",
+    "BOLETOS ENTREGUES",
+    "LANÇAMENTO CABO B2B - NÃO CONCLUÍDA",
+    "FOLGA PÓS PLANTÃO REALIZADA",
+    "DOWGRADE REALIZADO",
+    "REVERSÃO DE CANCELAMENTO REALIZADO",
+    "REVERSÃO DE CANCELAMENTO NÃO REALIZADO",
+    "FOLGA PÓS PLANTÃO NÃO REALIZADA",
+    "DOWGRADE NÃO REALIZADO",
+  ];
+
+  const bairrosOptions = [
+    "INGLESES DO RIO VERMELHO",
+    "SÃO JOÃO DO RIO VERMELHO",
+    "CANASVIEIRAS",
+    "VARGEM GRANDE",
+    "VARGEM DO BOM JESUS",
+    "CACHOEIRA DO BOM JESUS",
+    "CENTRO",
+    "CAMPECHE",
+    "SACO GRANDE",
+    "SAO JOAO DO RIO VERMELHO",
+    "TRINDADE",
+    "ESPLANADA",
+    "PLANALTO",
+    "DESVIO RIZZO",
+    "RIBEIRAO DA ILHA",
+    "NOSSA SENHORA DAS GRAÇAS",
+    "RATONES",
+    "RIO BRANCO",
+    "AREIAS",
+    "BARREIROS",
+    "INGLESES",
+    "LAGOA DA CONCEICAO",
+    "VARGEM PEQUENA",
+    "CIDADE NOVA",
+    "MONTE VERDE",
+    "LAGOA DA CONCEIÇÃO",
+    "RIBEIRÃO DA ILHA",
+    "TAPERA DA BASE",
+    "CAPOEIRAS",
+    "CARVOEIRA",
+    "CRUZEIRO",
+    "IPIRANGA",
+    "SERRANO",
+    "CHARQUEADAS",
+    "CORREGO GRANDE",
+    "ITACORUBI",
+    "JARDIM ATLÂNTICO",
+    "JURERÊ INTERNACIONAL",
+    "AGRONOMICA",
+    "CÓRREGO GRANDE",
+    "DIAMANTINO",
+    "JARDIM CIDADE DE FLORIANÓPOLIS",
+    "MORRO DAS PEDRAS",
+    "NOSSA SENHORA DE LOURDES",
+    "PANTANAL",
+    "PONTA DAS CANAS",
+    "SANTA MONICA",
+    "SÃO CAETANO",
+    "TAPERA",
+    "AGRONÔMICA",
+    "BELA VISTA",
+    "ESTREITO",
+    "JARDIM AMÉRICA",
+    "JARDIM IRACEMA",
+    "JURERE INTERNACIONAL",
+    "PONTA DAS CANAS",
+    "SALGADO FILHO",
+    "SÃO CRISTÓVÃO",
+    "SÃO VICTOR COHAB",
+    "CAMPINAS",
+    "CRISTO REDENTOR",
+    "INGLESES NORTE",
+    "KAYSER",
+    "MONTE CRISTO",
+    "NOSSA SENHORA DA SALETE",
+    "NOSSA SENHORA DAS GRACAS",
+    "PANAZZOLO",
+    "REOLON",
+    "SANTA CATARINA",
+    "SAO CAETANO",
+    "SAO PELEGRINO",
+    "SERRARIA",
+    "SÃO GIÁCOMO",
+    "SÃO PELEGRINO",
+    "CENTENÁRIO",
+    "COQUEIROS",
+    "INTERLAGOS",
+    "JURERE",
+    "MEDIANEIRA",
+    "NOSSA SENHORA DA CONCEIÇÃO",
+    "NOSSA SENHORA DE FÁTIMA",
+    "ROÇADO",
+    "SACO DOS LIMOES",
+    "SACO DOS LIMÕES",
+    "SÃO CIRO",
+    "SÃO LUIZ",
+    "SÃO VIRGÍLIO",
+    "ABRAÃO",
+    "ANA RECH",
+    "BALNEARIO",
+    "BALNEÁRIO",
+    "CANTO",
+    "CAPIVARI",
+    "CAPIVARI INGLESES",
+    "CINQÜENTENÁRIO",
+    "COLONINHA",
+    "CORREGO GRANDE",
+    "DE ZORZI",
+    "DISTRITO INDUSTRIAL",
+    "EXPOSIÇÃO",
+    "JOAO PAULO",
+    "JOSÉ MENDES",
+    "JURERÊ",
+    "KOBRASOL",
+    "MARECHAL FLORIANO",
+    "NOSSA SRA. DAS GRACAS",
+    "PIO X",
+    "POTECAS",
+    "PRESIDENTE VARGAS",
+    "REAL PARQUE",
+    "RIO TAVARES",
+    "SAGRADA FAMÍLIA",
+    "SANTA FE",
+    "SANTA MÔNICA",
+    "SANTINHO",
+    "SANTO ANTÔNIO DE LISBOA",
+    "UNIVERSITARIO",
+  ];
+
   const [tipoPessoaData, setTipoPessoaData] = useState([
     { name: "Pessoa Física", value: 0, fill: "#f47621" },
     { name: "Pessoa Jurídica", value: 0, fill: "#212121" },
   ]);
 
   const [trimestreData, setTrimestreData] = useState([]);
-
-  const mediaProducao = [
-    { nome: "JOÃO SILVA DOS SANTOS", diasUteis: 34, total: 87 },
-    { nome: "JOSÉ DE SOUZA SILVA", diasUteis: 32, total: 83 },
-    { nome: "MARIANA SANTOS MEDEIROS", diasUteis: 28, total: 78 },
-    { nome: "JORGE ARAGÃO DE OLIVEIRA", diasUteis: 21, total: 77 },
-    { nome: "MARIA BRAGA DE JESUS", diasUteis: 19, total: 69 },
-  ];
 
   const [totalCidade, setTotalCidade] = useState(0);
 
@@ -172,7 +551,7 @@ function DashboardGerencialOperacao() {
       }
 
       const response = await fetch(
-        `http://localhost:3011/ordens-servico?${params}`
+        `http://38.224.145.3:3003/ordens-servico?${params}`
       );
       const data = await response.json();
 
@@ -191,13 +570,8 @@ function DashboardGerencialOperacao() {
 
   const fetchTotalClientesPorTipo = async () => {
     try {
-      const params = new URLSearchParams();
-      if (tipoPessoaFiltro) {
-        params.append("tipoPessoa", tipoPessoaFiltro);
-      }
-
       const response = await fetch(
-        `http://localhost:3011/total-clientes-os-por-tipo?${params}`
+        `http://38.224.145.3:3003/total-clientes-os-por-tipo`
       );
       const data = await response.json();
 
@@ -212,9 +586,7 @@ function DashboardGerencialOperacao() {
 
   useEffect(() => {
     fetchTotalClientesPorTipo();
-  }, [tipoPessoaFiltro]);
-
-  // dentro do componente DashboardGerencialOperacao
+  }, []); // sem tipoPessoaFiltro
 
   const fetchTiposOS = async () => {
     try {
@@ -224,7 +596,7 @@ function DashboardGerencialOperacao() {
       }
 
       const response = await fetch(
-        `http://localhost:3011/ordens-servico-por-tipo?${params}`
+        `http://38.224.145.3:3003/ordens-servico-por-tipo?${params}`
       );
 
       const data = await response.json();
@@ -243,57 +615,77 @@ function DashboardGerencialOperacao() {
 
   useEffect(() => {
     fetchTiposOS();
-  }, []);
+  }, [selectedItems]);
+
+  const fetchOrdensPorUsuario = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (usuariosFiltroSelecionados.length > 0) {
+        params.append("usuarios", usuariosFiltroSelecionados.join(","));
+      }
+
+      const response = await fetch(
+        `http://38.224.145.3:3003/ordens-por-usuario?${params}`
+      );
+
+      const data = await response.json();
+
+      // Para o gráfico / tabela de "Usuários Fechamento"
+      const formattedDataUsuarios = data.map((item) => ({
+        nome: item.usuario,
+        qtd: parseInt(item.total_ordens, 10),
+      }));
+      setUsuariosFechamento(formattedDataUsuarios);
+
+      // Para a tabela de média de produção
+      const formattedDataMediaProducao = data.map((item) => ({
+        nome: item.usuario,
+        diasUteis: item.dias_uteis,
+        total: item.media_producao,
+      }));
+      setMediaProducao(formattedDataMediaProducao);
+    } catch (error) {
+      console.error("Erro ao buscar ordens por usuário:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchOrdensPorUsuario = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3011/ordens-por-usuario"
-        );
-        const data = await response.json();
-
-        const formattedData = data.map((item) => ({
-          nome: item.usuario,
-          qtd: parseInt(item.total_ordens, 10),
-        }));
-
-        setUsuariosFechamento(formattedData);
-      } catch (error) {
-        console.error("Erro ao buscar ordens por usuário:", error);
-      }
-    };
-
     fetchOrdensPorUsuario();
-  }, []);
+  }, [usuariosFiltroSelecionados]);
+
+  const fetchMotivosFechamento = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (motivosFechamentoFiltroSelecionados.length > 0) {
+        params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
+      }
+
+      const response = await fetch(
+        `http://38.224.145.3:3003/motivos-fechamento-os?${params}`
+      );
+
+      const data = await response.json();
+
+      const formattedData = data.map((item) => ({
+        motivo: item.motivo_fechamento,
+        qtd: parseInt(item.quantidade, 10),
+      }));
+
+      setMotivosFechamento(formattedData);
+    } catch (error) {
+      console.error("Erro ao buscar motivos de fechamento:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchMotivosFechamento = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3011/motivos-fechamento-os"
-        );
-        const data = await response.json();
-
-        const formattedData = data.map((item) => ({
-          motivo: item.motivo_fechamento,
-          qtd: parseInt(item.quantidade, 10),
-        }));
-
-        setMotivosFechamento(formattedData);
-      } catch (error) {
-        console.error("Erro ao buscar motivos de fechamento:", error);
-      }
-    };
-
     fetchMotivosFechamento();
-  }, []);
+  }, [motivosFechamentoFiltroSelecionados]);
 
   useEffect(() => {
     const fetchTotaisPorEstado = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3011/ordens-servico-do-mes-por-estado"
+          "http://38.224.145.3:3003/ordens-servico-do-mes-por-estado"
         );
         const data = await response.json();
 
@@ -318,9 +710,9 @@ function DashboardGerencialOperacao() {
     const fetchClientesHabilitados = async () => {
       try {
         const [resHoje, resSC, resRS] = await Promise.all([
-          fetch("http://localhost:3011/total-clientes-habilitados-mes"),
-          fetch("http://localhost:3011/total-clientes-habilitados-sc"),
-          fetch("http://localhost:3011/total-clientes-habilitados-rs"),
+          fetch("http://38.224.145.3:3003/total-clientes-habilitados-mes"),
+          fetch("http://38.224.145.3:3003/total-clientes-habilitados-sc"),
+          fetch("http://38.224.145.3:3003/total-clientes-habilitados-rs"),
         ]);
 
         const dataHoje = await resHoje.json();
@@ -342,7 +734,7 @@ function DashboardGerencialOperacao() {
     const fetchTotalClientesHabilitadosSC = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3011/total-clientes-habilitados-executado-sc"
+          "http://38.224.145.3:3003/total-clientes-habilitados-executado-sc"
         );
         const data = await response.json();
         setTotalManutencoesSC(Number(data.total_manutencoes));
@@ -357,7 +749,7 @@ function DashboardGerencialOperacao() {
     const fetchTotalManutencoesRS = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3011/total-clientes-habilitados-executado-rs"
+          "http://38.224.145.3:3003/total-clientes-habilitados-executado-rs"
         );
         const data = await response.json();
         setTotalManutencoesRS(Number(data.total_manutencoes));
@@ -378,7 +770,7 @@ function DashboardGerencialOperacao() {
       }
 
       const response = await fetch(
-        `http://localhost:3011/ordens-servico-ultimos-3-meses?${params}`
+        `http://38.224.145.3:3003/ordens-servico-ultimos-3-meses?${params}`
       );
       const data = await response.json();
 
@@ -415,7 +807,7 @@ function DashboardGerencialOperacao() {
   useEffect(() => {
     const fetchOrdensDetalhadas = async () => {
       try {
-        const response = await fetch("http://localhost:3011/ordens-detalhadas");
+        const response = await fetch("http://38.224.145.3:3003/ordens-detalhadas");
         const data = await response.json();
 
         // Mapear os dados para o formato usado no JSX
@@ -441,7 +833,7 @@ function DashboardGerencialOperacao() {
     const fetchOrdensServicoPorCidade = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3011/ordens-servico-do-mes-por-cidade"
+          "http://38.224.145.3:3003/ordens-servico-do-mes-por-cidade"
         );
         const data = await response.json();
 
@@ -477,30 +869,37 @@ function DashboardGerencialOperacao() {
     fetchOrdensServicoPorCidade();
   }, []);
 
-  useEffect(() => {
-    const fetchOrdensServicoPorBairro = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3011/ordens-servico-do-mes-por-bairro"
+  const fetchOrdensServicoPorBairro = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (bairrosFiltroSelecionados.length > 0) {
+        bairrosFiltroSelecionados.forEach((bairro) =>
+          params.append("bairro", bairro)
         );
-        const data = await response.json();
-
-        const bairrosComOS = data.total_por_bairro
-          .filter((bairro) => bairro.total_geral >= 1)
-          .sort((a, b) => b.total_geral - a.total_geral)
-          .map((bairro) => ({
-            nome: bairro.bairro || "Sem bairro",
-            qtd: bairro.total_geral,
-          }));
-
-        setOsPorBairro(bairrosComOS);
-      } catch (error) {
-        console.error("Erro ao buscar ordens de serviço por bairro:", error);
       }
-    };
 
+      const response = await fetch(
+        `http://38.224.145.3:3003/ordens-servico-do-mes-por-bairro?${params}`
+      );
+      const data = await response.json();
+
+      const bairrosComOS = data.total_por_bairro
+        .filter((bairro) => bairro.total_geral >= 1)
+        .sort((a, b) => b.total_geral - a.total_geral)
+        .map((bairro) => ({
+          nome: bairro.bairro || "Sem bairro",
+          qtd: bairro.total_geral,
+        }));
+
+      setOsPorBairro(bairrosComOS);
+    } catch (error) {
+      console.error("Erro ao buscar ordens de serviço por bairro:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchOrdensServicoPorBairro();
-  }, []);
+  }, [bairrosFiltroSelecionados]);
 
   useEffect(() => {
     if (
@@ -559,18 +958,107 @@ function DashboardGerencialOperacao() {
               Add filtro
             </button>
 
-            {selectedItems.length > 0 && (
+            {activeFilters.tipoOS && selectedItems.length > 0 && (
               <div className="filtro-tag">
                 Tipo de OS
                 <button
                   className="filtro-tag-close"
-                  onClick={() => setSelectedItems([])}
+                  onClick={() => {
+                    setSelectedItems([]);
+                    setActiveFilters((prev) => ({ ...prev, tipoOS: false }));
+                    fetchTiposOS(); // refaz a busca sem filtros
+                  }}
                 >
                   ×
                 </button>
                 <span className="filtro-tag-count">{selectedItems.length}</span>
               </div>
             )}
+
+            {activeFilters.usuarioFechamento &&
+              usuariosFiltroSelecionados.length > 0 && (
+                <div className="filtro-tag">
+                  Usuário Fechamento
+                  <button
+                    className="filtro-tag-close"
+                    onClick={() => {
+                      setUsuariosFiltroSelecionados([]);
+                      setActiveFilters((prev) => ({
+                        ...prev,
+                        usuarioFechamento: false,
+                      }));
+                      fetchOrdensPorUsuario();
+                    }}
+                  >
+                    ×
+                  </button>
+                  <span className="filtro-tag-count">
+                    {usuariosFiltroSelecionados.length}
+                  </span>
+                </div>
+              )}
+
+            {activeFilters.bairro && bairrosFiltroSelecionados.length > 0 && (
+              <div className="filtro-tag">
+                Bairro
+                <button
+                  className="filtro-tag-close"
+                  onClick={() => {
+                    setBairrosFiltroSelecionados([]);
+                    setActiveFilters((prev) => ({ ...prev, bairro: false }));
+                    fetchOrdensServicoPorBairro(); // opcional para reset
+                  }}
+                >
+                  ×
+                </button>
+                <span className="filtro-tag-count">
+                  {bairrosFiltroSelecionados.length}
+                </span>
+              </div>
+            )}
+
+            {activeFilters.tipoPessoa && tipoPessoaFiltro && (
+              <div className="filtro-tag">
+                Tipo:{" "}
+                {tipoPessoaFiltro === "pf"
+                  ? "Pessoa Física"
+                  : "Pessoa Jurídica"}
+                <button
+                  className="filtro-tag-close"
+                  onClick={() => {
+                    setTipoPessoaFiltro("");
+                    setActiveFilters((prev) => ({
+                      ...prev,
+                      tipoPessoa: false,
+                    }));
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            )}
+
+            {activeFilters.motivoFechamento &&
+              motivosFechamentoFiltroSelecionados.length > 0 && (
+                <div className="filtro-tag">
+                  Motivo Fechamento
+                  <button
+                    className="filtro-tag-close"
+                    onClick={() => {
+                      setMotivosFechamentoFiltroSelecionados([]);
+                      setActiveFilters((prev) => ({
+                        ...prev,
+                        motivoFechamento: false,
+                      }));
+                    }}
+                  >
+                    ×
+                  </button>
+                  <span className="filtro-tag-count">
+                    {motivosFechamentoFiltroSelecionados.length}
+                  </span>
+                </div>
+              )}
 
             {showFilter && (
               <div className="operacao-filter-dropdown" ref={filterRef}>
@@ -586,21 +1074,45 @@ function DashboardGerencialOperacao() {
                           </span>
                         )}
                       </li>
-                      <li>Usuário fechamento ➔</li>
-                      <li>OS por localização ➔</li>
+                      <li
+                        onClick={() => setActiveSubFilter("usuarioFechamento")}
+                      >
+                        <span>Usuário de fechamento ➔</span>
+                        {usuariosFiltroSelecionados.length > 0 && (
+                          <span className="filtro-badge">
+                            {usuariosFiltroSelecionados.length} ×
+                          </span>
+                        )}
+                      </li>
+                      <li onClick={() => setActiveSubFilter("osLocalizacao")}>
+                        <span>OS por localização ➔</span>
+                        {bairrosFiltroSelecionados.length > 0 && (
+                          <span className="filtro-badge">
+                            {bairrosFiltroSelecionados.length} ×
+                          </span>
+                        )}
+                      </li>
                       <li onClick={() => setActiveSubFilter("tipoPessoa")}>
-                        Tipo de pessoa ➔
+                        <span>Tipo de pessoa ➔</span>
+                        {tipoPessoaFiltro.length > 0 && (
+                          <span className="filtro-badge">
+                            {tipoPessoaFiltro.length} ×
+                          </span>
+                        )}
                       </li>
 
                       <li>Média de produção ➔</li>
-                      <li>Motivo fechamento ➔</li>
+                      <li
+                        onClick={() => setActiveSubFilter("motivoFechamento")}
+                      >
+                        <span>Motivo fechamento ➔</span>
+                        {motivosFechamentoFiltroSelecionados.length > 0 && (
+                          <span className="filtro-badge">
+                            {motivosFechamentoFiltroSelecionados.length} ×
+                          </span>
+                        )}
+                      </li>
                     </ul>
-                    <button
-                      className="operacao-apply-filter-button"
-                      onClick={() => setShowFilter(false)}
-                    >
-                      Aplicar filtros
-                    </button>
                   </>
                 )}
 
@@ -609,7 +1121,7 @@ function DashboardGerencialOperacao() {
                     <h4>Tipo de OS</h4>
                     <input
                       type="text"
-                      placeholder="🔍 Buscar"
+                      placeholder="Buscar OS"
                       className="operacao-subfilter-search"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -629,7 +1141,8 @@ function DashboardGerencialOperacao() {
                     <button
                       className="operacao-apply-filter-button"
                       onClick={() => {
-                        fetchTiposOS(); // busca os dados filtrados
+                        fetchTiposOS();
+                        setActiveFilters((prev) => ({ ...prev, tipoOS: true }));
                         setActiveSubFilter(null);
                         setShowFilter(false);
                       }}
@@ -660,7 +1173,161 @@ function DashboardGerencialOperacao() {
                         fetchOrdensServicoUltimos3Meses();
                         fetchTotais();
                         fetchTotalClientesPorTipo();
+                        setActiveFilters((prev) => ({
+                          ...prev,
+                          tipoPessoa: true,
+                        }));
+                        setActiveSubFilter(null);
+                        setShowFilter(false);
+                      }}
+                    >
+                      Aplicar
+                    </button>
+                  </div>
+                )}
+                {activeSubFilter === "osLocalizacao" && (
+                  <div className="operacao-subfilter">
+                    <h4>OS por Localização (Bairro)</h4>
+                    <input
+                      type="text"
+                      placeholder="Buscar bairro"
+                      className="operacao-subfilter-search"
+                      value={bairroSearchTerm}
+                      onChange={(e) => setBairroSearchTerm(e.target.value)}
+                    />
+                    <div className="operacao-subfilter-list">
+                      {bairrosOptions
+                        .filter((bairro) =>
+                          bairro
+                            .toLowerCase()
+                            .includes(bairroSearchTerm.toLowerCase())
+                        )
+                        .map((bairro, idx) => (
+                          <label key={idx} className="operacao-subfilter-item">
+                            <input
+                              type="checkbox"
+                              checked={bairrosFiltroSelecionados.includes(
+                                bairro
+                              )}
+                              onChange={() => {
+                                setBairrosFiltroSelecionados((prev) =>
+                                  prev.includes(bairro)
+                                    ? prev.filter((b) => b !== bairro)
+                                    : [...prev, bairro]
+                                );
+                              }}
+                            />
+                            {bairro}
+                          </label>
+                        ))}
+                    </div>
+                    <button
+                      className="operacao-apply-filter-button"
+                      onClick={() => {
+                        fetchOrdensServicoPorBairro();
+                        setActiveFilters((prev) => ({ ...prev, bairro: true }));
+                        setActiveSubFilter(null);
+                        setShowFilter(false);
+                      }}
+                    >
+                      Aplicar
+                    </button>
+                  </div>
+                )}
 
+                {activeSubFilter === "usuarioFechamento" && (
+                  <div className="operacao-subfilter">
+                    <h4>Usuário de Fechamento</h4>
+                    <input
+                      type="text"
+                      placeholder="Buscar usuário"
+                      className="operacao-subfilter-search"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <div className="operacao-subfilter-list">
+                      {usuariosFechamentoOptions
+                        .filter((user) =>
+                          user.toLowerCase().includes(searchTerm.toLowerCase())
+                        )
+                        .map((user, idx) => (
+                          <label key={idx} className="operacao-subfilter-item">
+                            <input
+                              type="checkbox"
+                              checked={usuariosFiltroSelecionados.includes(
+                                user
+                              )}
+                              onChange={() => {
+                                setUsuariosFiltroSelecionados((prev) =>
+                                  prev.includes(user)
+                                    ? prev.filter((u) => u !== user)
+                                    : [...prev, user]
+                                );
+                              }}
+                            />
+                            {user}
+                          </label>
+                        ))}
+                    </div>
+                    <button
+                      className="operacao-apply-filter-button"
+                      onClick={() => {
+                        fetchOrdensPorUsuario();
+                        setActiveFilters((prev) => ({
+                          ...prev,
+                          usuarioFechamento: true,
+                        }));
+                        setActiveSubFilter(null);
+                        setShowFilter(false);
+                      }}
+                    >
+                      Aplicar
+                    </button>
+                  </div>
+                )}
+                {activeSubFilter === "motivoFechamento" && (
+                  <div className="operacao-subfilter">
+                    <h4>Motivo de Fechamento</h4>
+                    <input
+                      type="text"
+                      placeholder="Buscar motivo"
+                      className="operacao-subfilter-search"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <div className="operacao-subfilter-list">
+                      {motivosFechamentoOptions
+                        .filter((motivo) =>
+                          motivo
+                            .toLowerCase()
+                            .includes(searchTerm.toLowerCase())
+                        )
+                        .map((motivo, idx) => (
+                          <label key={idx} className="operacao-subfilter-item">
+                            <input
+                              type="checkbox"
+                              checked={motivosFechamentoFiltroSelecionados.includes(
+                                motivo
+                              )}
+                              onChange={() => {
+                                setMotivosFechamentoFiltroSelecionados((prev) =>
+                                  prev.includes(motivo)
+                                    ? prev.filter((m) => m !== motivo)
+                                    : [...prev, motivo]
+                                );
+                              }}
+                            />
+                            {motivo}
+                          </label>
+                        ))}
+                    </div>
+                    <button
+                      className="operacao-apply-filter-button"
+                      onClick={() => {
+                        setActiveFilters((prev) => ({
+                          ...prev,
+                          motivoFechamento: true,
+                        }));
                         setActiveSubFilter(null);
                         setShowFilter(false);
                       }}
@@ -727,7 +1394,6 @@ function DashboardGerencialOperacao() {
                     tick={{ fontSize: 12 }}
                     axisLine={false}
                     tickLine={false}
-                    ticks={[0, 250, 500, 750, 1000]}
                   />
                   <Tooltip
                     formatter={(value) => [value, "Total"]}
@@ -1024,7 +1690,6 @@ function DashboardGerencialOperacao() {
               <thead>
                 <tr className="tr-space-between">
                   <th>OS por bairro</th>
-                  <th></th>
                   <th>Total</th>
                 </tr>
               </thead>
@@ -1034,7 +1699,6 @@ function DashboardGerencialOperacao() {
                     <td>
                       {index + 1}. {bairro.nome}
                     </td>
-                    <td></td>
                     <td>
                       <strong>{bairro.qtd.toLocaleString()}</strong>
                     </td>
@@ -1046,7 +1710,6 @@ function DashboardGerencialOperacao() {
                       <td>
                         {index + 6}. {bairro.nome}
                       </td>
-                      <td></td>
                       <td>
                         <strong>{bairro.qtd.toLocaleString()}</strong>
                       </td>
@@ -1059,29 +1722,34 @@ function DashboardGerencialOperacao() {
       </section>
 
       <section className="operacao-section operacao-extra-section">
-        <div className="operacao-card-nobottom operacao-table-card">
-          <table className="operacao-table">
-            <thead>
-              <tr className="tr-space-between">
-                <th>Qtd. média de produção</th>
-                <th>Dias úteis</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mediaProducao.map((item, index) => (
-                <tr key={index}>
-                  <td>
-                    {index + 1}. {item.nome}
-                  </td>
-                  <td>{item.diasUteis}</td>
-                  <td>
-                    <strong>{item.total}</strong>
-                  </td>
+        <div className="operacao-card-nobottom operacao-table-card operacao-table-wrapper">
+          <div
+            className="operacao-table-wrapper"
+            style={{ maxHeight: "260px", overflowY: "auto" }} // Scroll vertical
+          >
+            <table className="operacao-table">
+              <thead>
+                <tr className="tr-space-between">
+                  <th>Qtd. média de produção</th>
+                  <th>Dias úteis</th>
+                  <th>Total</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {mediaProducao.slice(5).map((item, index) => (
+                  <tr key={index + 5}>
+                    <td>
+                      {index + 1}. {item.nome}
+                    </td>
+                    <td>{item.diasUteis}</td>
+                    <td>
+                      <strong>{item.total}</strong>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className="operacao-card-nobottom operacao-table-card operacao-table-wrapper">
@@ -1093,8 +1761,8 @@ function DashboardGerencialOperacao() {
               </tr>
             </thead>
             <tbody>
-              {motivosFechamento.map((item, index) => (
-                <tr key={index}>
+              {motivosFechamento.slice(5).map((item, index) => (
+                <tr key={index + 5}>
                   <td>
                     {index + 1}. {item.motivo}
                   </td>
@@ -1118,7 +1786,7 @@ function DashboardGerencialOperacao() {
                 <th>Tipo</th>
                 <th>Descrição abertura</th>
                 <th>Descrição fechamento</th>
-                <th>Link</th>
+                {/* <th>Link</th> */}
               </tr>
             </thead>
             <tbody>
@@ -1150,7 +1818,7 @@ function DashboardGerencialOperacao() {
                         : item.descricaoFechamento || ""}
                     </span>
                   </td>
-                  <td>
+                  {/* <td>
                     <a
                       href={item.link}
                       target="_blank"
@@ -1158,7 +1826,7 @@ function DashboardGerencialOperacao() {
                     >
                       🔗
                     </a>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

@@ -166,7 +166,7 @@ body {
 }
 
 .operacao-subfilter-item input[type="checkbox"] {
-  accent-color: #f47621;
+  accent-color: #7A7674;
   cursor: pointer;
   transform: scale(1.1);
 }
@@ -509,11 +509,6 @@ body {
   border-radius: 4px;
 }
 
-.operacao-table-wrapper {
-  max-height: 300px; /* Ajuste a altura conforme o design */
-  overflow-y: auto;
-}
-
 .operacao-table {
   width: 100%;
   border-collapse: collapse;
@@ -529,10 +524,6 @@ body {
 .operacao-table td strong {
   font-weight: 700;
   color: #212121;
-}
-
-.operacao-table thead tr {
-  border-bottom: 1px solid #e0e0e0;
 }
 
 .operacao-table tbody tr:not(:last-child) {
@@ -618,4 +609,41 @@ body {
   display: flex;
   align-items: center;
   gap: 0.2rem;
+}
+
+
+
+.operacao-table th,
+.operacao-table td {
+  padding: 0.8rem;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.operacao-table th:nth-child(1),
+.operacao-table td:nth-child(1) {
+  width: 80%;
+}
+
+.operacao-table th:nth-child(2),
+.operacao-table td:nth-child(2) {
+  width: 20%;
+}
+
+.operacao-table th:nth-child(3),
+.operacao-table td:nth-child(3) {
+  width: 20%;
+}
+
+.operacao-table-wrapper {
+  overflow-y: auto;
+  max-height: 300px;
+  scrollbar-width: thin; /* Firefox */
+}
+
+.operacao-table thead {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
 }
