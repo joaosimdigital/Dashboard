@@ -11,7 +11,7 @@
 
 
 .body-principal{
-    background-color: #B3B3B3;
+    background-color: #B3B3B3 !important;
     width: 100%;
     display: flex;
     flex-direction: column;
