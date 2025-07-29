@@ -544,73 +544,85 @@ function DashboardGerencialOperacao() {
   );
 
   const fetchTotais = async () => {
-  try {
-    const params = new URLSearchParams();
+    try {
+      const params = new URLSearchParams();
 
-    if (tipoPessoaFiltro) {
-      params.append("tipoPessoa", tipoPessoaFiltro);
+      if (tipoPessoaFiltro) {
+        params.append("tipoPessoa", tipoPessoaFiltro);
+      }
+
+      if (selectedItems.length > 0) {
+        params.append("tiposOS", selectedItems.join(","));
+      }
+
+      if (bairrosFiltroSelecionados.length > 0) {
+        bairrosFiltroSelecionados.forEach((bairro) => {
+          params.append("bairro", bairro);
+        });
+      }
+
+      if (usuariosFiltroSelecionados.length > 0) {
+        params.append("usuarios", usuariosFiltroSelecionados.join(","));
+      }
+
+      const response = await fetch(
+        `http://localhost:3011/ordens-servico?${params.toString()}`
+      );
+      const data = await response.json();
+
+      setTotalOrdensServico(Number(data.total_os_mes));
+      setTotalInstalacoes(0); // ajuste conforme necessário
+      setTotalManutencoes(0); // ajuste conforme necessário
+      setTipoPessoaData([]); // ajuste conforme necessário
+    } catch (error) {
+      console.error("Erro ao buscar dados de totais:", error);
     }
-
-    if (selectedItems.length > 0) {
-      params.append("tiposOS", selectedItems.join(","));
-    }
-
-    if (bairrosFiltroSelecionados.length > 0) {
-      bairrosFiltroSelecionados.forEach((bairro) => {
-        params.append("bairro", bairro);
-      });
-    }
-
-    const response = await fetch(
-      `http://localhost:3011/ordens-servico?${params.toString()}`
-    );
-    const data = await response.json();
-
-    setTotalOrdensServico(Number(data.total_os_mes));
-    setTotalInstalacoes(0); // ajuste conforme necessário
-    setTotalManutencoes(0); // ajuste conforme necessário
-    setTipoPessoaData([]);  // ajuste conforme necessário
-  } catch (error) {
-    console.error("Erro ao buscar dados de totais:", error);
-  }
-};
-
+  };
 
   useEffect(() => {
     fetchTotais();
-  }, [tipoPessoaFiltro]);
+  }, [
+    tipoPessoaFiltro,
+    selectedItems,
+    bairrosFiltroSelecionados,
+    usuariosFiltroSelecionados, // <- adicionado
+  ]);
 
   const fetchTotalClientesPorTipo = async () => {
-  try {
-    const params = new URLSearchParams();
+    try {
+      const params = new URLSearchParams();
 
-    if (selectedItems.length > 0) {
-      params.append("tiposOS", selectedItems.join(","));
+      if (selectedItems.length > 0) {
+        params.append("tiposOS", selectedItems.join(","));
+      }
+
+      if (bairrosFiltroSelecionados.length > 0) {
+        bairrosFiltroSelecionados.forEach((bairro) => {
+          params.append("bairro", bairro);
+        });
+      }
+
+      if (usuariosFiltroSelecionados.length > 0) {
+        params.append("usuarios", usuariosFiltroSelecionados.join(","));
+      }
+
+      const response = await fetch(
+        `http://localhost:3011/total-clientes-os-por-tipo?${params.toString()}`
+      );
+      const data = await response.json();
+
+      setTipoPessoaData([
+        { name: "PF", value: data.pf || 0 },
+        { name: "PJ", value: data.pj || 0 },
+      ]);
+    } catch (error) {
+      console.error("Erro ao buscar total de clientes PF/PJ:", error);
     }
+  };
 
-    if (bairrosFiltroSelecionados.length > 0) {
-      bairrosFiltroSelecionados.forEach((bairro) => {
-        params.append("bairro", bairro);
-      });
-    }
-
-    const response = await fetch(
-      `http://localhost:3011/total-clientes-os-por-tipo?${params.toString()}`
-    );
-    const data = await response.json();
-
-    setTipoPessoaData([
-      { name: "PF", value: data.pf || 0 },
-      { name: "PJ", value: data.pj || 0 },
-    ]);
-  } catch (error) {
-    console.error("Erro ao buscar total de clientes PF/PJ:", error);
-  }
-};
-
-useEffect(() => {
-  fetchTotalClientesPorTipo();
-}, [selectedItems, bairrosFiltroSelecionados]);
+  useEffect(() => {
+    fetchTotalClientesPorTipo();
+  }, [selectedItems, bairrosFiltroSelecionados, usuariosFiltroSelecionados]);
 
   const fetchTiposOS = async () => {
     try {
@@ -644,8 +656,24 @@ useEffect(() => {
   const fetchOrdensPorUsuario = async () => {
     try {
       const params = new URLSearchParams();
+
       if (usuariosFiltroSelecionados.length > 0) {
         params.append("usuarios", usuariosFiltroSelecionados.join(","));
+      }
+
+      if (tipoPessoaFiltro) {
+        params.append("tipoPessoa", tipoPessoaFiltro);
+      }
+
+      if (selectedItems.length > 0) {
+        const tiposOSString = selectedItems.map(String).join(",");
+        params.append("tiposOS", tiposOSString);
+      }
+
+      if (bairrosFiltroSelecionados.length > 0) {
+        bairrosFiltroSelecionados.forEach((bairro) =>
+          params.append("bairro", bairro)
+        );
       }
 
       const response = await fetch(
@@ -675,7 +703,12 @@ useEffect(() => {
 
   useEffect(() => {
     fetchOrdensPorUsuario();
-  }, [usuariosFiltroSelecionados]);
+  }, [
+    usuariosFiltroSelecionados,
+    tipoPessoaFiltro,
+    selectedItems,
+    bairrosFiltroSelecionados,
+  ]);
 
   const fetchMotivosFechamento = async () => {
     try {
@@ -733,10 +766,38 @@ useEffect(() => {
   useEffect(() => {
     const fetchClientesHabilitados = async () => {
       try {
+        const params = new URLSearchParams();
+
+        if (tipoPessoaFiltro) {
+          params.append("tipoPessoa", tipoPessoaFiltro);
+        }
+
+        if (selectedItems.length > 0) {
+          params.append("tiposOS", selectedItems.join(","));
+        }
+
+        if (bairrosFiltroSelecionados.length > 0) {
+          bairrosFiltroSelecionados.forEach((bairro) =>
+            params.append("bairro", bairro)
+          );
+        }
+
+        if (usuariosFiltroSelecionados.length > 0) {
+          params.append("usuarios", usuariosFiltroSelecionados.join(","));
+        }
+
+        const queryString = params.toString();
+
         const [resHoje, resSC, resRS] = await Promise.all([
-          fetch("http://localhost:3011/total-clientes-habilitados-mes"),
-          fetch("http://localhost:3011/total-clientes-habilitados-sc"),
-          fetch("http://localhost:3011/total-clientes-habilitados-rs"),
+          fetch(
+            `http://localhost:3011/total-clientes-habilitados-mes?${queryString}`
+          ),
+          fetch(
+            `http://localhost:3011/total-clientes-habilitados-sc?${queryString}`
+          ),
+          fetch(
+            `http://localhost:3011/total-clientes-habilitados-rs?${queryString}`
+          ),
         ]);
 
         const dataHoje = await resHoje.json();
@@ -752,13 +813,46 @@ useEffect(() => {
     };
 
     fetchClientesHabilitados();
-  }, []);
+  }, [
+    tipoPessoaFiltro,
+    selectedItems,
+    bairrosFiltroSelecionados,
+    usuariosFiltroSelecionados,
+  ]);
 
+  const buildQueryParams = () => {
+    const params = new URLSearchParams();
+
+    if (selectedItems.length > 0) {
+      params.append("tiposOS", selectedItems.join(","));
+    }
+
+    if (bairrosFiltroSelecionados.length > 0) {
+      bairrosFiltroSelecionados.forEach((bairro) =>
+        params.append("bairro", bairro)
+      );
+    }
+
+    if (tipoPessoaFiltro) {
+      params.append("tipoPessoa", tipoPessoaFiltro);
+    }
+
+    if (usuariosFiltroSelecionados.length > 0) {
+      usuariosFiltroSelecionados.forEach((usuario) =>
+        params.append("usuarios", usuario)
+      );
+    }
+
+    return params.toString();
+  };
+
+  // UseEffect que busca os dados
   useEffect(() => {
     const fetchTotalClientesHabilitadosSC = async () => {
       try {
+        const params = buildQueryParams();
         const response = await fetch(
-          "http://localhost:3011/total-clientes-habilitados-executado-sc"
+          `http://localhost:3011/total-clientes-habilitados-executado-sc?${params}`
         );
         const data = await response.json();
         setTotalManutencoesSC(Number(data.total_manutencoes));
@@ -772,8 +866,9 @@ useEffect(() => {
 
     const fetchTotalManutencoesRS = async () => {
       try {
+        const params = buildQueryParams();
         const response = await fetch(
-          "http://localhost:3011/total-clientes-habilitados-executado-rs"
+          `http://localhost:3011/total-clientes-habilitados-executado-rs?${params}`
         );
         const data = await response.json();
         setTotalManutencoesRS(Number(data.total_manutencoes));
@@ -784,64 +879,78 @@ useEffect(() => {
 
     fetchTotalClientesHabilitadosSC();
     fetchTotalManutencoesRS();
-  }, []);
+  }, [
+    selectedItems,
+    bairrosFiltroSelecionados,
+    tipoPessoaFiltro,
+    usuariosFiltroSelecionados,
+  ]);
 
   const fetchOrdensServicoUltimos3Meses = async () => {
-  try {
-    const params = new URLSearchParams();
+    try {
+      const params = new URLSearchParams();
 
-    // tipoPessoa (pf/pj)
-    if (tipoPessoaFiltro) {
-      params.append("tipoPessoa", tipoPessoaFiltro);
+      // tipoPessoa (pf/pj)
+      if (tipoPessoaFiltro) {
+        params.append("tipoPessoa", tipoPessoaFiltro);
+      }
+
+      // tiposOS (ex: ["Instalação", "Troca"])
+      if (selectedItems.length > 0) {
+        params.append("tiposOS", selectedItems.join(","));
+      }
+
+      // bairros (ex: ["Centro", "Jardim Europa"])
+      if (bairrosFiltroSelecionados.length > 0) {
+        bairrosFiltroSelecionados.forEach((bairro) => {
+          params.append("bairro", bairro);
+        });
+      }
+
+      // usuários (usuários de fechamento)
+      if (usuariosFiltroSelecionados.length > 0) {
+        params.append("usuarios", usuariosFiltroSelecionados.join(","));
+      }
+
+      const response = await fetch(
+        `http://localhost:3011/ordens-servico-ultimos-3-meses?${params}`
+      );
+      const data = await response.json();
+
+      const mesesNomes = [
+        "Jan",
+        "Fev",
+        "Mar",
+        "Abr",
+        "Mai",
+        "Jun",
+        "Jul",
+        "Ago",
+        "Set",
+        "Out",
+        "Nov",
+        "Dez",
+      ];
+
+      const formattedData = data.map((item) => ({
+        name: `${mesesNomes[item.mes - 1]} ${item.ano}`,
+        value: parseInt(item.total_os),
+      }));
+
+      setTrimestreData(formattedData);
+    } catch (error) {
+      console.error("❌ Erro ao buscar OS dos últimos 3 meses:", error);
     }
+  };
 
-    // tiposOS (ex: ["Instalação", "Troca"])
-    if (selectedItems.length > 0) {
-      params.append("tiposOS", selectedItems.join(","));
-    }
-
-    // bairros (ex: ["Centro", "Jardim Europa"])
-    if (bairrosFiltroSelecionados.length > 0) {
-      bairrosFiltroSelecionados.forEach((bairro) => {
-        params.append("bairro", bairro);
-      });
-    }
-
-    const response = await fetch(
-      `http://localhost:3011/ordens-servico-ultimos-3-meses?${params}`
-    );
-    const data = await response.json();
-
-    const mesesNomes = [
-      "Jan",
-      "Fev",
-      "Mar",
-      "Abr",
-      "Mai",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Set",
-      "Out",
-      "Nov",
-      "Dez",
-    ];
-
-    const formattedData = data.map((item) => ({
-      name: `${mesesNomes[item.mes - 1]} ${item.ano}`,
-      value: parseInt(item.total_os),
-    }));
-
-    setTrimestreData(formattedData);
-  } catch (error) {
-    console.error("❌ Erro ao buscar OS dos últimos 3 meses:", error);
-  }
-};
-
-
- useEffect(() => {
-  fetchOrdensServicoUltimos3Meses();
-}, [tipoPessoaFiltro, selectedItems, bairrosFiltroSelecionados]);
+  useEffect(() => {
+    fetchOrdensServicoUltimos3Meses();
+  }, [
+    tipoPessoaFiltro,
+    selectedItems,
+    bairrosFiltroSelecionados,
+    usuariosFiltroSelecionados,
+  ]);
 
   useEffect(() => {
     const fetchOrdensDetalhadas = async () => {
@@ -849,14 +958,12 @@ useEffect(() => {
         const response = await fetch("http://localhost:3011/ordens-detalhadas");
         const data = await response.json();
 
-        // Mapear os dados para o formato usado no JSX
         const formatted = data.map((item) => ({
           nome: item.nome_razaosocial,
           tipo: item.tipo_os,
           descricaoAbertura: item.descricao_abertura,
           descricaoFechamento: item.descricao_fechamento,
-          // Se quiser um link real, adapte aqui. Por enquanto deixo '#' vazio.
-          link: "#",
+          link: `https://simfloripa.hubsoft.com.br/cliente/editar/${item.id_cliente}/ordem_servico`,
         }));
 
         setUltimasOS(formatted);
@@ -909,38 +1016,37 @@ useEffect(() => {
   }, []);
 
   const fetchOrdensServicoPorBairro = async () => {
-  try {
-    const params = new URLSearchParams();
+    try {
+      const params = new URLSearchParams();
 
-    if (bairrosFiltroSelecionados.length > 0) {
-      bairrosFiltroSelecionados.forEach((bairro) =>
-        params.append("bairro", bairro)
+      if (bairrosFiltroSelecionados.length > 0) {
+        bairrosFiltroSelecionados.forEach((bairro) =>
+          params.append("bairro", bairro)
+        );
+      }
+
+      if (selectedItems.length > 0) {
+        params.append("tiposOS", selectedItems.join(","));
+      }
+
+      const response = await fetch(
+        `http://localhost:3011/ordens-servico-do-mes-por-bairro?${params}`
       );
+      const data = await response.json();
+
+      const bairrosComOS = data.total_por_bairro
+        .filter((bairro) => bairro.total_geral >= 1)
+        .sort((a, b) => b.total_geral - a.total_geral)
+        .map((bairro) => ({
+          nome: bairro.bairro || "Sem bairro",
+          qtd: bairro.total_geral,
+        }));
+
+      setOsPorBairro(bairrosComOS);
+    } catch (error) {
+      console.error("Erro ao buscar ordens de serviço por bairro:", error);
     }
-
-    if (selectedItems.length > 0) {
-      params.append("tiposOS", selectedItems.join(","));
-    }
-
-    const response = await fetch(
-      `http://localhost:3011/ordens-servico-do-mes-por-bairro?${params}`
-    );
-    const data = await response.json();
-
-    const bairrosComOS = data.total_por_bairro
-      .filter((bairro) => bairro.total_geral >= 1)
-      .sort((a, b) => b.total_geral - a.total_geral)
-      .map((bairro) => ({
-        nome: bairro.bairro || "Sem bairro",
-        qtd: bairro.total_geral,
-      }));
-
-    setOsPorBairro(bairrosComOS);
-  } catch (error) {
-    console.error("Erro ao buscar ordens de serviço por bairro:", error);
-  }
-};
-
+  };
 
   useEffect(() => {
     fetchOrdensServicoPorBairro();
@@ -1831,7 +1937,7 @@ useEffect(() => {
                 <th>Tipo</th>
                 <th>Descrição abertura</th>
                 <th>Descrição fechamento</th>
-                {/* <th>Link</th> */}
+                <th>Link</th>
               </tr>
             </thead>
             <tbody>
@@ -1863,7 +1969,7 @@ useEffect(() => {
                         : item.descricaoFechamento || ""}
                     </span>
                   </td>
-                  {/* <td>
+                  <td>
                     <a
                       href={item.link}
                       target="_blank"
@@ -1871,7 +1977,7 @@ useEffect(() => {
                     >
                       🔗
                     </a>
-                  </td> */}
+                  </td>
                 </tr>
               ))}
             </tbody>
