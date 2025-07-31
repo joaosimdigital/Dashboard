@@ -514,10 +514,8 @@ function DashboardGerencialOperacao() {
     "UNIVERSITARIO",
   ];
 
-  const [tipoPessoaData, setTipoPessoaData] = useState([
-    { name: "Pessoa Física", value: 0, fill: "#f47621" },
-    { name: "Pessoa Jurídica", value: 0, fill: "#212121" },
-  ]);
+  const [tipoPessoaData, setTipoPessoaData] = useState([]);
+  const [loadingTipoPessoa, setLoadingTipoPessoa] = useState(true);
 
   const [trimestreData, setTrimestreData] = useState([]);
 
@@ -544,49 +542,115 @@ function DashboardGerencialOperacao() {
   );
 
   const fetchTotais = async () => {
-    try {
-      const params = new URLSearchParams();
-      if (tipoPessoaFiltro) {
-        params.append("tipoPessoa", tipoPessoaFiltro);
-      }
+  try {
+    const params = new URLSearchParams();
 
-      const response = await fetch(
-        `http://38.224.145.3:3003/ordens-servico?${params}`
-      );
-      const data = await response.json();
-
-      setTotalOrdensServico(Number(data.total_os_mes));
-      setTotalInstalacoes(0);
-      setTotalManutencoes(0);
-      setTipoPessoaData([]);
-    } catch (error) {
-      console.error("Erro ao buscar dados de totais:", error);
+    if (tipoPessoaFiltro) {
+      params.append("tipoPessoa", tipoPessoaFiltro);
     }
-  };
 
-  useEffect(() => {
-    fetchTotais();
-  }, [tipoPessoaFiltro]);
+    if (selectedItems.length > 0) {
+      params.append("tiposOS", selectedItems.join(","));
+    }
+
+    if (bairrosFiltroSelecionados.length > 0) {
+      bairrosFiltroSelecionados.forEach((bairro) => {
+        params.append("bairro", bairro);
+      });
+    }
+
+    if (usuariosFiltroSelecionados.length > 0) {
+      params.append("usuarios", usuariosFiltroSelecionados.join(","));
+    }
+
+    if (motivosFechamentoFiltroSelecionados.length > 0) {
+      params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
+    }
+
+    const response = await fetch(
+      `http://38.224.145.3:3012/ordens-servico?${params.toString()}`
+    );
+    const data = await response.json();
+
+    setTotalOrdensServico(Number(data.total_os_mes));
+    setTotalInstalacoes(0); // ajuste conforme necessário
+    setTotalManutencoes(0); // ajuste conforme necessário
+    setTipoPessoaData([]); // ajuste conforme necessário
+  } catch (error) {
+    console.error("Erro ao buscar dados de totais:", error);
+  }
+};
+
+useEffect(() => {
+  fetchTotais();
+}, [
+  tipoPessoaFiltro,
+  selectedItems,
+  bairrosFiltroSelecionados,
+  usuariosFiltroSelecionados,
+  motivosFechamentoFiltroSelecionados,
+]);
+
 
   const fetchTotalClientesPorTipo = async () => {
-    try {
-      const response = await fetch(
-        `http://38.224.145.3:3003/total-clientes-os-por-tipo`
-      );
-      const data = await response.json();
+  try {
+    setLoadingTipoPessoa(true);
 
-      setTipoPessoaData([
-        { name: "PF", value: data.pf || 0 },
-        { name: "PJ", value: data.pj || 0 },
-      ]);
-    } catch (error) {
-      console.error("Erro ao buscar total de clientes PF/PJ:", error);
+    const params = new URLSearchParams();
+
+    if (selectedItems.length > 0) {
+      params.append("tiposOS", selectedItems.join(","));
     }
-  };
 
-  useEffect(() => {
-    fetchTotalClientesPorTipo();
-  }, []); // sem tipoPessoaFiltro
+    if (bairrosFiltroSelecionados.length > 0) {
+      bairrosFiltroSelecionados.forEach((bairro) => {
+        params.append("bairro", bairro);
+      });
+    }
+
+    if (usuariosFiltroSelecionados.length > 0) {
+      params.append("usuarios", usuariosFiltroSelecionados.join(","));
+    }
+
+    if (motivosFechamentoFiltroSelecionados.length > 0) {
+      params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
+    }
+
+    const response = await fetch(
+      `http://38.224.145.3:3012/total-clientes-os-por-tipo?${params.toString()}`
+    );
+    const data = await response.json();
+
+    const pf = data.pf || 0;
+    const pj = data.pj || 0;
+
+    setTipoPessoaData([
+      { name: "Pessoa Física", value: pf, fill: "#f47621" },
+      { name: "Pessoa Jurídica", value: pj, fill: "#212121" },
+    ]);
+  } catch (error) {
+    console.error("Erro ao buscar total de clientes PF/PJ:", error);
+    setTipoPessoaData([]);
+  } finally {
+    setLoadingTipoPessoa(false);
+  }
+};
+
+useEffect(() => {
+  fetchTotalClientesPorTipo(); // Chamada inicial
+}, []);
+
+useEffect(() => {
+  fetchTotalClientesPorTipo(); // Atualiza se filtros mudarem
+}, [
+  selectedItems,
+  bairrosFiltroSelecionados,
+  usuariosFiltroSelecionados,
+  motivosFechamentoFiltroSelecionados,
+]);
+
+
+
 
   const fetchTiposOS = async () => {
     try {
@@ -596,7 +660,7 @@ function DashboardGerencialOperacao() {
       }
 
       const response = await fetch(
-        `http://38.224.145.3:3003/ordens-servico-por-tipo?${params}`
+        `http://38.224.145.3:3012/ordens-servico-por-tipo?${params}`
       );
 
       const data = await response.json();
@@ -620,12 +684,28 @@ function DashboardGerencialOperacao() {
   const fetchOrdensPorUsuario = async () => {
     try {
       const params = new URLSearchParams();
+
       if (usuariosFiltroSelecionados.length > 0) {
         params.append("usuarios", usuariosFiltroSelecionados.join(","));
       }
 
+      if (tipoPessoaFiltro) {
+        params.append("tipoPessoa", tipoPessoaFiltro);
+      }
+
+      if (selectedItems.length > 0) {
+        const tiposOSString = selectedItems.map(String).join(",");
+        params.append("tiposOS", tiposOSString);
+      }
+
+      if (bairrosFiltroSelecionados.length > 0) {
+        bairrosFiltroSelecionados.forEach((bairro) =>
+          params.append("bairro", bairro)
+        );
+      }
+
       const response = await fetch(
-        `http://38.224.145.3:3003/ordens-por-usuario?${params}`
+        `http://38.224.145.3:3012/ordens-por-usuario?${params}`
       );
 
       const data = await response.json();
@@ -651,41 +731,75 @@ function DashboardGerencialOperacao() {
 
   useEffect(() => {
     fetchOrdensPorUsuario();
-  }, [usuariosFiltroSelecionados]);
+  }, [
+    usuariosFiltroSelecionados,
+    tipoPessoaFiltro,
+    selectedItems,
+    bairrosFiltroSelecionados,
+  ]);
 
   const fetchMotivosFechamento = async () => {
-    try {
-      const params = new URLSearchParams();
-      if (motivosFechamentoFiltroSelecionados.length > 0) {
-        params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
-      }
+  try {
+    const params = new URLSearchParams();
 
-      const response = await fetch(
-        `http://38.224.145.3:3003/motivos-fechamento-os?${params}`
-      );
-
-      const data = await response.json();
-
-      const formattedData = data.map((item) => ({
-        motivo: item.motivo_fechamento,
-        qtd: parseInt(item.quantidade, 10),
-      }));
-
-      setMotivosFechamento(formattedData);
-    } catch (error) {
-      console.error("Erro ao buscar motivos de fechamento:", error);
+    if (motivosFechamentoFiltroSelecionados.length > 0) {
+      params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
     }
-  };
 
-  useEffect(() => {
-    fetchMotivosFechamento();
-  }, [motivosFechamentoFiltroSelecionados]);
+    if (tipoPessoaFiltro) {
+      params.append("tipoPessoa", tipoPessoaFiltro);
+    }
+
+    if (selectedItems.length > 0) {
+      const tiposOSString = selectedItems.map(String).join(",");
+      params.append("tiposOS", tiposOSString);
+    }
+
+    if (bairrosFiltroSelecionados.length > 0) {
+      bairrosFiltroSelecionados.forEach((bairro) =>
+        params.append("bairro", bairro)
+      );
+    }
+
+    if (usuariosFiltroSelecionados.length > 0) {
+      usuariosFiltroSelecionados.forEach((usuario) =>
+        params.append("usuarios", usuario)
+      );
+    }
+
+    const response = await fetch(
+      `http://38.224.145.3:3012/motivos-fechamento-os?${params}`
+    );
+
+    const data = await response.json();
+
+    const formattedData = data.map((item) => ({
+      motivo: item.motivo_fechamento,
+      qtd: parseInt(item.quantidade, 10),
+    }));
+
+    setMotivosFechamento(formattedData);
+  } catch (error) {
+    console.error("Erro ao buscar motivos de fechamento:", error);
+  }
+};
+
+useEffect(() => {
+  fetchMotivosFechamento();
+}, [
+  motivosFechamentoFiltroSelecionados,
+  tipoPessoaFiltro,
+  selectedItems,
+  bairrosFiltroSelecionados,
+  usuariosFiltroSelecionados
+]);
+
 
   useEffect(() => {
     const fetchTotaisPorEstado = async () => {
       try {
         const response = await fetch(
-          "http://38.224.145.3:3003/ordens-servico-do-mes-por-estado"
+          "http://38.224.145.3:3012/ordens-servico-do-mes-por-estado"
         );
         const data = await response.json();
 
@@ -707,34 +821,98 @@ function DashboardGerencialOperacao() {
   }, []);
 
   useEffect(() => {
-    const fetchClientesHabilitados = async () => {
-      try {
-        const [resHoje, resSC, resRS] = await Promise.all([
-          fetch("http://38.224.145.3:3003/total-clientes-habilitados-mes"),
-          fetch("http://38.224.145.3:3003/total-clientes-habilitados-sc"),
-          fetch("http://38.224.145.3:3003/total-clientes-habilitados-rs"),
-        ]);
+  const fetchClientesHabilitados = async () => {
+    try {
+      const params = new URLSearchParams();
 
-        const dataHoje = await resHoje.json();
-        const dataSC = await resSC.json();
-        const dataRS = await resRS.json();
-
-        setTotalClientesHabilitadosHoje(dataHoje.total_clientes_habilitados);
-        setTotalClientesHabilitadosSC(dataSC.total_clientes_habilitados);
-        setTotalClientesHabilitadosRS(dataRS.total_clientes_habilitados);
-      } catch (error) {
-        console.error("Erro ao buscar clientes habilitados:", error);
+      if (tipoPessoaFiltro) {
+        params.append("tipoPessoa", tipoPessoaFiltro);
       }
-    };
 
-    fetchClientesHabilitados();
-  }, []);
+      if (selectedItems.length > 0) {
+        params.append("tiposOS", selectedItems.join(","));
+      }
 
+      if (bairrosFiltroSelecionados.length > 0) {
+        bairrosFiltroSelecionados.forEach((bairro) =>
+          params.append("bairro", bairro)
+        );
+      }
+
+      if (usuariosFiltroSelecionados.length > 0) {
+        params.append("usuarios", usuariosFiltroSelecionados.join(","));
+      }
+
+      if (motivosFechamentoFiltroSelecionados.length > 0) {
+        params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
+      }
+
+      const queryString = params.toString();
+
+      const [resHoje, resSC, resRS] = await Promise.all([
+        fetch(`http://38.224.145.3:3012/total-clientes-habilitados-mes?${queryString}`),
+        fetch(`http://38.224.145.3:3012/total-clientes-habilitados-sc?${queryString}`),
+        fetch(`http://38.224.145.3:3012/total-clientes-habilitados-rs?${queryString}`),
+      ]);
+
+      const dataHoje = await resHoje.json();
+      const dataSC = await resSC.json();
+      const dataRS = await resRS.json();
+
+      setTotalClientesHabilitadosHoje(dataHoje.total_clientes_habilitados);
+      setTotalClientesHabilitadosSC(dataSC.total_clientes_habilitados);
+      setTotalClientesHabilitadosRS(dataRS.total_clientes_habilitados);
+    } catch (error) {
+      console.error("Erro ao buscar clientes habilitados:", error);
+    }
+  };
+
+  fetchClientesHabilitados();
+}, [
+  tipoPessoaFiltro,
+  selectedItems,
+  bairrosFiltroSelecionados,
+  usuariosFiltroSelecionados,
+  motivosFechamentoFiltroSelecionados, // novo filtro aqui
+]);
+
+  const buildQueryParams = () => {
+  const params = new URLSearchParams();
+
+  if (selectedItems.length > 0) {
+    params.append("tiposOS", selectedItems.join(","));
+  }
+
+  if (bairrosFiltroSelecionados.length > 0) {
+    bairrosFiltroSelecionados.forEach((bairro) =>
+      params.append("bairro", bairro)
+    );
+  }
+
+  if (tipoPessoaFiltro) {
+    params.append("tipoPessoa", tipoPessoaFiltro);
+  }
+
+  if (usuariosFiltroSelecionados.length > 0) {
+    usuariosFiltroSelecionados.forEach((usuario) =>
+      params.append("usuarios", usuario)
+    );
+  }
+
+  if (motivosFechamentoFiltroSelecionados.length > 0) {
+    params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
+  }
+
+  return params.toString();
+};
+
+  // UseEffect que busca os dados
   useEffect(() => {
     const fetchTotalClientesHabilitadosSC = async () => {
       try {
+        const params = buildQueryParams();
         const response = await fetch(
-          "http://38.224.145.3:3003/total-clientes-habilitados-executado-sc"
+          `http://38.224.145.3:3012/total-clientes-habilitados-executado-sc?${params}`
         );
         const data = await response.json();
         setTotalManutencoesSC(Number(data.total_manutencoes));
@@ -748,8 +926,9 @@ function DashboardGerencialOperacao() {
 
     const fetchTotalManutencoesRS = async () => {
       try {
+        const params = buildQueryParams();
         const response = await fetch(
-          "http://38.224.145.3:3003/total-clientes-habilitados-executado-rs"
+          `http://38.224.145.3:3012/total-clientes-habilitados-executado-rs?${params}`
         );
         const data = await response.json();
         setTotalManutencoesRS(Number(data.total_manutencoes));
@@ -760,126 +939,213 @@ function DashboardGerencialOperacao() {
 
     fetchTotalClientesHabilitadosSC();
     fetchTotalManutencoesRS();
-  }, []);
+  }, [
+    selectedItems,
+    bairrosFiltroSelecionados,
+    tipoPessoaFiltro,
+    usuariosFiltroSelecionados,
+  ]);
 
   const fetchOrdensServicoUltimos3Meses = async () => {
+  try {
+    const params = new URLSearchParams();
+
+    if (tipoPessoaFiltro) {
+      params.append("tipoPessoa", tipoPessoaFiltro);
+    }
+
+    if (selectedItems.length > 0) {
+      params.append("tiposOS", selectedItems.join(","));
+    }
+
+    if (bairrosFiltroSelecionados.length > 0) {
+      bairrosFiltroSelecionados.forEach((bairro) => {
+        params.append("bairro", bairro);
+      });
+    }
+
+    if (usuariosFiltroSelecionados.length > 0) {
+      params.append("usuarios", usuariosFiltroSelecionados.join(","));
+    }
+
+    if (motivosFechamentoFiltroSelecionados.length > 0) {
+      params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
+    }
+
+    const response = await fetch(
+      `http://38.224.145.3:3012/ordens-servico-ultimos-3-meses?${params}`
+    );
+    const data = await response.json();
+
+    const mesesNomes = [
+      "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+      "Jul", "Ago", "Set", "Out", "Nov", "Dez",
+    ];
+
+    const formattedData = data.map((item) => ({
+      name: `${mesesNomes[item.mes - 1]} ${item.ano}`,
+      value: parseInt(item.total_os),
+    }));
+
+    setTrimestreData(formattedData);
+  } catch (error) {
+    console.error("❌ Erro ao buscar OS dos últimos 3 meses:", error);
+  }
+};
+
+useEffect(() => {
+  fetchOrdensServicoUltimos3Meses();
+}, [
+  tipoPessoaFiltro,
+  selectedItems,
+  bairrosFiltroSelecionados,
+  usuariosFiltroSelecionados,
+  motivosFechamentoFiltroSelecionados,
+]);
+
+
+  useEffect(() => {
+  const fetchOrdensDetalhadas = async () => {
     try {
       const params = new URLSearchParams();
+
       if (tipoPessoaFiltro) {
         params.append("tipoPessoa", tipoPessoaFiltro);
       }
 
-      const response = await fetch(
-        `http://38.224.145.3:3003/ordens-servico-ultimos-3-meses?${params}`
-      );
-      const data = await response.json();
-
-      const mesesNomes = [
-        "Jan",
-        "Fev",
-        "Mar",
-        "Abr",
-        "Mai",
-        "Jun",
-        "Jul",
-        "Ago",
-        "Set",
-        "Out",
-        "Nov",
-        "Dez",
-      ];
-
-      const formattedData = data.map((item) => ({
-        name: `${mesesNomes[item.mes - 1]} ${item.ano}`,
-        value: parseInt(item.total_os),
-      }));
-
-      setTrimestreData(formattedData);
-    } catch (error) {
-      console.error("❌ Erro ao buscar OS dos últimos 3 meses:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchOrdensServicoUltimos3Meses();
-  }, [tipoPessoaFiltro]);
-
-  useEffect(() => {
-    const fetchOrdensDetalhadas = async () => {
-      try {
-        const response = await fetch("http://38.224.145.3:3003/ordens-detalhadas");
-        const data = await response.json();
-
-        // Mapear os dados para o formato usado no JSX
-        const formatted = data.map((item) => ({
-          nome: item.nome_razaosocial,
-          tipo: item.tipo_os,
-          descricaoAbertura: item.descricao_abertura,
-          descricaoFechamento: item.descricao_fechamento,
-          // Se quiser um link real, adapte aqui. Por enquanto deixo '#' vazio.
-          link: "#",
-        }));
-
-        setUltimasOS(formatted);
-      } catch (error) {
-        console.error("Erro ao buscar ordens detalhadas:", error);
+      if (selectedItems.length > 0) {
+        params.append("tiposOS", selectedItems.join(","));
       }
-    };
 
-    fetchOrdensDetalhadas();
-  }, []);
-
-  useEffect(() => {
-    const fetchOrdensServicoPorCidade = async () => {
-      try {
-        const response = await fetch(
-          "http://38.224.145.3:3003/ordens-servico-do-mes-por-cidade"
-        );
-        const data = await response.json();
-
-        // Mapeamento de cores fixas por cidade
-        const coresPorCidade = {
-          Florianópolis: "#000000",
-          "Caxias do Sul": "#FB7424",
-          "São José": "#F4DF1E",
-          Palhoça: "#E4482D",
-        };
-
-        const formattedData = data.total_por_cidade
-          .filter((item) =>
-            ["Florianópolis", "Caxias do Sul", "São José", "Palhoça"].includes(
-              item.cidade
-            )
-          )
-          .map((item) => ({
-            name: item.cidade,
-            value: item.total_geral,
-            color: coresPorCidade[item.cidade] || "#999999",
-          }));
-
-        const total = formattedData.reduce((sum, item) => sum + item.value, 0);
-
-        setCidadeData(formattedData);
-        setTotalCidade(total);
-      } catch (error) {
-        console.error("Erro ao buscar ordens de serviço por cidade:", error);
-      }
-    };
-
-    fetchOrdensServicoPorCidade();
-  }, []);
-
-  const fetchOrdensServicoPorBairro = async () => {
-    try {
-      const params = new URLSearchParams();
       if (bairrosFiltroSelecionados.length > 0) {
         bairrosFiltroSelecionados.forEach((bairro) =>
           params.append("bairro", bairro)
         );
       }
 
+      if (usuariosFiltroSelecionados.length > 0) {
+        params.append("usuarios", usuariosFiltroSelecionados.join(","));
+      }
+
+      if (motivosFechamentoFiltroSelecionados.length > 0) {
+        params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
+      }
+
+      const response = await fetch(`http://38.224.145.3:3012/ordens-detalhadas?${params}`);
+      const data = await response.json();
+
+      const formatted = data.map((item) => ({
+        nome: item.nome_razaosocial,
+        tipo: item.tipo_os,
+        descricaoAbertura: item.descricao_abertura,
+        descricaoFechamento: item.descricao_fechamento,
+        link: `https://simfloripa.hubsoft.com.br/cliente/editar/${item.id_cliente}/ordem_servico`,
+      }));
+
+      setUltimasOS(formatted);
+    } catch (error) {
+      console.error("Erro ao buscar ordens detalhadas:", error);
+    }
+  };
+
+  fetchOrdensDetalhadas();
+}, [
+  tipoPessoaFiltro,
+  selectedItems,
+  bairrosFiltroSelecionados,
+  usuariosFiltroSelecionados,
+  motivosFechamentoFiltroSelecionados,
+]);
+
+
+
+  useEffect(() => {
+  const fetchOrdensServicoPorCidade = async () => {
+    try {
+      const params = new URLSearchParams();
+
+      if (tipoPessoaFiltro) {
+        params.append("tipoPessoa", tipoPessoaFiltro);
+      }
+
+      if (selectedItems.length > 0) {
+        params.append("tiposOS", selectedItems.join(","));
+      }
+
+      if (bairrosFiltroSelecionados.length > 0) {
+        bairrosFiltroSelecionados.forEach((bairro) => {
+          params.append("bairro", bairro);
+        });
+      }
+
+      if (usuariosFiltroSelecionados.length > 0) {
+        params.append("usuarios", usuariosFiltroSelecionados.join(","));
+      }
+
+      if (motivosFechamentoFiltroSelecionados.length > 0) {
+        params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
+      }
+
       const response = await fetch(
-        `http://38.224.145.3:3003/ordens-servico-do-mes-por-bairro?${params}`
+        `http://38.224.145.3:3012/ordens-servico-do-mes-por-cidade?${params.toString()}`
+      );
+
+      const data = await response.json();
+
+      // Mapeamento de cores fixas por cidade
+      const coresPorCidade = {
+        Florianópolis: "#000000",
+        "Caxias do Sul": "#FB7424",
+        "São José": "#F4DF1E",
+        Palhoça: "#E4482D",
+      };
+
+      const formattedData = data.total_por_cidade
+        .filter((item) =>
+          ["Florianópolis", "Caxias do Sul", "São José", "Palhoça"].includes(
+            item.cidade
+          )
+        )
+        .map((item) => ({
+          name: item.cidade,
+          value: item.total_geral,
+          color: coresPorCidade[item.cidade] || "#999999",
+        }));
+
+      const total = formattedData.reduce((sum, item) => sum + item.value, 0);
+
+      setCidadeData(formattedData);
+      setTotalCidade(total);
+    } catch (error) {
+      console.error("Erro ao buscar ordens de serviço por cidade:", error);
+    }
+  };
+
+  fetchOrdensServicoPorCidade();
+}, [
+  tipoPessoaFiltro,
+  selectedItems,
+  bairrosFiltroSelecionados,
+  usuariosFiltroSelecionados,
+  motivosFechamentoFiltroSelecionados,
+]);
+
+  const fetchOrdensServicoPorBairro = async () => {
+    try {
+      const params = new URLSearchParams();
+
+      if (bairrosFiltroSelecionados.length > 0) {
+        bairrosFiltroSelecionados.forEach((bairro) =>
+          params.append("bairro", bairro)
+        );
+      }
+
+      if (selectedItems.length > 0) {
+        params.append("tiposOS", selectedItems.join(","));
+      }
+
+      const response = await fetch(
+        `http://38.224.145.3:3012/ordens-servico-do-mes-por-bairro?${params}`
       );
       const data = await response.json();
 
@@ -1354,69 +1620,49 @@ function DashboardGerencialOperacao() {
           <div className="operacao-summary-cards">
             {/* Tipo de pessoa */}
             <div className="operacao-card-nobottom">
-              <h4>Tipo de pessoa</h4>
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart
-                  data={tipoPessoaData}
-                  barCategoryGap={20}
-                  margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
-                >
-                  <defs>
-                    <linearGradient
-                      id={gradientIdPF}
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="0%" stopColor="#f47621" />
-                      <stop offset="100%" stopColor="#e15000" />
-                    </linearGradient>
-                    <linearGradient
-                      id={gradientIdPJ}
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="0%" stopColor="#333333" />
-                      <stop offset="100%" stopColor="#000000" />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis
-                    dataKey="name"
-                    tick={{ fontSize: 12 }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    tick={{ fontSize: 12 }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <Tooltip
-                    formatter={(value) => [value, "Total"]}
-                    cursor={{ fill: "rgba(0,0,0,0.05)" }}
-                  />
-                  <Bar dataKey="value" radius={[5, 5, 0, 0]} maxBarSize={70}>
-                    {tipoPessoaData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={`url(#${
-                          index === 0 ? gradientIdPF : gradientIdPJ
-                        })`}
-                      />
-                    ))}
-                    <LabelList
-                      dataKey="value"
-                      position="top"
-                      style={{ fill: "#212121", fontWeight: 600 }}
-                    />
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+  <h4>Tipo de pessoa</h4>
+  <ResponsiveContainer width="100%" height={250}>
+    {!loadingTipoPessoa && tipoPessoaData.length > 0 ? (
+      <BarChart
+        data={tipoPessoaData}
+        barCategoryGap={20}
+        margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+        <XAxis
+          dataKey="name"
+          tick={{ fontSize: 12 }}
+          axisLine={false}
+          tickLine={false}
+        />
+        <YAxis
+          tick={{ fontSize: 12 }}
+          axisLine={false}
+          tickLine={false}
+        />
+        <Tooltip
+          formatter={(value) => [value, "Total"]}
+          cursor={{ fill: "rgba(0,0,0,0.05)" }}
+        />
+        <Bar dataKey="value" radius={[5, 5, 0, 0]} maxBarSize={70}>
+          {tipoPessoaData.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.fill} />
+          ))}
+          <LabelList
+            dataKey="value"
+            position="top"
+            style={{ fill: "#212121", fontWeight: 600 }}
+          />
+        </Bar>
+      </BarChart>
+    ) : (
+      <div style={{ textAlign: "center", paddingTop: "100px", color: "#999" }}>
+        {loadingTipoPessoa ? "Carregando..." : "Nenhum dado encontrado"}
+      </div>
+    )}
+  </ResponsiveContainer>
+</div>
+
 
             {/* Total de Ordens de Serviços */}
             <div className="operacao-card operacao-big-number-card">
@@ -1786,7 +2032,7 @@ function DashboardGerencialOperacao() {
                 <th>Tipo</th>
                 <th>Descrição abertura</th>
                 <th>Descrição fechamento</th>
-                {/* <th>Link</th> */}
+                <th>Link</th>
               </tr>
             </thead>
             <tbody>
@@ -1818,7 +2064,7 @@ function DashboardGerencialOperacao() {
                         : item.descricaoFechamento || ""}
                     </span>
                   </td>
-                  {/* <td>
+                  <td>
                     <a
                       href={item.link}
                       target="_blank"
@@ -1826,7 +2072,7 @@ function DashboardGerencialOperacao() {
                     >
                       🔗
                     </a>
-                  </td> */}
+                  </td>
                 </tr>
               ))}
             </tbody>
