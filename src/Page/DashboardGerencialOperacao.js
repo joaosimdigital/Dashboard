@@ -568,7 +568,7 @@ function DashboardGerencialOperacao() {
     }
 
     const response = await fetch(
-      `http://38.224.145.3:3012/ordens-servico?${params.toString()}`
+      `http://38.224.145.3:3003/ordens-servico?${params.toString()}`
     );
     const data = await response.json();
 
@@ -617,7 +617,7 @@ useEffect(() => {
     }
 
     const response = await fetch(
-      `http://38.224.145.3:3012/total-clientes-os-por-tipo?${params.toString()}`
+      `http://38.224.145.3:3003/total-clientes-os-por-tipo?${params.toString()}`
     );
     const data = await response.json();
 
@@ -660,7 +660,7 @@ useEffect(() => {
       }
 
       const response = await fetch(
-        `http://38.224.145.3:3012/ordens-servico-por-tipo?${params}`
+        `http://38.224.145.3:3003/ordens-servico-por-tipo?${params}`
       );
 
       const data = await response.json();
@@ -705,7 +705,7 @@ useEffect(() => {
       }
 
       const response = await fetch(
-        `http://38.224.145.3:3012/ordens-por-usuario?${params}`
+        `http://38.224.145.3:3003/ordens-por-usuario?${params}`
       );
 
       const data = await response.json();
@@ -768,7 +768,7 @@ useEffect(() => {
     }
 
     const response = await fetch(
-      `http://38.224.145.3:3012/motivos-fechamento-os?${params}`
+      `http://38.224.145.3:3003/motivos-fechamento-os?${params}`
     );
 
     const data = await response.json();
@@ -799,7 +799,7 @@ useEffect(() => {
     const fetchTotaisPorEstado = async () => {
       try {
         const response = await fetch(
-          "http://38.224.145.3:3012/ordens-servico-do-mes-por-estado"
+          "http://38.224.145.3:3003/ordens-servico-do-mes-por-estado"
         );
         const data = await response.json();
 
@@ -850,9 +850,9 @@ useEffect(() => {
       const queryString = params.toString();
 
       const [resHoje, resSC, resRS] = await Promise.all([
-        fetch(`http://38.224.145.3:3012/total-clientes-habilitados-mes?${queryString}`),
-        fetch(`http://38.224.145.3:3012/total-clientes-habilitados-sc?${queryString}`),
-        fetch(`http://38.224.145.3:3012/total-clientes-habilitados-rs?${queryString}`),
+        fetch(`http://38.224.145.3:3003/total-clientes-habilitados-mes?${queryString}`),
+        fetch(`http://38.224.145.3:3003/total-clientes-habilitados-sc?${queryString}`),
+        fetch(`http://38.224.145.3:3003/total-clientes-habilitados-rs?${queryString}`),
       ]);
 
       const dataHoje = await resHoje.json();
@@ -912,7 +912,7 @@ useEffect(() => {
       try {
         const params = buildQueryParams();
         const response = await fetch(
-          `http://38.224.145.3:3012/total-clientes-habilitados-executado-sc?${params}`
+          `http://38.224.145.3:3003/total-clientes-habilitados-executado-sc?${params}`
         );
         const data = await response.json();
         setTotalManutencoesSC(Number(data.total_manutencoes));
@@ -928,7 +928,7 @@ useEffect(() => {
       try {
         const params = buildQueryParams();
         const response = await fetch(
-          `http://38.224.145.3:3012/total-clientes-habilitados-executado-rs?${params}`
+          `http://38.224.145.3:3003/total-clientes-habilitados-executado-rs?${params}`
         );
         const data = await response.json();
         setTotalManutencoesRS(Number(data.total_manutencoes));
@@ -973,7 +973,7 @@ useEffect(() => {
     }
 
     const response = await fetch(
-      `http://38.224.145.3:3012/ordens-servico-ultimos-3-meses?${params}`
+      `http://38.224.145.3:3003/ordens-servico-ultimos-3-meses?${params}`
     );
     const data = await response.json();
 
@@ -1031,7 +1031,7 @@ useEffect(() => {
         params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
       }
 
-      const response = await fetch(`http://38.224.145.3:3012/ordens-detalhadas?${params}`);
+      const response = await fetch(`http://38.224.145.3:3003/ordens-detalhadas?${params}`);
       const data = await response.json();
 
       const formatted = data.map((item) => ({
@@ -1087,7 +1087,7 @@ useEffect(() => {
       }
 
       const response = await fetch(
-        `http://38.224.145.3:3012/ordens-servico-do-mes-por-cidade?${params.toString()}`
+        `http://38.224.145.3:3003/ordens-servico-do-mes-por-cidade?${params.toString()}`
       );
 
       const data = await response.json();
@@ -1145,7 +1145,7 @@ useEffect(() => {
       }
 
       const response = await fetch(
-        `http://38.224.145.3:3012/ordens-servico-do-mes-por-bairro?${params}`
+        `http://38.224.145.3:3003/ordens-servico-do-mes-por-bairro?${params}`
       );
       const data = await response.json();
 
