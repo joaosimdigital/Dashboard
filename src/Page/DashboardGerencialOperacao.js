@@ -23,17 +23,31 @@ function DashboardGerencialOperacao() {
   const [searchTerm, setSearchTerm] = useState("");
   const [motivosFechamento, setMotivosFechamento] = useState([]);
   const [tipoPessoaFiltro, setTipoPessoaFiltro] = useState("");
+  const [tempDataFim, setTempDataFim] = useState("");
+  const [tempBairrosFiltroSelecionados, setTempBairrosFiltroSelecionados] =
+    useState([]);
 
   const [mostrarCalendario, setMostrarCalendario] = useState(false);
   const [dataInicio, setDataInicio] = useState("");
+  const [
+    tempMotivosFechamentoFiltroSelecionados,
+    setTempMotivosFechamentoFiltroSelecionados,
+  ] = useState([]);
   const [dataFim, setDataFim] = useState("");
+  const [tempDataInicio, setTempDataInicio] = useState("");
 
   const [selectedItems, setSelectedItems] = useState([]);
   const [usuariosFechamento, setUsuariosFechamento] = useState([]);
+  const [tempUsuariosFiltroSelecionados, setTempUsuariosFiltroSelecionados] =
+    useState([]);
+
+  const [tempSelectedItems, setTempSelectedItems] = useState(selectedItems);
+  const [tempTipoPessoaFiltro, setTempTipoPessoaFiltro] =
+    useState(tipoPessoaFiltro);
+
   const [bairroFiltro, setBairroFiltro] = useState("");
   const [mediaProducao, setMediaProducao] = useState([]);
 
-  const [bairroFiltroTemp, setBairroFiltroTemp] = useState("");
   const [ultimasOS, setUltimasOS] = useState([]);
 
   const [totalOrdensServico, setTotalOrdensServico] = useState(null);
@@ -736,87 +750,84 @@ function DashboardGerencialOperacao() {
     dataFim,
   ]);
 
-  
   const fetchOrdensPorUsuario = async () => {
-  try {
-    const params = new URLSearchParams();
+    try {
+      const params = new URLSearchParams();
 
-    // ✅ Filtro por usuários
-    if (usuariosFiltroSelecionados.length > 0) {
-      params.append("usuarios", usuariosFiltroSelecionados.join(","));
+      // ✅ Filtro por usuários
+      if (usuariosFiltroSelecionados.length > 0) {
+        params.append("usuarios", usuariosFiltroSelecionados.join(","));
+      }
+
+      // ✅ Filtro por tipo de pessoa
+      if (tipoPessoaFiltro) {
+        params.append("tipoPessoa", tipoPessoaFiltro);
+      }
+
+      // ✅ Filtro por tipos de OS
+      if (selectedItems.length > 0) {
+        const tiposOSString = selectedItems.map(String).join(",");
+        params.append("tiposOS", tiposOSString);
+      }
+
+      // ✅ Filtro por bairros
+      if (bairrosFiltroSelecionados.length > 0) {
+        bairrosFiltroSelecionados.forEach((bairro) => {
+          params.append("bairro", bairro);
+        });
+      }
+
+      // ✅ Filtro por motivos de fechamento
+      if (motivosFechamentoFiltroSelecionados.length > 0) {
+        const motivos = motivosFechamentoFiltroSelecionados.join(",");
+        params.append("motivos", motivos);
+      }
+
+      // ✅ Filtro por data
+      if (dataInicio) {
+        params.append("dataInicio", dataInicio);
+      }
+
+      if (dataFim) {
+        params.append("dataFim", dataFim);
+      }
+
+      const response = await fetch(
+        `http://38.224.145.3:3003/ordens-por-usuario?${params.toString()}`
+      );
+
+      const data = await response.json();
+
+      // ✅ Formata dados para gráfico de usuários
+      const formattedDataUsuarios = data.map((item) => ({
+        nome: item.usuario,
+        qtd: parseInt(item.total_ordens, 10),
+      }));
+      setUsuariosFechamento(formattedDataUsuarios);
+
+      // ✅ Formata dados para gráfico de média de produção
+      const formattedDataMediaProducao = data.map((item) => ({
+        nome: item.usuario,
+        diasUteis: item.dias_uteis,
+        total: parseFloat(item.media_producao),
+      }));
+      setMediaProducao(formattedDataMediaProducao);
+    } catch (error) {
+      console.error("❌ Erro ao buscar ordens por usuário:", error);
     }
+  };
 
-    // ✅ Filtro por tipo de pessoa
-    if (tipoPessoaFiltro) {
-      params.append("tipoPessoa", tipoPessoaFiltro);
-    }
-
-    // ✅ Filtro por tipos de OS
-    if (selectedItems.length > 0) {
-      const tiposOSString = selectedItems.map(String).join(",");
-      params.append("tiposOS", tiposOSString);
-    }
-
-    // ✅ Filtro por bairros
-    if (bairrosFiltroSelecionados.length > 0) {
-      bairrosFiltroSelecionados.forEach((bairro) => {
-        params.append("bairro", bairro);
-      });
-    }
-
-    // ✅ Filtro por motivos de fechamento
-    if (motivosFechamentoFiltroSelecionados.length > 0) {
-      const motivos = motivosFechamentoFiltroSelecionados.join(",");
-      params.append("motivos", motivos);
-    }
-
-    // ✅ Filtro por data
-    if (dataInicio) {
-      params.append("dataInicio", dataInicio);
-    }
-
-    if (dataFim) {
-      params.append("dataFim", dataFim);
-    }
-
-    const response = await fetch(
-      `http://38.224.145.3:3003/ordens-por-usuario?${params.toString()}`
-    );
-
-    const data = await response.json();
-
-    // ✅ Formata dados para gráfico de usuários
-    const formattedDataUsuarios = data.map((item) => ({
-      nome: item.usuario,
-      qtd: parseInt(item.total_ordens, 10),
-    }));
-    setUsuariosFechamento(formattedDataUsuarios);
-
-    // ✅ Formata dados para gráfico de média de produção
-    const formattedDataMediaProducao = data.map((item) => ({
-      nome: item.usuario,
-      diasUteis: item.dias_uteis,
-      total: parseFloat(item.media_producao),
-    }));
-    setMediaProducao(formattedDataMediaProducao);
-  } catch (error) {
-    console.error("❌ Erro ao buscar ordens por usuário:", error);
-  }
-};
-
-useEffect(() => {
-  fetchOrdensPorUsuario();
-}, [
-  usuariosFiltroSelecionados,
-  tipoPessoaFiltro,
-  selectedItems,
-  bairrosFiltroSelecionados,
-  motivosFechamentoFiltroSelecionados,
-  dataInicio,
-  dataFim,
-]);
-
-
+  useEffect(() => {
+    fetchOrdensPorUsuario();
+  }, [
+    usuariosFiltroSelecionados,
+    tipoPessoaFiltro,
+    selectedItems,
+    bairrosFiltroSelecionados,
+    motivosFechamentoFiltroSelecionados,
+    dataInicio,
+    dataFim,
+  ]);
 
   const fetchMotivosFechamento = async () => {
     try {
@@ -858,12 +869,17 @@ useEffect(() => {
 
       const data = await response.json();
 
-      const formattedData = data.map((item) => ({
-        motivo: item.motivo_fechamento,
-        qtd: parseInt(item.quantidade, 10),
-      }));
+      if (Array.isArray(data)) {
+        const formattedData = data.map((item) => ({
+          motivo: item.motivo_fechamento,
+          qtd: parseInt(item.quantidade, 10),
+        }));
 
-      setMotivosFechamento(formattedData);
+        setMotivosFechamento(formattedData);
+      } else {
+        console.error("Resposta inesperada, não é um array:", data);
+        setMotivosFechamento([]);
+      }
     } catch (error) {
       console.error("Erro ao buscar motivos de fechamento:", error);
     }
@@ -1071,67 +1087,76 @@ useEffect(() => {
   ]);
 
   const fetchOrdensServicoUltimos3Meses = async () => {
-  try {
-    const params = new URLSearchParams();
+    try {
+      const params = new URLSearchParams();
 
-    if (tipoPessoaFiltro) {
-      params.append("tipoPessoa", tipoPessoaFiltro);
+      if (tipoPessoaFiltro) {
+        params.append("tipoPessoa", tipoPessoaFiltro);
+      }
+
+      if (selectedItems.length > 0) {
+        params.append("tiposOS", selectedItems.join(","));
+      }
+
+      if (bairrosFiltroSelecionados.length > 0) {
+        bairrosFiltroSelecionados.forEach((bairro) => {
+          params.append("bairro", bairro);
+        });
+      }
+
+      if (usuariosFiltroSelecionados.length > 0) {
+        params.append("usuarios", usuariosFiltroSelecionados.join(","));
+      }
+
+      if (motivosFechamentoFiltroSelecionados.length > 0) {
+        params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
+      }
+
+      if (dataInicio) {
+        params.append("dataInicio", dataInicio);
+      }
+
+      if (dataFim) {
+        params.append("dataFim", dataFim);
+      }
+
+      const response = await fetch(
+        `http://38.224.145.3:3003/ordens-servico-ultimos-3-meses?${params}`
+      );
+      const data = await response.json();
+
+      const mesesNomes = [
+        "Jan",
+        "Fev",
+        "Mar",
+        "Abr",
+        "Mai",
+        "Jun",
+        "Jul",
+        "Ago",
+        "Set",
+        "Out",
+        "Nov",
+        "Dez",
+      ];
+
+      const formattedData = data.map((item) => ({
+        name: `${mesesNomes[item.mes - 1]} ${item.ano}`,
+        value: parseInt(item.total_os),
+      }));
+
+      // ✅ Define os dados e o título com base no número de meses retornados
+      setTrimestreData(formattedData);
+
+      if (formattedData.length <= 3) {
+        setTituloGrafico("Último trimestre");
+      } else {
+        setTituloGrafico(`Últimos ${formattedData.length} meses`);
+      }
+    } catch (error) {
+      console.error("❌ Erro ao buscar OS dos últimos 3 meses:", error);
     }
-
-    if (selectedItems.length > 0) {
-      params.append("tiposOS", selectedItems.join(","));
-    }
-
-    if (bairrosFiltroSelecionados.length > 0) {
-      bairrosFiltroSelecionados.forEach((bairro) => {
-        params.append("bairro", bairro);
-      });
-    }
-
-    if (usuariosFiltroSelecionados.length > 0) {
-      params.append("usuarios", usuariosFiltroSelecionados.join(","));
-    }
-
-    if (motivosFechamentoFiltroSelecionados.length > 0) {
-      params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
-    }
-
-    if (dataInicio) {
-      params.append("dataInicio", dataInicio);
-    }
-
-    if (dataFim) {
-      params.append("dataFim", dataFim);
-    }
-
-    const response = await fetch(
-      `http://38.224.145.3:3003/ordens-servico-ultimos-3-meses?${params}`
-    );
-    const data = await response.json();
-
-    const mesesNomes = [
-      "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
-      "Jul", "Ago", "Set", "Out", "Nov", "Dez",
-    ];
-
-    const formattedData = data.map((item) => ({
-      name: `${mesesNomes[item.mes - 1]} ${item.ano}`,
-      value: parseInt(item.total_os),
-    }));
-
-    // ✅ Define os dados e o título com base no número de meses retornados
-    setTrimestreData(formattedData);
-
-    if (formattedData.length <= 3) {
-      setTituloGrafico("Último trimestre");
-    } else {
-      setTituloGrafico(`Últimos ${formattedData.length} meses`);
-    }
-  } catch (error) {
-    console.error("❌ Erro ao buscar OS dos últimos 3 meses:", error);
-  }
-};
-
+  };
 
   useEffect(() => {
     fetchOrdensServicoUltimos3Meses();
@@ -1224,9 +1249,7 @@ useEffect(() => {
         }
 
         if (bairrosFiltroSelecionados.length > 0) {
-          bairrosFiltroSelecionados.forEach((bairro) => {
-            params.append("bairro", bairro);
-          });
+          params.append("bairro", bairrosFiltroSelecionados.join(","));
         }
 
         if (usuariosFiltroSelecionados.length > 0) {
@@ -1248,6 +1271,10 @@ useEffect(() => {
         const response = await fetch(
           `http://38.224.145.3:3003/ordens-servico-do-mes-por-cidade?${params.toString()}`
         );
+
+        if (!response.ok) {
+          throw new Error(`Erro na requisição: ${response.status}`);
+        }
 
         const data = await response.json();
 
@@ -1294,14 +1321,43 @@ useEffect(() => {
     try {
       const params = new URLSearchParams();
 
+      // Bairro
       if (bairrosFiltroSelecionados.length > 0) {
         bairrosFiltroSelecionados.forEach((bairro) =>
           params.append("bairro", bairro)
         );
       }
 
+      // Tipos de OS
       if (selectedItems.length > 0) {
         params.append("tiposOS", selectedItems.join(","));
+      }
+
+      // Tipo de pessoa (ex: "Física", "Jurídica")
+      if (tipoPessoaFiltro) {
+        params.append("tipoPessoa", tipoPessoaFiltro);
+      }
+
+      // Usuários
+      if (usuariosFiltroSelecionados.length > 0) {
+        usuariosFiltroSelecionados.forEach((usuario) =>
+          params.append("usuarios", usuario)
+        );
+      }
+
+      // Motivos
+      if (motivosFechamentoFiltroSelecionados.length > 0) {
+        motivosFechamentoFiltroSelecionados.forEach((motivo) =>
+          params.append("motivos", motivo)
+        );
+      }
+
+      // Período
+      if (dataInicio) {
+        params.append("dataInicio", dataInicio);
+      }
+      if (dataFim) {
+        params.append("dataFim", dataFim);
       }
 
       const response = await fetch(
@@ -1325,7 +1381,15 @@ useEffect(() => {
 
   useEffect(() => {
     fetchOrdensServicoPorBairro();
-  }, [bairrosFiltroSelecionados]);
+  }, [
+    tipoPessoaFiltro,
+    selectedItems,
+    bairrosFiltroSelecionados,
+    usuariosFiltroSelecionados,
+    motivosFechamentoFiltroSelecionados,
+    dataInicio, // ✅ novo listener
+    dataFim, // ✅ novo listener
+  ]);
 
   useEffect(() => {
     if (
@@ -1419,7 +1483,6 @@ useEffect(() => {
               Limpar filtros
             </button>
 
-            {/* Botão de Selecionar período */}
             <div
               style={{
                 display: "flex",
@@ -1450,23 +1513,25 @@ useEffect(() => {
                     Início:{" "}
                     <input
                       type="date"
-                      value={dataInicio}
-                      onChange={(e) => setDataInicio(e.target.value)}
+                      value={tempDataInicio}
+                      onChange={(e) => setTempDataInicio(e.target.value)}
                     />
                   </label>
                   <label style={{ display: "block", marginBottom: "0.5rem" }}>
                     Fim:{" "}
                     <input
                       type="date"
-                      value={dataFim}
-                      onChange={(e) => setDataFim(e.target.value)}
+                      value={tempDataFim}
+                      onChange={(e) => setTempDataFim(e.target.value)}
                     />
                   </label>
                   <button
                     className="operacao-apply-filter-button"
                     onClick={() => {
+                      setDataInicio(tempDataInicio);
+                      setDataFim(tempDataFim);
                       setMostrarCalendario(false);
-                      fetchOrdensServicoUltimos3Meses(); // ou a função que refaz a busca usando dataInicio/dataFim
+                      fetchOrdensServicoUltimos3Meses(); // ou outra função
                     }}
                   >
                     Aplicar período
@@ -1648,8 +1713,14 @@ useEffect(() => {
                         <label key={idx} className="operacao-subfilter-item">
                           <input
                             type="checkbox"
-                            checked={selectedItems.includes(item)}
-                            onChange={() => toggleItem(item)}
+                            checked={tempSelectedItems.includes(item)}
+                            onChange={() => {
+                              setTempSelectedItems((prev) =>
+                                prev.includes(item)
+                                  ? prev.filter((i) => i !== item)
+                                  : [...prev, item]
+                              );
+                            }}
                           />
                           {item}
                         </label>
@@ -1658,6 +1729,7 @@ useEffect(() => {
                     <button
                       className="operacao-apply-filter-button"
                       onClick={() => {
+                        setSelectedItems(tempSelectedItems); // <-- Aqui atualiza o estado que dispara o fetch
                         fetchTiposOS();
                         setActiveFilters((prev) => ({ ...prev, tipoOS: true }));
                         setActiveSubFilter(null);
@@ -1677,8 +1749,14 @@ useEffect(() => {
                         <label key={idx} className="operacao-subfilter-item">
                           <input
                             type="checkbox"
-                            checked={tipoPessoaFiltro === tipo}
-                            onChange={() => setTipoPessoaFiltro(tipo)}
+                            checked={tempTipoPessoaFiltro.includes(tipo)}
+                            onChange={() => {
+                              setTempTipoPessoaFiltro((prev) =>
+                                prev.includes(tipo)
+                                  ? prev.filter((i) => i !== tipo)
+                                  : [...prev, tipo]
+                              );
+                            }}
                           />
                           {tipo === "pf" ? "Pessoa Física" : "Pessoa Jurídica"}
                         </label>
@@ -1687,6 +1765,7 @@ useEffect(() => {
                     <button
                       className="operacao-apply-filter-button"
                       onClick={() => {
+                        setTipoPessoaFiltro(tempTipoPessoaFiltro);
                         fetchOrdensServicoUltimos3Meses();
                         fetchTotais();
                         fetchTotalClientesPorTipo();
@@ -1702,6 +1781,7 @@ useEffect(() => {
                     </button>
                   </div>
                 )}
+
                 {activeSubFilter === "osLocalizacao" && (
                   <div className="operacao-subfilter">
                     <h4>OS por Localização (Bairro)</h4>
@@ -1723,11 +1803,11 @@ useEffect(() => {
                           <label key={idx} className="operacao-subfilter-item">
                             <input
                               type="checkbox"
-                              checked={bairrosFiltroSelecionados.includes(
+                              checked={tempBairrosFiltroSelecionados.includes(
                                 bairro
                               )}
                               onChange={() => {
-                                setBairrosFiltroSelecionados((prev) =>
+                                setTempBairrosFiltroSelecionados((prev) =>
                                   prev.includes(bairro)
                                     ? prev.filter((b) => b !== bairro)
                                     : [...prev, bairro]
@@ -1741,6 +1821,9 @@ useEffect(() => {
                     <button
                       className="operacao-apply-filter-button"
                       onClick={() => {
+                        setBairrosFiltroSelecionados(
+                          tempBairrosFiltroSelecionados
+                        );
                         fetchOrdensServicoPorBairro();
                         setActiveFilters((prev) => ({ ...prev, bairro: true }));
                         setActiveSubFilter(null);
@@ -1771,11 +1854,11 @@ useEffect(() => {
                           <label key={idx} className="operacao-subfilter-item">
                             <input
                               type="checkbox"
-                              checked={usuariosFiltroSelecionados.includes(
+                              checked={tempUsuariosFiltroSelecionados.includes(
                                 user
                               )}
                               onChange={() => {
-                                setUsuariosFiltroSelecionados((prev) =>
+                                setTempUsuariosFiltroSelecionados((prev) =>
                                   prev.includes(user)
                                     ? prev.filter((u) => u !== user)
                                     : [...prev, user]
@@ -1789,6 +1872,9 @@ useEffect(() => {
                     <button
                       className="operacao-apply-filter-button"
                       onClick={() => {
+                        setUsuariosFiltroSelecionados(
+                          tempUsuariosFiltroSelecionados
+                        );
                         fetchOrdensPorUsuario();
                         setActiveFilters((prev) => ({
                           ...prev,
@@ -1802,6 +1888,7 @@ useEffect(() => {
                     </button>
                   </div>
                 )}
+
                 {activeSubFilter === "motivoFechamento" && (
                   <div className="operacao-subfilter">
                     <h4>Motivo de Fechamento</h4>
@@ -1814,33 +1901,40 @@ useEffect(() => {
                     />
                     <div className="operacao-subfilter-list">
                       {motivosFechamentoOptions
-                        .filter((motivo) =>
-                          motivo
-                            .toLowerCase()
-                            .includes(searchTerm.toLowerCase())
+                        .filter((item) =>
+                          item.toLowerCase().includes(searchTerm.toLowerCase())
                         )
-                        .map((motivo, idx) => (
-                          <label key={idx} className="operacao-subfilter-item">
-                            <input
-                              type="checkbox"
-                              checked={motivosFechamentoFiltroSelecionados.includes(
-                                motivo
-                              )}
-                              onChange={() => {
-                                setMotivosFechamentoFiltroSelecionados((prev) =>
-                                  prev.includes(motivo)
-                                    ? prev.filter((m) => m !== motivo)
-                                    : [...prev, motivo]
-                                );
-                              }}
-                            />
-                            {motivo}
-                          </label>
-                        ))}
+                        .map((motivo, idx) => {
+                          return (
+                            <label
+                              key={idx}
+                              className="operacao-subfilter-item"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={tempMotivosFechamentoFiltroSelecionados.includes(
+                                  motivo
+                                )}
+                                onChange={() => {
+                                  setTempMotivosFechamentoFiltroSelecionados(
+                                    (prev) =>
+                                      prev.includes(motivo)
+                                        ? prev.filter((m) => m !== motivo)
+                                        : [...prev, motivo]
+                                  );
+                                }}
+                              />
+                              {motivo}
+                            </label>
+                          );
+                        })}
                     </div>
                     <button
                       className="operacao-apply-filter-button"
                       onClick={() => {
+                        setMotivosFechamentoFiltroSelecionados(
+                          tempMotivosFechamentoFiltroSelecionados
+                        );
                         setActiveFilters((prev) => ({
                           ...prev,
                           motivoFechamento: true,
@@ -1914,7 +2008,9 @@ useEffect(() => {
                       color: "#999",
                     }}
                   >
-                    {loadingTipoPessoa ? "Carregando..." : "Carregando..."}
+                    {loadingTipoPessoa
+                      ? "Carregando..."
+                      : "Sem dados para o período selecionado"}
                   </div>
                 )}
               </ResponsiveContainer>
@@ -1934,53 +2030,78 @@ useEffect(() => {
             <div className="operacao-card-nobottom">
               <h4>{tituloGrafico}</h4>
               <ResponsiveContainer width="100%" height={250}>
-                <BarChart
-                  data={trimestreData}
-                  barCategoryGap={2}
-                  margin={{ top: 10, right: 20, left: 10, bottom: 20 }}
-                >
-                  <defs>
-                    <linearGradient id="gradOrange" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#f47621" />
-                      <stop offset="100%" stopColor="#e15000" />
-                    </linearGradient>
-                    <linearGradient id="gradBlack" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#333333" />
-                      <stop offset="100%" stopColor="#000000" />
-                    </linearGradient>
-                    <linearGradient id="gradRed" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#f87171" />
-                      <stop offset="100%" stopColor="#dc2626" />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis
-                    dataKey="name"
-                    tick={{ fontSize: 12 }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => value.toLocaleString()}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <Tooltip
-                    formatter={(value) => [value, "Total"]}
-                    cursor={{ fill: "rgba(0,0,0,0.05)" }}
-                  />
-                  <Bar dataKey="value" radius={[8, 8, 0, 0]} maxBarSize={70}>
-                    {trimestreData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={gradients[index]} />
-                    ))}
-                    <LabelList
-                      dataKey="value"
-                      position="top"
-                      style={{ fill: "#212121", fontWeight: 600 }}
+                {trimestreData.length > 0 ? (
+                  <BarChart
+                    data={trimestreData}
+                    barCategoryGap={2}
+                    margin={{ top: 10, right: 20, left: 10, bottom: 20 }}
+                  >
+                    {/* Defs e elementos do gráfico */}
+                    <defs>
+                      <linearGradient
+                        id="gradOrange"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop offset="0%" stopColor="#f47621" />
+                        <stop offset="100%" stopColor="#e15000" />
+                      </linearGradient>
+                      <linearGradient
+                        id="gradBlack"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop offset="0%" stopColor="#333333" />
+                        <stop offset="100%" stopColor="#000000" />
+                      </linearGradient>
+                      <linearGradient id="gradRed" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#f87171" />
+                        <stop offset="100%" stopColor="#dc2626" />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 12 }}
+                      axisLine={false}
+                      tickLine={false}
                     />
-                  </Bar>
-                </BarChart>
+                    <YAxis
+                      tick={{ fontSize: 12 }}
+                      tickFormatter={(value) => value.toLocaleString()}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <Tooltip
+                      formatter={(value) => [value, "Total"]}
+                      cursor={{ fill: "rgba(0,0,0,0.05)" }}
+                    />
+                    <Bar dataKey="value" radius={[8, 8, 0, 0]} maxBarSize={70}>
+                      {trimestreData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={gradients[index]} />
+                      ))}
+                      <LabelList
+                        dataKey="value"
+                        position="top"
+                        style={{ fill: "#212121", fontWeight: 600 }}
+                      />
+                    </Bar>
+                  </BarChart>
+                ) : (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      paddingTop: "100px",
+                      color: "#999",
+                    }}
+                  >
+                    Sem dados para o período selecionado
+                  </div>
+                )}
               </ResponsiveContainer>
             </div>
           </div>
@@ -2088,53 +2209,79 @@ useEffect(() => {
       </section>
 
       <section className="operacao-section operacao-table-section">
+        {/* Tipos de OS */}
         <div className="operacao-table-card">
           <div className="operacao-table-wrapper">
-            <table className="operacao-table">
-              <thead>
-                <tr className="tr-space-between">
-                  <th>Tipos de OS</th>
-                  <th>Qtd.</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tiposOS.map((tipo, index) => (
-                  <tr key={index}>
-                    <td>
-                      {index + 1}. {tipo.nome}
-                    </td>
-                    <td>
-                      <strong>{tipo.qtd.toLocaleString("pt-BR")}</strong>
-                    </td>
+            {tiposOS.length > 0 ? (
+              <table className="operacao-table">
+                <thead>
+                  <tr className="tr-space-between">
+                    <th>Tipos de OS</th>
+                    <th>Qtd.</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {tiposOS.map((tipo, index) => (
+                    <tr key={index}>
+                      <td>
+                        {index + 1}. {tipo.nome}
+                      </td>
+                      <td>
+                        <strong>{tipo.qtd.toLocaleString("pt-BR")}</strong>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "40px",
+                  color: "#999",
+                }}
+              >
+                Sem dados para o período selecionado
+              </div>
+            )}
           </div>
         </div>
 
+        {/* Usuários de Fechamento */}
         <div className="operacao-table-card">
           <div className="operacao-table-wrapper">
-            <table className="operacao-table">
-              <thead>
-                <tr className="tr-space-between">
-                  <th>Usuário de fechamento</th>
-                  <th>Qtd.</th>
-                </tr>
-              </thead>
-              <tbody>
-                {usuariosFechamento.map((usuario, index) => (
-                  <tr key={index}>
-                    <td>
-                      {index + 1}. {usuario.nome}
-                    </td>
-                    <td>
-                      <strong>{usuario.qtd.toLocaleString("pt-BR")}</strong>
-                    </td>
+            {usuariosFechamento.length > 0 ? (
+              <table className="operacao-table">
+                <thead>
+                  <tr className="tr-space-between">
+                    <th>Usuário de fechamento</th>
+                    <th>Qtd.</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {usuariosFechamento.map((usuario, index) => (
+                    <tr key={index}>
+                      <td>
+                        {index + 1}. {usuario.nome}
+                      </td>
+                      <td>
+                        <strong>{usuario.qtd.toLocaleString("pt-BR")}</strong>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "40px",
+                  color: "#999",
+                }}
+              >
+                Sem dados para o período selecionado
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -2144,41 +2291,57 @@ useEffect(() => {
         <div className="operacao-card-nobottom operacao-chart-donut">
           <h4>OS por cidade</h4>
           <div className="donut-chart-container">
-            <ResponsiveContainer width={250} height={180}>
-              <PieChart>
-                <Pie
-                  data={cidadeData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={38}
-                  outerRadius={75}
-                  paddingAngle={4}
-                >
-                  {cidadeData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-            <ul className="donut-legend">
-              {cidadeData.map((entry, index) => {
-                const percent =
-                  totalCidade > 0
-                    ? ((entry.value / totalCidade) * 100).toFixed(1)
-                    : 0;
-                return (
-                  <li key={index}>
-                    <span
-                      className="legend-dot"
-                      style={{ backgroundColor: entry.color }}
-                    ></span>
-                    {entry.name} <strong>{entry.value}</strong> {percent}%
-                  </li>
-                );
-              })}
-            </ul>
+            {cidadeData.length > 0 ? (
+              <>
+                <ResponsiveContainer width={250} height={180}>
+                  <PieChart>
+                    <Pie
+                      data={cidadeData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={38}
+                      outerRadius={75}
+                      paddingAngle={4}
+                    >
+                      {cidadeData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+                <ul className="donut-legend">
+                  {cidadeData.map((entry, index) => {
+                    const percent =
+                      totalCidade > 0
+                        ? ((entry.value / totalCidade) * 100).toFixed(1)
+                        : 0;
+                    return (
+                      <li key={index}>
+                        <span
+                          className="legend-dot"
+                          style={{ backgroundColor: entry.color }}
+                        ></span>
+                        {entry.name} <strong>{entry.value}</strong> {percent}%
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
+            ) : (
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "60px 0",
+                  color: "#999",
+                }}
+              >
+                {cidadeData === null
+                  ? "Carregando..."
+                  : "Sem dados para o período selecionado"}
+              </div>
+            )}
           </div>
         </div>
 
@@ -2186,74 +2349,104 @@ useEffect(() => {
         <div className="operacao-card-nobottom operacao-table-card">
           <div
             className="operacao-table-wrapper"
-            style={{ maxHeight: "260px", overflowY: "auto" }} // Scroll vertical
+            style={{ maxHeight: "260px", overflowY: "auto" }}
           >
-            <table className="operacao-table">
-              <thead>
-                <tr className="tr-space-between">
-                  <th>OS por bairro</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {osPorBairro.slice(0, 5).map((bairro, index) => (
-                  <tr key={index}>
-                    <td>
-                      {index + 1}. {bairro.nome}
-                    </td>
-                    <td>
-                      <strong>{bairro.qtd.toLocaleString()}</strong>
-                    </td>
+            {osPorBairro.length > 0 ? (
+              <table className="operacao-table">
+                <thead>
+                  <tr className="tr-space-between">
+                    <th>OS por bairro</th>
+                    <th>Total</th>
                   </tr>
-                ))}
-                {osPorBairro.length > 5 &&
-                  osPorBairro.slice(5).map((bairro, index) => (
-                    <tr key={index + 5}>
+                </thead>
+                <tbody>
+                  {osPorBairro.slice(0, 5).map((bairro, index) => (
+                    <tr key={index}>
                       <td>
-                        {index + 6}. {bairro.nome}
+                        {index + 1}. {bairro.nome}
                       </td>
                       <td>
                         <strong>{bairro.qtd.toLocaleString()}</strong>
                       </td>
                     </tr>
                   ))}
-              </tbody>
-            </table>
+                  {osPorBairro.length > 5 &&
+                    osPorBairro.slice(5).map((bairro, index) => (
+                      <tr key={index + 5}>
+                        <td>
+                          {index + 6}. {bairro.nome}
+                        </td>
+                        <td>
+                          <strong>{bairro.qtd.toLocaleString()}</strong>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            ) : (
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "60px 0",
+                  color: "#999",
+                }}
+              >
+                {osPorBairro === null
+                  ? "Carregando..."
+                  : "Sem dados para o período selecionado"}
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       <section className="operacao-section operacao-extra-section">
+        {/* Qtd. média de produção */}
         <div className="operacao-card-nobottom operacao-table-card operacao-table-wrapper">
           <div
             className="operacao-table-wrapper"
-            style={{ maxHeight: "260px", overflowY: "auto" }} // Scroll vertical
+            style={{ maxHeight: "260px", overflowY: "auto" }}
           >
-            <table className="operacao-table">
-              <thead>
-                <tr className="tr-space-between">
-                  <th>Qtd. média de produção</th>
-                  <th>Dias úteis</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {mediaProducao.slice(5).map((item, index) => (
-                  <tr key={index + 5}>
-                    <td>
-                      {index + 1}. {item.nome}
-                    </td>
-                    <td>{item.diasUteis}</td>
-                    <td>
-                      <strong>{item.total}</strong>
-                    </td>
+            {mediaProducao && mediaProducao.length > 0 ? (
+              <table className="operacao-table">
+                <thead>
+                  <tr className="tr-space-between">
+                    <th>Qtd. média de produção</th>
+                    <th>Dias úteis</th>
+                    <th>Total</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {mediaProducao.slice(5).map((item, index) => (
+                    <tr key={index + 5}>
+                      <td>
+                        {index + 1}. {item.nome}
+                      </td>
+                      <td>{item.diasUteis}</td>
+                      <td>
+                        <strong>{item.total}</strong>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "60px 0",
+                  color: "#999",
+                }}
+              >
+                {mediaProducao === null
+                  ? "Carregando..."
+                  : "Sem dados para o período selecionado"}
+              </div>
+            )}
           </div>
         </div>
 
+        {/* Motivos de fechamento */}
         <div className="operacao-card-nobottom operacao-table-card operacao-table-wrapper">
           <table className="operacao-table">
             <thead>
@@ -2263,8 +2456,8 @@ useEffect(() => {
               </tr>
             </thead>
             <tbody>
-              {motivosFechamento.slice(5).map((item, index) => (
-                <tr key={index + 5}>
+              {motivosFechamento.map((item, index) => (
+                <tr key={index}>
                   <td>
                     {index + 1}. {item.motivo}
                   </td>
@@ -2281,58 +2474,72 @@ useEffect(() => {
       <section className="operacao-section operacao-final-section">
         <div className="operacao-card-nobottom operacao-table-card operacao-table-wrapper">
           <h4>Últimas Ordens de Serviço</h4>
-          <table className="operacao-table large">
-            <thead>
-              <tr>
-                <th>Nome/Razão Social</th>
-                <th>Tipo</th>
-                <th>Descrição abertura</th>
-                <th>Descrição fechamento</th>
-                <th>Link</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ultimasOS.map((item, index) => (
-                <tr key={index}>
-                  <td>
-                    {index + 1}. {item.nome}
-                  </td>
-                  <td>{item.tipo}</td>
-                  <td>
-                    <span
-                      className="descricao-limitada"
-                      onClick={() => openModal(item.descricaoAbertura || "")}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {(item.descricaoAbertura || "").length > 50
-                        ? (item.descricaoAbertura || "").slice(0, 50) + "..."
-                        : item.descricaoAbertura || ""}
-                    </span>
-                  </td>
-                  <td>
-                    <span
-                      className="descricao-limitada"
-                      onClick={() => openModal(item.descricaoFechamento || "")}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {(item.descricaoFechamento || "").length > 50
-                        ? (item.descricaoFechamento || "").slice(0, 50) + "..."
-                        : item.descricaoFechamento || ""}
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      🔗
-                    </a>
-                  </td>
+
+          {ultimasOS && ultimasOS.length > 0 ? (
+            <table className="operacao-table large">
+              <thead>
+                <tr>
+                  <th>Nome/Razão Social</th>
+                  <th>Tipo</th>
+                  <th>Descrição abertura</th>
+                  <th>Descrição fechamento</th>
+                  <th>Link</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {ultimasOS.map((item, index) => (
+                  <tr key={index}>
+                    <td>
+                      {index + 1}. {item.nome}
+                    </td>
+                    <td>{item.tipo}</td>
+                    <td>
+                      <span
+                        className="descricao-limitada"
+                        onClick={() => openModal(item.descricaoAbertura || "")}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {(item.descricaoAbertura || "").length > 50
+                          ? (item.descricaoAbertura || "").slice(0, 50) + "..."
+                          : item.descricaoAbertura || ""}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className="descricao-limitada"
+                        onClick={() =>
+                          openModal(item.descricaoFechamento || "")
+                        }
+                        style={{ cursor: "pointer" }}
+                      >
+                        {(item.descricaoFechamento || "").length > 50
+                          ? (item.descricaoFechamento || "").slice(0, 50) +
+                            "..."
+                          : item.descricaoFechamento || ""}
+                      </span>
+                    </td>
+                    <td>
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        🔗
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div
+              style={{ textAlign: "center", padding: "60px 0", color: "#999" }}
+            >
+              {ultimasOS === null
+                ? "Carregando..."
+                : "Sem dados para o período selecionado"}
+            </div>
+          )}
         </div>
 
         {/* ✅ MODAL */}
