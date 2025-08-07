@@ -1000,10 +1000,10 @@ function DashboardGerencialOperacao() {
             `http://38.224.145.3:3003/total-clientes-habilitados-mes?${queryString}`
           ),
           fetch(
-            `http://38.224.145.3:3003/total-clientes-habilitados-sc?${queryString}`
+            `http://38.224.145.3:3003/total-clientes-habilitados-sc-novo?${queryString}`
           ),
           fetch(
-            `http://38.224.145.3:3003/total-clientes-habilitados-rs?${queryString}`
+            `http://38.224.145.3:3003/total-clientes-habilitados-rs-novo?${queryString}`
           ),
         ]);
 
@@ -1077,7 +1077,7 @@ function DashboardGerencialOperacao() {
       try {
         const params = buildQueryParams();
         const response = await fetch(
-          `http://38.224.145.3:3003/total-clientes-habilitados-executado-sc?${params}`
+          `http://38.224.145.3:3003/total-clientes-habilitados-executado-sc-novo?${params}`
         );
         const data = await response.json();
         setTotalManutencoesSC(Number(data.total_manutencoes));
@@ -1096,7 +1096,7 @@ function DashboardGerencialOperacao() {
       try {
         const params = buildQueryParams();
         const response = await fetch(
-          `http://38.224.145.3:3003/total-clientes-habilitados-executado-rs?${params}`
+          `http://38.224.145.3:3003/total-clientes-habilitados-executado-rs-novo?${params}`
         );
         const data = await response.json();
         setTotalManutencoesRS(Number(data.total_manutencoes));
