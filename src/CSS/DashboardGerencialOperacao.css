@@ -17,6 +17,22 @@ body {
   background-color: #FCFCFC;
 }
 
+.loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 10px;
+  background-color: #ff4d00;
+  z-index: 9999;
+  transition: width 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.loading-bar.hidden {
+  opacity: 0;
+  width: 0;
+}
+
+
 .operacao-filter-dropdown {
   position: absolute;
   top: 45px;
@@ -241,6 +257,7 @@ body {
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.048);
   flex: 1;
   min-width: 250px;
+  max-height: 300px;
   position: relative;
 }
 
