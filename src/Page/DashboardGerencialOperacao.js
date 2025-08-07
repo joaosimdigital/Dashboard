@@ -90,6 +90,8 @@ function DashboardGerencialOperacao() {
   const [totalManutencoesSC, setTotalManutencoesSC] = useState(null);
 
   const [totalManutencoesRS, setTotalManutencoesRS] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [bairrosFiltroSelecionados, setBairrosFiltroSelecionados] = useState(
     []
   );
@@ -102,6 +104,9 @@ function DashboardGerencialOperacao() {
   const [usuarioFiltro, setUsuarioFiltro] = useState("");
   const [usuarioFiltroTemp, setUsuarioFiltroTemp] = useState("");
   const [cidadeData, setCidadeData] = useState([]);
+
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const itensPorPagina = 10; // ou 5, 20... depende do que fizer sentido
 
   const [showModal, setShowModal] = useState(false);
   const [selectedTipoPessoa, setSelectedTipoPessoa] = useState([]);
@@ -117,6 +122,11 @@ function DashboardGerencialOperacao() {
   const gradientIdPF = "colorPF";
   const gradientIdPJ = "colorPJ";
 
+  const indiceInicio = (paginaAtual - 1) * itensPorPagina;
+  const indiceFim = indiceInicio + itensPorPagina;
+  const ultimasOSPaginadas = ultimasOS.slice(indiceInicio, indiceFim);
+  const totalPaginas = Math.ceil(ultimasOS.length / itensPorPagina);
+
   const tipoOSOptions = [
     "Sem acesso (sem sinal GPON)",
     "Instalação GPON",
@@ -129,8 +139,6 @@ function DashboardGerencialOperacao() {
     "Sem acesso (com sinal GPON)",
     "Troca de equipamento",
   ];
-
-  const tipoFechamento = ["INSTALAÇÃO - OS DUPLICADA"];
 
   const toggleTipoPessoa = (tipo) => {
     setSelectedTipoPessoa((prev) =>
@@ -562,6 +570,7 @@ function DashboardGerencialOperacao() {
   );
 
   const fetchTotais = async () => {
+    setIsLoading(true); // começa o carregamento
     try {
       const params = new URLSearchParams();
 
@@ -587,7 +596,6 @@ function DashboardGerencialOperacao() {
         params.append("motivos", motivosFechamentoFiltroSelecionados.join(","));
       }
 
-      // ✅ Novos filtros de data
       if (dataInicio) {
         params.append("dataInicio", dataInicio);
       }
@@ -597,16 +605,18 @@ function DashboardGerencialOperacao() {
       }
 
       const response = await fetch(
-        `http://38.224.145.3:3003/ordens-servico?${params.toString()}`
+        `http://localhost:3011/ordens-servico?${params.toString()}`
       );
       const data = await response.json();
 
       setTotalOrdensServico(Number(data.total_os_mes));
-      setTotalInstalacoes(0); // ajuste conforme necessário
-      setTotalManutencoes(0); // ajuste conforme necessário
-      setTipoPessoaData([]); // ajuste conforme necessário
+      setTotalInstalacoes(0);
+      setTotalManutencoes(0);
+      setTipoPessoaData([]);
     } catch (error) {
       console.error("Erro ao buscar dados de totais:", error);
+    } finally {
+      setIsLoading(false); // finaliza o carregamento
     }
   };
 
@@ -618,11 +628,12 @@ function DashboardGerencialOperacao() {
     bairrosFiltroSelecionados,
     usuariosFiltroSelecionados,
     motivosFechamentoFiltroSelecionados,
-    dataInicio, // ✅ novo listener
-    dataFim, // ✅ novo listener
+    dataInicio,
+    dataFim,
   ]);
 
   const fetchTotalClientesPorTipo = async () => {
+    setIsLoading(true);
     try {
       setLoadingTipoPessoa(true);
 
@@ -656,7 +667,7 @@ function DashboardGerencialOperacao() {
       }
 
       const response = await fetch(
-        `http://38.224.145.3:3003/total-clientes-os-por-tipo?${params.toString()}`
+        `http://localhost:3011/total-clientes-os-por-tipo?${params.toString()}`
       );
       const data = await response.json();
 
@@ -672,6 +683,7 @@ function DashboardGerencialOperacao() {
       setTipoPessoaData([]);
     } finally {
       setLoadingTipoPessoa(false);
+      setIsLoading(false);
     }
   };
 
@@ -687,6 +699,7 @@ function DashboardGerencialOperacao() {
   ]);
 
   const fetchTiposOS = async () => {
+    setIsLoading(true);
     try {
       const params = new URLSearchParams();
 
@@ -721,7 +734,7 @@ function DashboardGerencialOperacao() {
       }
 
       const response = await fetch(
-        `http://38.224.145.3:3003/ordens-servico-por-tipo?${params.toString()}`
+        `http://localhost:3011/ordens-servico-por-tipo?${params.toString()}`
       );
 
       const data = await response.json();
@@ -735,6 +748,8 @@ function DashboardGerencialOperacao() {
       setAllTiposOS(formattedData);
     } catch (error) {
       console.error("Erro ao buscar tipos de OS do mês atual:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -751,6 +766,7 @@ function DashboardGerencialOperacao() {
   ]);
 
   const fetchOrdensPorUsuario = async () => {
+    setIsLoading(true);
     try {
       const params = new URLSearchParams();
 
@@ -793,7 +809,7 @@ function DashboardGerencialOperacao() {
       }
 
       const response = await fetch(
-        `http://38.224.145.3:3003/ordens-por-usuario?${params.toString()}`
+        `http://localhost:3011/ordens-por-usuario?${params.toString()}`
       );
 
       const data = await response.json();
@@ -814,6 +830,8 @@ function DashboardGerencialOperacao() {
       setMediaProducao(formattedDataMediaProducao);
     } catch (error) {
       console.error("❌ Erro ao buscar ordens por usuário:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -830,6 +848,7 @@ function DashboardGerencialOperacao() {
   ]);
 
   const fetchMotivosFechamento = async () => {
+    setIsLoading(true);
     try {
       const params = new URLSearchParams();
 
@@ -864,7 +883,7 @@ function DashboardGerencialOperacao() {
       }
 
       const response = await fetch(
-        `http://38.224.145.3:3003/motivos-fechamento-os?${params}`
+        `http://localhost:3011/motivos-fechamento-os?${params}`
       );
 
       const data = await response.json();
@@ -882,6 +901,8 @@ function DashboardGerencialOperacao() {
       }
     } catch (error) {
       console.error("Erro ao buscar motivos de fechamento:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -898,6 +919,7 @@ function DashboardGerencialOperacao() {
   ]);
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchTotaisPorEstado = async () => {
       try {
         const params = new URLSearchParams();
@@ -908,7 +930,7 @@ function DashboardGerencialOperacao() {
         }
 
         const response = await fetch(
-          `http://38.224.145.3:3003/ordens-servico-do-mes-por-estado?${params}`
+          `http://localhost:3011/ordens-servico-do-mes-por-estado?${params}`
         );
 
         const data = await response.json();
@@ -923,6 +945,8 @@ function DashboardGerencialOperacao() {
         setManutencoesRS(rs ? rs.total_manutencoes : 0);
       } catch (error) {
         console.error("Erro ao buscar totais por estado:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -930,6 +954,7 @@ function DashboardGerencialOperacao() {
   }, [dataInicio, dataFim]);
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchClientesHabilitados = async () => {
       try {
         const params = new URLSearchParams();
@@ -972,13 +997,13 @@ function DashboardGerencialOperacao() {
 
         const [resHoje, resSC, resRS] = await Promise.all([
           fetch(
-            `http://38.224.145.3:3003/total-clientes-habilitados-mes?${queryString}`
+            `http://localhost:3011/total-clientes-habilitados-mes?${queryString}`
           ),
           fetch(
-            `http://38.224.145.3:3003/total-clientes-habilitados-sc?${queryString}`
+            `http://localhost:3011/total-clientes-habilitados-sc?${queryString}`
           ),
           fetch(
-            `http://38.224.145.3:3003/total-clientes-habilitados-rs?${queryString}`
+            `http://localhost:3011/total-clientes-habilitados-rs?${queryString}`
           ),
         ]);
 
@@ -991,6 +1016,8 @@ function DashboardGerencialOperacao() {
         setTotalClientesHabilitadosRS(dataRS.total_clientes_habilitados);
       } catch (error) {
         console.error("Erro ao buscar clientes habilitados:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -1045,11 +1072,12 @@ function DashboardGerencialOperacao() {
 
   // UseEffect que busca os dados
   useEffect(() => {
+    setIsLoading(true);
     const fetchTotalClientesHabilitadosSC = async () => {
       try {
         const params = buildQueryParams();
         const response = await fetch(
-          `http://38.224.145.3:3003/total-clientes-habilitados-executado-sc?${params}`
+          `http://localhost:3011/total-clientes-habilitados-executado-sc?${params}`
         );
         const data = await response.json();
         setTotalManutencoesSC(Number(data.total_manutencoes));
@@ -1058,19 +1086,24 @@ function DashboardGerencialOperacao() {
           "Erro ao buscar total de clientes habilitados SC:",
           error
         );
+      } finally {
+        setIsLoading(false);
       }
     };
 
     const fetchTotalManutencoesRS = async () => {
+      setIsLoading(true);
       try {
         const params = buildQueryParams();
         const response = await fetch(
-          `http://38.224.145.3:3003/total-clientes-habilitados-executado-rs?${params}`
+          `http://localhost:3011/total-clientes-habilitados-executado-rs?${params}`
         );
         const data = await response.json();
         setTotalManutencoesRS(Number(data.total_manutencoes));
       } catch (error) {
         console.error("Erro ao buscar total de manutenções RS:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -1087,6 +1120,7 @@ function DashboardGerencialOperacao() {
   ]);
 
   const fetchOrdensServicoUltimos3Meses = async () => {
+    setIsLoading(true);
     try {
       const params = new URLSearchParams();
 
@@ -1121,7 +1155,7 @@ function DashboardGerencialOperacao() {
       }
 
       const response = await fetch(
-        `http://38.224.145.3:3003/ordens-servico-ultimos-3-meses?${params}`
+        `http://localhost:3011/ordens-servico-ultimos-3-meses?${params}`
       );
       const data = await response.json();
 
@@ -1155,6 +1189,8 @@ function DashboardGerencialOperacao() {
       }
     } catch (error) {
       console.error("❌ Erro ao buscar OS dos últimos 3 meses:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -1171,6 +1207,7 @@ function DashboardGerencialOperacao() {
   ]);
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchOrdensDetalhadas = async () => {
       try {
         const params = new URLSearchParams();
@@ -1206,7 +1243,7 @@ function DashboardGerencialOperacao() {
         }
 
         const response = await fetch(
-          `http://38.224.145.3:3003/ordens-detalhadas?${params}`
+          `http://localhost:3011/ordens-detalhadas?${params}`
         );
         const data = await response.json();
 
@@ -1221,6 +1258,8 @@ function DashboardGerencialOperacao() {
         setUltimasOS(formatted);
       } catch (error) {
         console.error("Erro ao buscar ordens detalhadas:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -1236,6 +1275,7 @@ function DashboardGerencialOperacao() {
   ]);
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchOrdensServicoPorCidade = async () => {
       try {
         const params = new URLSearchParams();
@@ -1269,7 +1309,7 @@ function DashboardGerencialOperacao() {
         }
 
         const response = await fetch(
-          `http://38.224.145.3:3003/ordens-servico-do-mes-por-cidade?${params.toString()}`
+          `http://localhost:3011/ordens-servico-do-mes-por-cidade?${params.toString()}`
         );
 
         if (!response.ok) {
@@ -1303,6 +1343,8 @@ function DashboardGerencialOperacao() {
         setTotalCidade(total);
       } catch (error) {
         console.error("Erro ao buscar ordens de serviço por cidade:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -1318,6 +1360,7 @@ function DashboardGerencialOperacao() {
   ]);
 
   const fetchOrdensServicoPorBairro = async () => {
+    setIsLoading(true);
     try {
       const params = new URLSearchParams();
 
@@ -1361,7 +1404,7 @@ function DashboardGerencialOperacao() {
       }
 
       const response = await fetch(
-        `http://38.224.145.3:3003/ordens-servico-do-mes-por-bairro?${params}`
+        `http://localhost:3011/ordens-servico-do-mes-por-bairro?${params}`
       );
       const data = await response.json();
 
@@ -1376,10 +1419,13 @@ function DashboardGerencialOperacao() {
       setOsPorBairro(bairrosComOS);
     } catch (error) {
       console.error("Erro ao buscar ordens de serviço por bairro:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
+    setIsLoading(true);
     fetchOrdensServicoPorBairro();
   }, [
     tipoPessoaFiltro,
@@ -1422,1009 +1468,1155 @@ function DashboardGerencialOperacao() {
   }, [totalManutencoesSC, totalManutencoesRS]);
 
   return (
-    <div className="operacao-wrapper">
-      <img src={imgSmileSim} alt="Smile Top Left" className="smile-top-left" />
-      <div className="operacao-header">
-        <div className="operacao-header-left">
-          <h2>Dashboard Gerencial da Operação</h2>
-          <div
-            className="style-div"
-            style={{
-              position: "relative",
-              marginTop: "4rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-            }}
-          >
-            <button
-              className="operacao-filter-button"
-              onClick={() => {
-                setShowFilter((prev) => !prev);
-                setActiveSubFilter(null);
-              }}
-            >
-              <img src={imgFiltro} className="img-filtro" />
-              Add filtro
-            </button>
-
-            {/* Botão Limpar filtros */}
-            <button
-              className="operacao-filter-button"
-              style={{ marginLeft: "auto" }}
-              onClick={() => {
-                setSelectedItems([]);
-                setUsuariosFiltroSelecionados([]);
-                setBairrosFiltroSelecionados([]);
-                setTipoPessoaFiltro("");
-                setMotivosFechamentoFiltroSelecionados([]);
-                setDataInicio(""); // <- Limpa data início
-                setDataFim(""); // <- Limpa data fim
-                setActiveFilters({
-                  tipoOS: false,
-                  usuarioFechamento: false,
-                  bairro: false,
-                  tipoPessoa: false,
-                  motivoFechamento: false,
-                });
-                setShowFilter(false);
-                setActiveSubFilter(null);
-
-                // Atualiza os dados da dashboard sem filtros
-                fetchTiposOS();
-                fetchOrdensPorUsuario();
-                fetchOrdensServicoPorBairro();
-                fetchOrdensServicoUltimos3Meses();
-                fetchTotais();
-                fetchTotalClientesPorTipo();
-                fetchMotivosFechamento();
-              }}
-            >
-              Limpar filtros
-            </button>
-
+    <>
+      {isLoading && <div className="loading-bar" style={{ width: "100%" }} />}
+      <div className="operacao-wrapper">
+        <img
+          src={imgSmileSim}
+          alt="Smile Top Left"
+          className="smile-top-left"
+        />
+        <div className="operacao-header">
+          <div className="operacao-header-left">
+            <h2>Dashboard Gerencial da Operação</h2>
             <div
+              className="style-div"
               style={{
+                position: "relative",
+                marginTop: "4rem",
                 display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-end",
-                marginRight: "2rem",
+                alignItems: "center",
+                gap: "0.5rem",
               }}
             >
               <button
                 className="operacao-filter-button"
-                onClick={() => setMostrarCalendario((prev) => !prev)}
+                onClick={() => {
+                  setShowFilter((prev) => !prev);
+                  setActiveSubFilter(null);
+                }}
               >
-                📅 Selecionar período
+                <img src={imgFiltro} className="img-filtro" />
+                Add filtro
               </button>
 
-              {mostrarCalendario && (
-                <div
-                  style={{
-                    marginTop: "0.5rem",
-                    background: "#fff",
-                    padding: "1rem",
-                    borderRadius: "8px",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-                    zIndex: 10,
-                  }}
+              {/* Botão Limpar filtros */}
+              <button
+                className="operacao-filter-button"
+                style={{ marginLeft: "auto" }}
+                onClick={() => {
+                  setSelectedItems([]);
+                  setUsuariosFiltroSelecionados([]);
+                  setBairrosFiltroSelecionados([]);
+                  setTipoPessoaFiltro("");
+                  setMotivosFechamentoFiltroSelecionados([]);
+                  setDataInicio(""); // <- Limpa data início
+                  setDataFim(""); // <- Limpa data fim
+                  setActiveFilters({
+                    tipoOS: false,
+                    usuarioFechamento: false,
+                    bairro: false,
+                    tipoPessoa: false,
+                    motivoFechamento: false,
+                  });
+                  setShowFilter(false);
+                  setActiveSubFilter(null);
+
+                  // Atualiza os dados da dashboard sem filtros
+                  fetchTiposOS();
+                  fetchOrdensPorUsuario();
+                  fetchOrdensServicoPorBairro();
+                  fetchOrdensServicoUltimos3Meses();
+                  fetchTotais();
+                  fetchTotalClientesPorTipo();
+                  fetchMotivosFechamento();
+                }}
+              >
+                Limpar filtros
+              </button>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-end",
+                  marginRight: "2rem",
+                }}
+              >
+                <button
+                  className="operacao-filter-button"
+                  onClick={() => setMostrarCalendario((prev) => !prev)}
                 >
-                  <label style={{ display: "block", marginBottom: "0.5rem" }}>
-                    Início:{" "}
-                    <input
-                      type="date"
-                      value={tempDataInicio}
-                      onChange={(e) => setTempDataInicio(e.target.value)}
-                    />
-                  </label>
-                  <label style={{ display: "block", marginBottom: "0.5rem" }}>
-                    Fim:{" "}
-                    <input
-                      type="date"
-                      value={tempDataFim}
-                      onChange={(e) => setTempDataFim(e.target.value)}
-                    />
-                  </label>
-                  <button
-                    className="operacao-apply-filter-button"
-                    onClick={() => {
-                      setDataInicio(tempDataInicio);
-                      setDataFim(tempDataFim);
-                      setMostrarCalendario(false);
-                      fetchOrdensServicoUltimos3Meses(); // ou outra função
+                  📅 Selecionar período
+                </button>
+
+                {mostrarCalendario && (
+                  <div
+                    style={{
+                      marginTop: "0.5rem",
+                      background: "#fff",
+                      padding: "1rem",
+                      borderRadius: "8px",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                      zIndex: 10,
                     }}
                   >
-                    Aplicar período
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {activeFilters.tipoOS && selectedItems.length > 0 && (
-              <div className="filtro-tag">
-                Tipo de OS
-                <button
-                  className="filtro-tag-close"
-                  onClick={() => {
-                    setSelectedItems([]);
-                    setActiveFilters((prev) => ({ ...prev, tipoOS: false }));
-                    fetchTiposOS(); // refaz a busca sem filtros
-                  }}
-                >
-                  ×
-                </button>
-                <span className="filtro-tag-count">{selectedItems.length}</span>
-              </div>
-            )}
-
-            {activeFilters.usuarioFechamento &&
-              usuariosFiltroSelecionados.length > 0 && (
-                <div className="filtro-tag">
-                  Usuário Fechamento
-                  <button
-                    className="filtro-tag-close"
-                    onClick={() => {
-                      setUsuariosFiltroSelecionados([]);
-                      setActiveFilters((prev) => ({
-                        ...prev,
-                        usuarioFechamento: false,
-                      }));
-                      fetchOrdensPorUsuario();
-                    }}
-                  >
-                    ×
-                  </button>
-                  <span className="filtro-tag-count">
-                    {usuariosFiltroSelecionados.length}
-                  </span>
-                </div>
-              )}
-
-            {activeFilters.bairro && bairrosFiltroSelecionados.length > 0 && (
-              <div className="filtro-tag">
-                Bairro
-                <button
-                  className="filtro-tag-close"
-                  onClick={() => {
-                    setBairrosFiltroSelecionados([]);
-                    setActiveFilters((prev) => ({ ...prev, bairro: false }));
-                    fetchOrdensServicoPorBairro(); // opcional para reset
-                  }}
-                >
-                  ×
-                </button>
-                <span className="filtro-tag-count">
-                  {bairrosFiltroSelecionados.length}
-                </span>
-              </div>
-            )}
-
-            {activeFilters.tipoPessoa && tipoPessoaFiltro && (
-              <div className="filtro-tag">
-                Tipo:{" "}
-                {tipoPessoaFiltro === "pf"
-                  ? "Pessoa Física"
-                  : "Pessoa Jurídica"}
-                <button
-                  className="filtro-tag-close"
-                  onClick={() => {
-                    setTipoPessoaFiltro("");
-                    setActiveFilters((prev) => ({
-                      ...prev,
-                      tipoPessoa: false,
-                    }));
-                  }}
-                >
-                  ×
-                </button>
-              </div>
-            )}
-
-            {activeFilters.motivoFechamento &&
-              motivosFechamentoFiltroSelecionados.length > 0 && (
-                <div className="filtro-tag">
-                  Motivo Fechamento
-                  <button
-                    className="filtro-tag-close"
-                    onClick={() => {
-                      setMotivosFechamentoFiltroSelecionados([]);
-                      setActiveFilters((prev) => ({
-                        ...prev,
-                        motivoFechamento: false,
-                      }));
-                    }}
-                  >
-                    ×
-                  </button>
-                  <span className="filtro-tag-count">
-                    {motivosFechamentoFiltroSelecionados.length}
-                  </span>
-                </div>
-              )}
-
-            {showFilter && (
-              <div className="operacao-filter-dropdown" ref={filterRef}>
-                {!activeSubFilter && (
-                  <>
-                    <h4>Filtrar por</h4>
-                    <ul>
-                      <li onClick={() => setActiveSubFilter("tipoOS")}>
-                        <span>Tipo de OS ➔</span>
-                        {selectedItems.length > 0 && (
-                          <span className="filtro-badge">
-                            {selectedItems.length} ×
-                          </span>
-                        )}
-                      </li>
-                      <li
-                        onClick={() => setActiveSubFilter("usuarioFechamento")}
-                      >
-                        <span>Usuário de fechamento ➔</span>
-                        {usuariosFiltroSelecionados.length > 0 && (
-                          <span className="filtro-badge">
-                            {usuariosFiltroSelecionados.length} ×
-                          </span>
-                        )}
-                      </li>
-                      <li onClick={() => setActiveSubFilter("osLocalizacao")}>
-                        <span>OS por localização ➔</span>
-                        {bairrosFiltroSelecionados.length > 0 && (
-                          <span className="filtro-badge">
-                            {bairrosFiltroSelecionados.length} ×
-                          </span>
-                        )}
-                      </li>
-                      <li onClick={() => setActiveSubFilter("tipoPessoa")}>
-                        <span>Tipo de pessoa ➔</span>
-                        {tipoPessoaFiltro.length > 0 && (
-                          <span className="filtro-badge">
-                            {tipoPessoaFiltro.length} ×
-                          </span>
-                        )}
-                      </li>
-
-                      <li>Média de produção ➔</li>
-                      <li
-                        onClick={() => setActiveSubFilter("motivoFechamento")}
-                      >
-                        <span>Motivo fechamento ➔</span>
-                        {motivosFechamentoFiltroSelecionados.length > 0 && (
-                          <span className="filtro-badge">
-                            {motivosFechamentoFiltroSelecionados.length} ×
-                          </span>
-                        )}
-                      </li>
-                    </ul>
-                  </>
-                )}
-
-                {activeSubFilter === "tipoOS" && (
-                  <div className="operacao-subfilter">
-                    <h4>Tipo de OS</h4>
-                    <input
-                      type="text"
-                      placeholder="Buscar OS"
-                      className="operacao-subfilter-search"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <div className="operacao-subfilter-list">
-                      {filteredOptions.map((item, idx) => (
-                        <label key={idx} className="operacao-subfilter-item">
-                          <input
-                            type="checkbox"
-                            checked={tempSelectedItems.includes(item)}
-                            onChange={() => {
-                              setTempSelectedItems((prev) =>
-                                prev.includes(item)
-                                  ? prev.filter((i) => i !== item)
-                                  : [...prev, item]
-                              );
-                            }}
-                          />
-                          {item}
-                        </label>
-                      ))}
-                    </div>
+                    <label style={{ display: "block", marginBottom: "0.5rem" }}>
+                      Início:{" "}
+                      <input
+                        type="date"
+                        value={tempDataInicio}
+                        onChange={(e) => setTempDataInicio(e.target.value)}
+                      />
+                    </label>
+                    <label style={{ display: "block", marginBottom: "0.5rem" }}>
+                      Fim:{" "}
+                      <input
+                        type="date"
+                        value={tempDataFim}
+                        onChange={(e) => setTempDataFim(e.target.value)}
+                      />
+                    </label>
                     <button
                       className="operacao-apply-filter-button"
                       onClick={() => {
-                        setSelectedItems(tempSelectedItems); // <-- Aqui atualiza o estado que dispara o fetch
-                        fetchTiposOS();
-                        setActiveFilters((prev) => ({ ...prev, tipoOS: true }));
-                        setActiveSubFilter(null);
-                        setShowFilter(false);
+                        setDataInicio(tempDataInicio);
+                        setDataFim(tempDataFim);
+                        setMostrarCalendario(false);
+                        fetchOrdensServicoUltimos3Meses(); // ou outra função
                       }}
                     >
-                      Aplicar
+                      Aplicar período
                     </button>
                   </div>
                 )}
+              </div>
 
-                {activeSubFilter === "tipoPessoa" && (
-                  <div className="operacao-subfilter">
-                    <h4>Tipo de Pessoa</h4>
-                    <div className="operacao-subfilter-list">
-                      {["pf", "pj"].map((tipo, idx) => (
-                        <label key={idx} className="operacao-subfilter-item">
-                          <input
-                            type="checkbox"
-                            checked={tempTipoPessoaFiltro.includes(tipo)}
-                            onChange={() => {
-                              setTempTipoPessoaFiltro((prev) =>
-                                prev.includes(tipo)
-                                  ? prev.filter((i) => i !== tipo)
-                                  : [...prev, tipo]
-                              );
-                            }}
-                          />
-                          {tipo === "pf" ? "Pessoa Física" : "Pessoa Jurídica"}
-                        </label>
-                      ))}
-                    </div>
+              {activeFilters.tipoOS && selectedItems.length > 0 && (
+                <div className="filtro-tag">
+                  Tipo de OS
+                  <button
+                    className="filtro-tag-close"
+                    onClick={() => {
+                      setSelectedItems([]);
+                      setActiveFilters((prev) => ({ ...prev, tipoOS: false }));
+                      fetchTiposOS(); // refaz a busca sem filtros
+                    }}
+                  >
+                    ×
+                  </button>
+                  <span className="filtro-tag-count">
+                    {selectedItems.length}
+                  </span>
+                </div>
+              )}
+
+              {activeFilters.usuarioFechamento &&
+                usuariosFiltroSelecionados.length > 0 && (
+                  <div className="filtro-tag">
+                    Usuário Fechamento
                     <button
-                      className="operacao-apply-filter-button"
+                      className="filtro-tag-close"
                       onClick={() => {
-                        setTipoPessoaFiltro(tempTipoPessoaFiltro);
-                        fetchOrdensServicoUltimos3Meses();
-                        fetchTotais();
-                        fetchTotalClientesPorTipo();
+                        setUsuariosFiltroSelecionados([]);
                         setActiveFilters((prev) => ({
                           ...prev,
-                          tipoPessoa: true,
+                          usuarioFechamento: false,
                         }));
-                        setActiveSubFilter(null);
-                        setShowFilter(false);
-                      }}
-                    >
-                      Aplicar
-                    </button>
-                  </div>
-                )}
-
-                {activeSubFilter === "osLocalizacao" && (
-                  <div className="operacao-subfilter">
-                    <h4>OS por Localização (Bairro)</h4>
-                    <input
-                      type="text"
-                      placeholder="Buscar bairro"
-                      className="operacao-subfilter-search"
-                      value={bairroSearchTerm}
-                      onChange={(e) => setBairroSearchTerm(e.target.value)}
-                    />
-                    <div className="operacao-subfilter-list">
-                      {bairrosOptions
-                        .filter((bairro) =>
-                          bairro
-                            .toLowerCase()
-                            .includes(bairroSearchTerm.toLowerCase())
-                        )
-                        .map((bairro, idx) => (
-                          <label key={idx} className="operacao-subfilter-item">
-                            <input
-                              type="checkbox"
-                              checked={tempBairrosFiltroSelecionados.includes(
-                                bairro
-                              )}
-                              onChange={() => {
-                                setTempBairrosFiltroSelecionados((prev) =>
-                                  prev.includes(bairro)
-                                    ? prev.filter((b) => b !== bairro)
-                                    : [...prev, bairro]
-                                );
-                              }}
-                            />
-                            {bairro}
-                          </label>
-                        ))}
-                    </div>
-                    <button
-                      className="operacao-apply-filter-button"
-                      onClick={() => {
-                        setBairrosFiltroSelecionados(
-                          tempBairrosFiltroSelecionados
-                        );
-                        fetchOrdensServicoPorBairro();
-                        setActiveFilters((prev) => ({ ...prev, bairro: true }));
-                        setActiveSubFilter(null);
-                        setShowFilter(false);
-                      }}
-                    >
-                      Aplicar
-                    </button>
-                  </div>
-                )}
-
-                {activeSubFilter === "usuarioFechamento" && (
-                  <div className="operacao-subfilter">
-                    <h4>Usuário de Fechamento</h4>
-                    <input
-                      type="text"
-                      placeholder="Buscar usuário"
-                      className="operacao-subfilter-search"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <div className="operacao-subfilter-list">
-                      {usuariosFechamentoOptions
-                        .filter((user) =>
-                          user.toLowerCase().includes(searchTerm.toLowerCase())
-                        )
-                        .map((user, idx) => (
-                          <label key={idx} className="operacao-subfilter-item">
-                            <input
-                              type="checkbox"
-                              checked={tempUsuariosFiltroSelecionados.includes(
-                                user
-                              )}
-                              onChange={() => {
-                                setTempUsuariosFiltroSelecionados((prev) =>
-                                  prev.includes(user)
-                                    ? prev.filter((u) => u !== user)
-                                    : [...prev, user]
-                                );
-                              }}
-                            />
-                            {user}
-                          </label>
-                        ))}
-                    </div>
-                    <button
-                      className="operacao-apply-filter-button"
-                      onClick={() => {
-                        setUsuariosFiltroSelecionados(
-                          tempUsuariosFiltroSelecionados
-                        );
                         fetchOrdensPorUsuario();
-                        setActiveFilters((prev) => ({
-                          ...prev,
-                          usuarioFechamento: true,
-                        }));
-                        setActiveSubFilter(null);
-                        setShowFilter(false);
                       }}
                     >
-                      Aplicar
+                      ×
                     </button>
+                    <span className="filtro-tag-count">
+                      {usuariosFiltroSelecionados.length}
+                    </span>
                   </div>
                 )}
 
-                {activeSubFilter === "motivoFechamento" && (
-                  <div className="operacao-subfilter">
-                    <h4>Motivo de Fechamento</h4>
-                    <input
-                      type="text"
-                      placeholder="Buscar motivo"
-                      className="operacao-subfilter-search"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <div className="operacao-subfilter-list">
-                      {motivosFechamentoOptions
-                        .filter((item) =>
-                          item.toLowerCase().includes(searchTerm.toLowerCase())
-                        )
-                        .map((motivo, idx) => {
-                          return (
+              {activeFilters.bairro && bairrosFiltroSelecionados.length > 0 && (
+                <div className="filtro-tag">
+                  Bairro
+                  <button
+                    className="filtro-tag-close"
+                    onClick={() => {
+                      setBairrosFiltroSelecionados([]);
+                      setActiveFilters((prev) => ({ ...prev, bairro: false }));
+                      fetchOrdensServicoPorBairro(); // opcional para reset
+                    }}
+                  >
+                    ×
+                  </button>
+                  <span className="filtro-tag-count">
+                    {bairrosFiltroSelecionados.length}
+                  </span>
+                </div>
+              )}
+
+              {activeFilters.tipoPessoa && tipoPessoaFiltro && (
+                <div className="filtro-tag">
+                  Tipo:{" "}
+                  {tipoPessoaFiltro === "pf"
+                    ? "Pessoa Física"
+                    : "Pessoa Jurídica"}
+                  <button
+                    className="filtro-tag-close"
+                    onClick={() => {
+                      setTipoPessoaFiltro("");
+                      setActiveFilters((prev) => ({
+                        ...prev,
+                        tipoPessoa: false,
+                      }));
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
+
+              {activeFilters.motivoFechamento &&
+                motivosFechamentoFiltroSelecionados.length > 0 && (
+                  <div className="filtro-tag">
+                    Motivo Fechamento
+                    <button
+                      className="filtro-tag-close"
+                      onClick={() => {
+                        setMotivosFechamentoFiltroSelecionados([]);
+                        setActiveFilters((prev) => ({
+                          ...prev,
+                          motivoFechamento: false,
+                        }));
+                      }}
+                    >
+                      ×
+                    </button>
+                    <span className="filtro-tag-count">
+                      {motivosFechamentoFiltroSelecionados.length}
+                    </span>
+                  </div>
+                )}
+
+              {showFilter && (
+                <div className="operacao-filter-dropdown" ref={filterRef}>
+                  {!activeSubFilter && (
+                    <>
+                      <h4>Filtrar por</h4>
+                      <ul>
+                        <li onClick={() => setActiveSubFilter("tipoOS")}>
+                          <span>Tipo de OS ➔</span>
+                          {selectedItems.length > 0 && (
+                            <span className="filtro-badge">
+                              {selectedItems.length} ×
+                            </span>
+                          )}
+                        </li>
+                        <li
+                          onClick={() =>
+                            setActiveSubFilter("usuarioFechamento")
+                          }
+                        >
+                          <span>Usuário de fechamento ➔</span>
+                          {usuariosFiltroSelecionados.length > 0 && (
+                            <span className="filtro-badge">
+                              {usuariosFiltroSelecionados.length} ×
+                            </span>
+                          )}
+                        </li>
+                        <li onClick={() => setActiveSubFilter("osLocalizacao")}>
+                          <span>OS por localização ➔</span>
+                          {bairrosFiltroSelecionados.length > 0 && (
+                            <span className="filtro-badge">
+                              {bairrosFiltroSelecionados.length} ×
+                            </span>
+                          )}
+                        </li>
+                        <li onClick={() => setActiveSubFilter("tipoPessoa")}>
+                          <span>Tipo de pessoa ➔</span>
+                          {tipoPessoaFiltro.length > 0 && (
+                            <span className="filtro-badge">
+                              {tipoPessoaFiltro.length} ×
+                            </span>
+                          )}
+                        </li>
+
+                        <li>Média de produção ➔</li>
+                        <li
+                          onClick={() => setActiveSubFilter("motivoFechamento")}
+                        >
+                          <span>Motivo fechamento ➔</span>
+                          {motivosFechamentoFiltroSelecionados.length > 0 && (
+                            <span className="filtro-badge">
+                              {motivosFechamentoFiltroSelecionados.length} ×
+                            </span>
+                          )}
+                        </li>
+                      </ul>
+                    </>
+                  )}
+
+                  {activeSubFilter === "tipoOS" && (
+                    <div className="operacao-subfilter">
+                      <h4>Tipo de OS</h4>
+                      <input
+                        type="text"
+                        placeholder="Buscar OS"
+                        className="operacao-subfilter-search"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                      <div className="operacao-subfilter-list">
+                        {filteredOptions.map((item, idx) => (
+                          <label key={idx} className="operacao-subfilter-item">
+                            <input
+                              type="checkbox"
+                              checked={tempSelectedItems.includes(item)}
+                              onChange={() => {
+                                setTempSelectedItems((prev) =>
+                                  prev.includes(item)
+                                    ? prev.filter((i) => i !== item)
+                                    : [...prev, item]
+                                );
+                              }}
+                            />
+                            {item}
+                          </label>
+                        ))}
+                      </div>
+                      <button
+                        className="operacao-apply-filter-button"
+                        onClick={() => {
+                          setSelectedItems(tempSelectedItems); // <-- Aqui atualiza o estado que dispara o fetch
+                          fetchTiposOS();
+                          setActiveFilters((prev) => ({
+                            ...prev,
+                            tipoOS: true,
+                          }));
+                          setActiveSubFilter(null);
+                          setShowFilter(false);
+                        }}
+                      >
+                        Aplicar
+                      </button>
+                    </div>
+                  )}
+
+                  {activeSubFilter === "tipoPessoa" && (
+                    <div className="operacao-subfilter">
+                      <h4>Tipo de Pessoa</h4>
+                      <div className="operacao-subfilter-list">
+                        {["pf", "pj"].map((tipo, idx) => (
+                          <label key={idx} className="operacao-subfilter-item">
+                            <input
+                              type="checkbox"
+                              checked={tempTipoPessoaFiltro.includes(tipo)}
+                              onChange={() => {
+                                setTempTipoPessoaFiltro((prev) =>
+                                  prev.includes(tipo)
+                                    ? prev.filter((i) => i !== tipo)
+                                    : [...prev, tipo]
+                                );
+                              }}
+                            />
+                            {tipo === "pf"
+                              ? "Pessoa Física"
+                              : "Pessoa Jurídica"}
+                          </label>
+                        ))}
+                      </div>
+                      <button
+                        className="operacao-apply-filter-button"
+                        onClick={() => {
+                          setTipoPessoaFiltro(tempTipoPessoaFiltro);
+                          fetchOrdensServicoUltimos3Meses();
+                          fetchTotais();
+                          fetchTotalClientesPorTipo();
+                          setActiveFilters((prev) => ({
+                            ...prev,
+                            tipoPessoa: true,
+                          }));
+                          setActiveSubFilter(null);
+                          setShowFilter(false);
+                        }}
+                      >
+                        Aplicar
+                      </button>
+                    </div>
+                  )}
+
+                  {activeSubFilter === "osLocalizacao" && (
+                    <div className="operacao-subfilter">
+                      <h4>OS por Localização (Bairro)</h4>
+                      <input
+                        type="text"
+                        placeholder="Buscar bairro"
+                        className="operacao-subfilter-search"
+                        value={bairroSearchTerm}
+                        onChange={(e) => setBairroSearchTerm(e.target.value)}
+                      />
+                      <div className="operacao-subfilter-list">
+                        {bairrosOptions
+                          .filter((bairro) =>
+                            bairro
+                              .toLowerCase()
+                              .includes(bairroSearchTerm.toLowerCase())
+                          )
+                          .map((bairro, idx) => (
                             <label
                               key={idx}
                               className="operacao-subfilter-item"
                             >
                               <input
                                 type="checkbox"
-                                checked={tempMotivosFechamentoFiltroSelecionados.includes(
-                                  motivo
+                                checked={tempBairrosFiltroSelecionados.includes(
+                                  bairro
                                 )}
                                 onChange={() => {
-                                  setTempMotivosFechamentoFiltroSelecionados(
-                                    (prev) =>
-                                      prev.includes(motivo)
-                                        ? prev.filter((m) => m !== motivo)
-                                        : [...prev, motivo]
+                                  setTempBairrosFiltroSelecionados((prev) =>
+                                    prev.includes(bairro)
+                                      ? prev.filter((b) => b !== bairro)
+                                      : [...prev, bairro]
                                   );
                                 }}
                               />
-                              {motivo}
+                              {bairro}
                             </label>
+                          ))}
+                      </div>
+                      <button
+                        className="operacao-apply-filter-button"
+                        onClick={() => {
+                          setBairrosFiltroSelecionados(
+                            tempBairrosFiltroSelecionados
                           );
-                        })}
+                          fetchOrdensServicoPorBairro();
+                          setActiveFilters((prev) => ({
+                            ...prev,
+                            bairro: true,
+                          }));
+                          setActiveSubFilter(null);
+                          setShowFilter(false);
+                        }}
+                      >
+                        Aplicar
+                      </button>
                     </div>
-                    <button
-                      className="operacao-apply-filter-button"
-                      onClick={() => {
-                        setMotivosFechamentoFiltroSelecionados(
-                          tempMotivosFechamentoFiltroSelecionados
-                        );
-                        setActiveFilters((prev) => ({
-                          ...prev,
-                          motivoFechamento: true,
-                        }));
-                        setActiveSubFilter(null);
-                        setShowFilter(false);
+                  )}
+
+                  {activeSubFilter === "usuarioFechamento" && (
+                    <div className="operacao-subfilter">
+                      <h4>Usuário de Fechamento</h4>
+                      <input
+                        type="text"
+                        placeholder="Buscar usuário"
+                        className="operacao-subfilter-search"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                      <div className="operacao-subfilter-list">
+                        {usuariosFechamentoOptions
+                          .filter((user) =>
+                            user
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase())
+                          )
+                          .map((user, idx) => (
+                            <label
+                              key={idx}
+                              className="operacao-subfilter-item"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={tempUsuariosFiltroSelecionados.includes(
+                                  user
+                                )}
+                                onChange={() => {
+                                  setTempUsuariosFiltroSelecionados((prev) =>
+                                    prev.includes(user)
+                                      ? prev.filter((u) => u !== user)
+                                      : [...prev, user]
+                                  );
+                                }}
+                              />
+                              {user}
+                            </label>
+                          ))}
+                      </div>
+                      <button
+                        className="operacao-apply-filter-button"
+                        onClick={() => {
+                          setUsuariosFiltroSelecionados(
+                            tempUsuariosFiltroSelecionados
+                          );
+                          fetchOrdensPorUsuario();
+                          setActiveFilters((prev) => ({
+                            ...prev,
+                            usuarioFechamento: true,
+                          }));
+                          setActiveSubFilter(null);
+                          setShowFilter(false);
+                        }}
+                      >
+                        Aplicar
+                      </button>
+                    </div>
+                  )}
+
+                  {activeSubFilter === "motivoFechamento" && (
+                    <div className="operacao-subfilter">
+                      <h4>Motivo de Fechamento</h4>
+                      <input
+                        type="text"
+                        placeholder="Buscar motivo"
+                        className="operacao-subfilter-search"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                      <div className="operacao-subfilter-list">
+                        {motivosFechamentoOptions
+                          .filter((item) =>
+                            item
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase())
+                          )
+                          .map((motivo, idx) => {
+                            return (
+                              <label
+                                key={idx}
+                                className="operacao-subfilter-item"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={tempMotivosFechamentoFiltroSelecionados.includes(
+                                    motivo
+                                  )}
+                                  onChange={() => {
+                                    setTempMotivosFechamentoFiltroSelecionados(
+                                      (prev) =>
+                                        prev.includes(motivo)
+                                          ? prev.filter((m) => m !== motivo)
+                                          : [...prev, motivo]
+                                    );
+                                  }}
+                                />
+                                {motivo}
+                              </label>
+                            );
+                          })}
+                      </div>
+                      <button
+                        className="operacao-apply-filter-button"
+                        onClick={() => {
+                          setMotivosFechamentoFiltroSelecionados(
+                            tempMotivosFechamentoFiltroSelecionados
+                          );
+                          setActiveFilters((prev) => ({
+                            ...prev,
+                            motivoFechamento: true,
+                          }));
+                          setActiveSubFilter(null);
+                          setShowFilter(false);
+                        }}
+                      >
+                        Aplicar
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Logo à direita */}
+          <img src={imgLogo} alt="Logo Empresa" className="operacao-logo" />
+
+          {/* LINHA DIVISÓRIA */}
+          <div className="operacao-divider"></div>
+        </div>
+
+        <section className="operacao-section">
+          <h3>Visão geral</h3>
+          <div className="operacao-card-container">
+            <div className="operacao-summary-cards">
+              {/* Tipo de pessoa */}
+              <div className="operacao-card-nobottom">
+                <h4>Tipo de pessoa</h4>
+                <ResponsiveContainer width="100%" height={250}>
+                  {tipoPessoaData.length >= 0 ? (
+                    <BarChart
+                      data={tipoPessoaData}
+                      barCategoryGap={20}
+                      margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis
+                        dataKey="name"
+                        tick={{ fontSize: 12 }}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 12 }}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <Tooltip
+                        formatter={(value) => [value, "Total"]}
+                        cursor={{ fill: "rgba(0,0,0,0.05)" }}
+                      />
+                      <Bar
+                        dataKey="value"
+                        radius={[5, 5, 0, 0]}
+                        maxBarSize={70}
+                      >
+                        {tipoPessoaData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                        <LabelList
+                          dataKey="value"
+                          position="top"
+                          style={{ fill: "#212121", fontWeight: 600 }}
+                        />
+                      </Bar>
+                    </BarChart>
+                  ) : (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        paddingTop: "100px",
+                        color: "#999",
                       }}
                     >
-                      Aplicar
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Logo à direita */}
-        <img src={imgLogo} alt="Logo Empresa" className="operacao-logo" />
-
-        {/* LINHA DIVISÓRIA */}
-        <div className="operacao-divider"></div>
-      </div>
-
-      <section className="operacao-section">
-        <h3>Visão geral</h3>
-        <div className="operacao-card-container">
-          <div className="operacao-summary-cards">
-            {/* Tipo de pessoa */}
-            <div className="operacao-card-nobottom">
-              <h4>Tipo de pessoa</h4>
-              <ResponsiveContainer width="100%" height={250}>
-                {!loadingTipoPessoa && tipoPessoaData.length > 0 ? (
-                  <BarChart
-                    data={tipoPessoaData}
-                    barCategoryGap={20}
-                    margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis
-                      dataKey="name"
-                      tick={{ fontSize: 12 }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      tick={{ fontSize: 12 }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <Tooltip
-                      formatter={(value) => [value, "Total"]}
-                      cursor={{ fill: "rgba(0,0,0,0.05)" }}
-                    />
-                    <Bar dataKey="value" radius={[5, 5, 0, 0]} maxBarSize={70}>
-                      {tipoPessoaData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                      ))}
-                      <LabelList
-                        dataKey="value"
-                        position="top"
-                        style={{ fill: "#212121", fontWeight: 600 }}
-                      />
-                    </Bar>
-                  </BarChart>
-                ) : (
-                  <div
-                    style={{
-                      textAlign: "center",
-                      paddingTop: "100px",
-                      color: "#999",
-                    }}
-                  >
-                    {loadingTipoPessoa
-                      ? "Carregando..."
-                      : "Sem dados para o período selecionado"}
-                  </div>
-                )}
-              </ResponsiveContainer>
-            </div>
-
-            {/* Total de Ordens de Serviços */}
-            <div className="operacao-card operacao-big-number-card">
-              <h4>Total de Ordens de Serviços</h4>
-              <div className="operacao-big-number">
-                {totalOrdensServico !== null
-                  ? totalOrdensServico.toLocaleString()
-                  : "Carregando..."}
-              </div>
-            </div>
-
-            {/* Último trimestre */}
-            <div className="operacao-card-nobottom">
-              <h4>{tituloGrafico}</h4>
-              <ResponsiveContainer width="100%" height={250}>
-                {trimestreData.length > 0 ? (
-                  <BarChart
-                    data={trimestreData}
-                    barCategoryGap={2}
-                    margin={{ top: 10, right: 20, left: 10, bottom: 20 }}
-                  >
-                    {/* Defs e elementos do gráfico */}
-                    <defs>
-                      <linearGradient
-                        id="gradOrange"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop offset="0%" stopColor="#f47621" />
-                        <stop offset="100%" stopColor="#e15000" />
-                      </linearGradient>
-                      <linearGradient
-                        id="gradBlack"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop offset="0%" stopColor="#333333" />
-                        <stop offset="100%" stopColor="#000000" />
-                      </linearGradient>
-                      <linearGradient id="gradRed" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#f87171" />
-                        <stop offset="100%" stopColor="#dc2626" />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis
-                      dataKey="name"
-                      tick={{ fontSize: 12 }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      tick={{ fontSize: 12 }}
-                      tickFormatter={(value) => value.toLocaleString()}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <Tooltip
-                      formatter={(value) => [value, "Total"]}
-                      cursor={{ fill: "rgba(0,0,0,0.05)" }}
-                    />
-                    <Bar dataKey="value" radius={[8, 8, 0, 0]} maxBarSize={70}>
-                      {trimestreData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={gradients[index]} />
-                      ))}
-                      <LabelList
-                        dataKey="value"
-                        position="top"
-                        style={{ fill: "#212121", fontWeight: 600 }}
-                      />
-                    </Bar>
-                  </BarChart>
-                ) : (
-                  <div
-                    style={{
-                      textAlign: "center",
-                      paddingTop: "100px",
-                      color: "#999",
-                    }}
-                  >
-                    Sem dados para o período selecionado
-                  </div>
-                )}
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="operacao-section">
-        <h3>Instalações</h3>
-        <div className="operacao-card-container">
-          <div className="operacao-summary-cards">
-            <div className="operacao-card-nobottom-center">
-              <h4>Instalações por estado</h4>
-              <div className="operacao-state-installations">
-                <div>
-                  <strong>SC</strong>
-                  <p>
-                    {totalClientesHabilitadosSC !== null
-                      ? totalClientesHabilitadosSC.toLocaleString()
-                      : "Carregando..."}
-                  </p>
-                </div>
-                <div>
-                  <strong>RS</strong>
-                  <p>
-                    {totalClientesHabilitadosRS !== null
-                      ? totalClientesHabilitadosRS.toLocaleString()
-                      : "Carregando..."}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="operacao-card operacao-big-number-card">
-              <h4>Total de Instalações</h4>
-              <div className="operacao-big-number-nomargin">
-                {totalClientesHabilitadosSC !== null &&
-                totalClientesHabilitadosRS !== null
-                  ? (
-                      Number(totalClientesHabilitadosSC) +
-                      Number(totalClientesHabilitadosRS)
-                    ).toLocaleString()
-                  : "Carregando..."}
-              </div>
-            </div>
-
-            <div className="operacao-card-nobottom-center operacao-big-number-card">
-              <h4>% atingido da Meta</h4>
-              <div className="operacao-big-number-nomargin">
-                {percentualMetaInstalacao !== null
-                  ? `${percentualMetaInstalacao}%`
-                  : "Carregando..."}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="operacao-section">
-        <h3>Manutenções</h3>
-        <div className="operacao-card-container">
-          <div className="operacao-summary-cards">
-            <div className="operacao-card-nobottom-center">
-              <h4>Manutenções por estado</h4>
-              <div className="operacao-state-installations">
-                <div>
-                  <strong>SC</strong>
-                  <p>
-                    {totalManutencoesSC !== null
-                      ? totalManutencoesSC.toLocaleString()
-                      : "Carregando..."}
-                  </p>
-                </div>
-                <div>
-                  <strong>RS</strong>
-                  <p>
-                    {totalManutencoesRS !== null
-                      ? totalManutencoesRS.toLocaleString()
-                      : "Carregando..."}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="operacao-card operacao-big-number-card">
-              <h4>Total de Manutenções</h4>
-              <div className="operacao-big-number-nomargin">
-                {totalManutencoesSC !== null && totalManutencoesRS !== null
-                  ? (
-                      Number(totalManutencoesSC) + Number(totalManutencoesRS)
-                    ).toLocaleString()
-                  : "Carregando..."}
-              </div>
-            </div>
-
-            <div className="operacao-card-nobottom-center operacao-big-number-card">
-              <h4>% atingido da Meta</h4>
-              <div className="operacao-big-number-nomargin">
-                {percentualMetaManutencao !== null
-                  ? `${percentualMetaManutencao}%`
-                  : "Carregando..."}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="operacao-section operacao-table-section">
-        {/* Tipos de OS */}
-        <div className="operacao-table-card">
-          <div className="operacao-table-wrapper">
-            {tiposOS.length > 0 ? (
-              <table className="operacao-table">
-                <thead>
-                  <tr className="tr-space-between">
-                    <th>Tipos de OS</th>
-                    <th>Qtd.</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tiposOS.map((tipo, index) => (
-                    <tr key={index}>
-                      <td>
-                        {index + 1}. {tipo.nome}
-                      </td>
-                      <td>
-                        <strong>{tipo.qtd.toLocaleString("pt-BR")}</strong>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "40px",
-                  color: "#999",
-                }}
-              >
-                Sem dados para o período selecionado
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Usuários de Fechamento */}
-        <div className="operacao-table-card">
-          <div className="operacao-table-wrapper">
-            {usuariosFechamento.length > 0 ? (
-              <table className="operacao-table">
-                <thead>
-                  <tr className="tr-space-between">
-                    <th>Usuário de fechamento</th>
-                    <th>Qtd.</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {usuariosFechamento.map((usuario, index) => (
-                    <tr key={index}>
-                      <td>
-                        {index + 1}. {usuario.nome}
-                      </td>
-                      <td>
-                        <strong>{usuario.qtd.toLocaleString("pt-BR")}</strong>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "40px",
-                  color: "#999",
-                }}
-              >
-                Sem dados para o período selecionado
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section className="operacao-section operacao-extra-section">
-        {/* OS por cidade */}
-        <div className="operacao-card-nobottom operacao-chart-donut">
-          <h4>OS por cidade</h4>
-          <div className="donut-chart-container">
-            {cidadeData.length > 0 ? (
-              <>
-                <ResponsiveContainer width={250} height={180}>
-                  <PieChart>
-                    <Pie
-                      data={cidadeData}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={38}
-                      outerRadius={75}
-                      paddingAngle={4}
-                    >
-                      {cidadeData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                  </PieChart>
+                      {loadingTipoPessoa
+                        ? "Carregando..."
+                        : "Sem dados para o período selecionado"}
+                    </div>
+                  )}
                 </ResponsiveContainer>
-                <ul className="donut-legend">
-                  {cidadeData.map((entry, index) => {
-                    const percent =
-                      totalCidade > 0
-                        ? ((entry.value / totalCidade) * 100).toFixed(1)
-                        : 0;
-                    return (
-                      <li key={index}>
-                        <span
-                          className="legend-dot"
-                          style={{ backgroundColor: entry.color }}
-                        ></span>
-                        {entry.name} <strong>{entry.value}</strong> {percent}%
-                      </li>
-                    );
-                  })}
-                </ul>
-              </>
-            ) : (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "60px 0",
-                  color: "#999",
-                }}
-              >
-                {cidadeData === null
-                  ? "Carregando..."
-                  : "Sem dados para o período selecionado"}
               </div>
-            )}
-          </div>
-        </div>
 
-        {/* OS por bairro */}
-        <div className="operacao-card-nobottom operacao-table-card">
-          <div
-            className="operacao-table-wrapper"
-            style={{ maxHeight: "260px", overflowY: "auto" }}
-          >
-            {osPorBairro.length > 0 ? (
-              <table className="operacao-table">
-                <thead>
-                  <tr className="tr-space-between">
-                    <th>OS por bairro</th>
-                    <th>Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {osPorBairro.slice(0, 5).map((bairro, index) => (
-                    <tr key={index}>
-                      <td>
-                        {index + 1}. {bairro.nome}
-                      </td>
-                      <td>
-                        <strong>{bairro.qtd.toLocaleString()}</strong>
-                      </td>
+              {/* Total de Ordens de Serviços */}
+              <div className="operacao-card operacao-big-number-card">
+                <h4>Total de Ordens de Serviços</h4>
+                <div className="operacao-big-number">
+                  {totalOrdensServico !== null
+                    ? totalOrdensServico.toLocaleString()
+                    : "Carregando..."}
+                </div>
+              </div>
+
+              {/* Último trimestre */}
+              <div className="operacao-card-nobottom">
+                <h4>{tituloGrafico}</h4>
+                <ResponsiveContainer width="100%" height={250}>
+                  {trimestreData.length > 0 ? (
+                    <BarChart
+                      data={trimestreData}
+                      barCategoryGap={2}
+                      margin={{ top: 10, right: 20, left: 10, bottom: 20 }}
+                    >
+                      {/* Defs e elementos do gráfico */}
+                      <defs>
+                        <linearGradient
+                          id="gradOrange"
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="1"
+                        >
+                          <stop offset="0%" stopColor="#f47621" />
+                          <stop offset="100%" stopColor="#e15000" />
+                        </linearGradient>
+                        <linearGradient
+                          id="gradBlack"
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="1"
+                        >
+                          <stop offset="0%" stopColor="#333333" />
+                          <stop offset="100%" stopColor="#000000" />
+                        </linearGradient>
+                        <linearGradient
+                          id="gradRed"
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="1"
+                        >
+                          <stop offset="0%" stopColor="#f87171" />
+                          <stop offset="100%" stopColor="#dc2626" />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis
+                        dataKey="name"
+                        tick={{ fontSize: 12 }}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 12 }}
+                        tickFormatter={(value) => value.toLocaleString()}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <Tooltip
+                        formatter={(value) => [value, "Total"]}
+                        cursor={{ fill: "rgba(0,0,0,0.05)" }}
+                      />
+                      <Bar
+                        dataKey="value"
+                        radius={[8, 8, 0, 0]}
+                        maxBarSize={70}
+                      >
+                        {trimestreData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={gradients[index]} />
+                        ))}
+                        <LabelList
+                          dataKey="value"
+                          position="top"
+                          style={{ fill: "#212121", fontWeight: 600 }}
+                        />
+                      </Bar>
+                    </BarChart>
+                  ) : (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        paddingTop: "100px",
+                        color: "#999",
+                      }}
+                    >
+                      Sem dados para o período selecionado
+                    </div>
+                  )}
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="operacao-section">
+          <h3>Instalações</h3>
+          <div className="operacao-card-container">
+            <div className="operacao-summary-cards">
+              <div className="operacao-card-nobottom-center">
+                <h4>Instalações por estado</h4>
+                <div className="operacao-state-installations">
+                  <div>
+                    <strong>SC</strong>
+                    <p>
+                      {totalClientesHabilitadosSC !== null
+                        ? totalClientesHabilitadosSC.toLocaleString()
+                        : "Carregando..."}
+                    </p>
+                  </div>
+                  <div>
+                    <strong>RS</strong>
+                    <p>
+                      {totalClientesHabilitadosRS !== null
+                        ? totalClientesHabilitadosRS.toLocaleString()
+                        : "Carregando..."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="operacao-card operacao-big-number-card">
+                <h4>Total de Instalações</h4>
+                <div className="operacao-big-number-nomargin">
+                  {totalClientesHabilitadosSC !== null &&
+                  totalClientesHabilitadosRS !== null
+                    ? (
+                        Number(totalClientesHabilitadosSC) +
+                        Number(totalClientesHabilitadosRS)
+                      ).toLocaleString()
+                    : "Carregando..."}
+                </div>
+              </div>
+
+              <div className="operacao-card-nobottom-center operacao-big-number-card">
+                <h4>% atingido da Meta</h4>
+                <div className="operacao-big-number-nomargin">
+                  {percentualMetaInstalacao !== null
+                    ? `${percentualMetaInstalacao}%`
+                    : "Carregando..."}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="operacao-section">
+          <h3>Manutenções</h3>
+          <div className="operacao-card-container">
+            <div className="operacao-summary-cards">
+              <div className="operacao-card-nobottom-center">
+                <h4>Manutenções por estado</h4>
+                <div className="operacao-state-installations">
+                  <div>
+                    <strong>SC</strong>
+                    <p>
+                      {totalManutencoesSC !== null
+                        ? totalManutencoesSC.toLocaleString()
+                        : "Carregando..."}
+                    </p>
+                  </div>
+                  <div>
+                    <strong>RS</strong>
+                    <p>
+                      {totalManutencoesRS !== null
+                        ? totalManutencoesRS.toLocaleString()
+                        : "Carregando..."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="operacao-card operacao-big-number-card">
+                <h4>Total de Manutenções</h4>
+                <div className="operacao-big-number-nomargin">
+                  {totalManutencoesSC !== null && totalManutencoesRS !== null
+                    ? (
+                        Number(totalManutencoesSC) + Number(totalManutencoesRS)
+                      ).toLocaleString()
+                    : "Carregando..."}
+                </div>
+              </div>
+
+              <div className="operacao-card-nobottom-center operacao-big-number-card">
+                <h4>% atingido da Meta</h4>
+                <div className="operacao-big-number-nomargin">
+                  {percentualMetaManutencao !== null
+                    ? `${percentualMetaManutencao}%`
+                    : "Carregando..."}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="operacao-section operacao-table-section">
+          {/* Tipos de OS */}
+          <div className="operacao-table-card">
+            <div className="operacao-table-wrapper">
+              {tiposOS.length > 0 ? (
+                <table className="operacao-table">
+                  <thead>
+                    <tr className="tr-space-between">
+                      <th>Tipos de OS</th>
+                      <th>Qtd.</th>
                     </tr>
-                  ))}
-                  {osPorBairro.length > 5 &&
-                    osPorBairro.slice(5).map((bairro, index) => (
-                      <tr key={index + 5}>
+                  </thead>
+                  <tbody>
+                    {tiposOS.map((tipo, index) => (
+                      <tr key={index}>
                         <td>
-                          {index + 6}. {bairro.nome}
+                          {index + 1}. {tipo.nome}
+                        </td>
+                        <td>
+                          <strong>{tipo.qtd.toLocaleString("pt-BR")}</strong>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "40px",
+                    color: "#999",
+                  }}
+                >
+                  Sem dados para o período selecionado
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Usuários de Fechamento */}
+          <div className="operacao-table-card">
+            <div className="operacao-table-wrapper">
+              {usuariosFechamento.length > 0 ? (
+                <table className="operacao-table">
+                  <thead>
+                    <tr className="tr-space-between">
+                      <th>Usuário de fechamento</th>
+                      <th>Qtd.</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {usuariosFechamento.map((usuario, index) => (
+                      <tr key={index}>
+                        <td>
+                          {index + 1}. {usuario.nome}
+                        </td>
+                        <td>
+                          <strong>{usuario.qtd.toLocaleString("pt-BR")}</strong>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "40px",
+                    color: "#999",
+                  }}
+                >
+                  Sem dados para o período selecionado
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <section className="operacao-section operacao-extra-section">
+          {/* OS por cidade */}
+          <div className="operacao-card-nobottom operacao-chart-donut">
+            <h4>OS por cidade</h4>
+            <div className="donut-chart-container">
+              {cidadeData.length > 0 ? (
+                <>
+                  <ResponsiveContainer width={250} height={180}>
+                    <PieChart>
+                      <Pie
+                        data={cidadeData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={38}
+                        outerRadius={75}
+                        paddingAngle={4}
+                      >
+                        {cidadeData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <ul className="donut-legend">
+                    {cidadeData.map((entry, index) => {
+                      const percent =
+                        totalCidade > 0
+                          ? ((entry.value / totalCidade) * 100).toFixed(1)
+                          : 0;
+                      return (
+                        <li key={index}>
+                          <span
+                            className="legend-dot"
+                            style={{ backgroundColor: entry.color }}
+                          ></span>
+                          {entry.name} <strong>{entry.value}</strong> {percent}%
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </>
+              ) : (
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "60px 0",
+                    color: "#999",
+                  }}
+                >
+                  {cidadeData === null
+                    ? "Carregando..."
+                    : "Sem dados para o período selecionado"}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* OS por bairro */}
+          <div className="operacao-card-nobottom operacao-table-card">
+            <div
+              className="operacao-table-wrapper"
+              style={{ maxHeight: "260px", overflowY: "auto" }}
+            >
+              {osPorBairro.length > 0 ? (
+                <table className="operacao-table">
+                  <thead>
+                    <tr className="tr-space-between">
+                      <th>OS por bairro</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {osPorBairro.slice(0, 5).map((bairro, index) => (
+                      <tr key={index}>
+                        <td>
+                          {index + 1}. {bairro.nome}
                         </td>
                         <td>
                           <strong>{bairro.qtd.toLocaleString()}</strong>
                         </td>
                       </tr>
                     ))}
-                </tbody>
-              </table>
-            ) : (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "60px 0",
-                  color: "#999",
-                }}
-              >
-                {osPorBairro === null
-                  ? "Carregando..."
-                  : "Sem dados para o período selecionado"}
-              </div>
-            )}
+                    {osPorBairro.length > 5 &&
+                      osPorBairro.slice(5).map((bairro, index) => (
+                        <tr key={index + 5}>
+                          <td>
+                            {index + 6}. {bairro.nome}
+                          </td>
+                          <td>
+                            <strong>{bairro.qtd.toLocaleString()}</strong>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "60px 0",
+                    color: "#999",
+                  }}
+                >
+                  {osPorBairro === null
+                    ? "Carregando..."
+                    : "Sem dados para o período selecionado"}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="operacao-section operacao-extra-section">
-        {/* Qtd. média de produção */}
-        <div className="operacao-card-nobottom operacao-table-card operacao-table-wrapper">
-          <div
-            className="operacao-table-wrapper"
-            style={{ maxHeight: "260px", overflowY: "auto" }}
-          >
-            {mediaProducao && mediaProducao.length > 0 ? (
-              <table className="operacao-table">
+        <section className="operacao-section operacao-extra-section">
+          {/* Qtd. média de produção */}
+          <div className="operacao-card-nobottom operacao-table-card operacao-table-wrapper">
+            <div
+              className="operacao-table-wrapper"
+              style={{ maxHeight: "260px", overflowY: "auto" }}
+            >
+              {mediaProducao && mediaProducao.length > 0 ? (
+                <table className="operacao-table">
+                  <thead>
+                    <tr className="tr-space-between">
+                      <th>Qtd. média de produção</th>
+                      <th>Dias úteis</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {mediaProducao.slice(5).map((item, index) => (
+                      <tr key={index + 5}>
+                        <td>
+                          {index + 1}. {item.nome}
+                        </td>
+                        <td>{item.diasUteis}</td>
+                        <td>
+                          <strong>{item.total}</strong>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "60px 0",
+                    color: "#999",
+                  }}
+                >
+                  {mediaProducao === null
+                    ? "Carregando..."
+                    : "Sem dados para o período selecionado"}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Motivos de fechamento */}
+          <div className="operacao-card-nobottom operacao-table-card operacao-table-wrapper">
+            <table className="operacao-table">
+              <thead>
+                <tr className="tr-space-between">
+                  <th>Motivos de fechamento</th>
+                  <th>Qtd.</th>
+                </tr>
+              </thead>
+              <tbody>
+                {motivosFechamento.map((item, index) => (
+                  <tr key={index}>
+                    <td>
+                      {index + 1}. {item.motivo}
+                    </td>
+                    <td>
+                      <strong>{item.qtd}</strong>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="operacao-section operacao-final-section">
+          <div className="operacao-card-nobottom operacao-table-card operacao-table-wrapper">
+            <h4>Últimas Ordens de Serviço</h4>
+
+            {ultimasOS && ultimasOS.length > 0 ? (
+              <table className="operacao-table large">
                 <thead>
-                  <tr className="tr-space-between">
-                    <th>Qtd. média de produção</th>
-                    <th>Dias úteis</th>
-                    <th>Total</th>
+                  <tr>
+                    <th>Nome/Razão Social</th>
+                    <th>Tipo</th>
+                    <th>Descrição abertura</th>
+                    <th>Descrição fechamento</th>
+                    <th>Link</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {mediaProducao.slice(5).map((item, index) => (
-                    <tr key={index + 5}>
+                  {ultimasOSPaginadas.map((item, index) => (
+                    <tr key={index}>
                       <td>
-                        {index + 1}. {item.nome}
+                        {indiceInicio + index + 1}. {item.nome}
                       </td>
-                      <td>{item.diasUteis}</td>
+                      <td>{item.tipo}</td>
                       <td>
-                        <strong>{item.total}</strong>
+                        <span
+                          className="descricao-limitada"
+                          onClick={() =>
+                            openModal(item.descricaoAbertura || "")
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
+                          {(item.descricaoAbertura || "").length > 50
+                            ? (item.descricaoAbertura || "").slice(0, 50) +
+                              "..."
+                            : item.descricaoAbertura || ""}
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          className="descricao-limitada"
+                          onClick={() =>
+                            openModal(item.descricaoFechamento || "")
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
+                          {(item.descricaoFechamento || "").length > 50
+                            ? (item.descricaoFechamento || "").slice(0, 50) +
+                              "..."
+                            : item.descricaoFechamento || ""}
+                        </span>
+                      </td>
+                      <td>
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          🔗
+                        </a>
                       </td>
                     </tr>
                   ))}
@@ -2438,123 +2630,50 @@ function DashboardGerencialOperacao() {
                   color: "#999",
                 }}
               >
-                {mediaProducao === null
+                {ultimasOS === null
                   ? "Carregando..."
                   : "Sem dados para o período selecionado"}
               </div>
             )}
           </div>
-        </div>
+          {totalPaginas > 1 && (
+            <div className="paginacao-tabela">
+              <button
+                onClick={() => setPaginaAtual((prev) => Math.max(prev - 1, 1))}
+                disabled={paginaAtual === 1}
+              >
+                Anterior
+              </button>
 
-        {/* Motivos de fechamento */}
-        <div className="operacao-card-nobottom operacao-table-card operacao-table-wrapper">
-          <table className="operacao-table">
-            <thead>
-              <tr className="tr-space-between">
-                <th>Motivos de fechamento</th>
-                <th>Qtd.</th>
-              </tr>
-            </thead>
-            <tbody>
-              {motivosFechamento.map((item, index) => (
-                <tr key={index}>
-                  <td>
-                    {index + 1}. {item.motivo}
-                  </td>
-                  <td>
-                    <strong>{item.qtd}</strong>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+              <span>
+                Página {paginaAtual} de {totalPaginas}
+              </span>
 
-      <section className="operacao-section operacao-final-section">
-        <div className="operacao-card-nobottom operacao-table-card operacao-table-wrapper">
-          <h4>Últimas Ordens de Serviço</h4>
-
-          {ultimasOS && ultimasOS.length > 0 ? (
-            <table className="operacao-table large">
-              <thead>
-                <tr>
-                  <th>Nome/Razão Social</th>
-                  <th>Tipo</th>
-                  <th>Descrição abertura</th>
-                  <th>Descrição fechamento</th>
-                  <th>Link</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ultimasOS.map((item, index) => (
-                  <tr key={index}>
-                    <td>
-                      {index + 1}. {item.nome}
-                    </td>
-                    <td>{item.tipo}</td>
-                    <td>
-                      <span
-                        className="descricao-limitada"
-                        onClick={() => openModal(item.descricaoAbertura || "")}
-                        style={{ cursor: "pointer" }}
-                      >
-                        {(item.descricaoAbertura || "").length > 50
-                          ? (item.descricaoAbertura || "").slice(0, 50) + "..."
-                          : item.descricaoAbertura || ""}
-                      </span>
-                    </td>
-                    <td>
-                      <span
-                        className="descricao-limitada"
-                        onClick={() =>
-                          openModal(item.descricaoFechamento || "")
-                        }
-                        style={{ cursor: "pointer" }}
-                      >
-                        {(item.descricaoFechamento || "").length > 50
-                          ? (item.descricaoFechamento || "").slice(0, 50) +
-                            "..."
-                          : item.descricaoFechamento || ""}
-                      </span>
-                    </td>
-                    <td>
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        🔗
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div
-              style={{ textAlign: "center", padding: "60px 0", color: "#999" }}
-            >
-              {ultimasOS === null
-                ? "Carregando..."
-                : "Sem dados para o período selecionado"}
+              <button
+                onClick={() =>
+                  setPaginaAtual((prev) => Math.min(prev + 1, totalPaginas))
+                }
+                disabled={paginaAtual === totalPaginas}
+              >
+                Próxima
+              </button>
             </div>
           )}
-        </div>
 
-        {/* ✅ MODAL */}
-        {showModal && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <button onClick={closeModal} className="close-button">
-                x
-              </button>
-              <p>{modalContent}</p>
+          {/* ✅ MODAL */}
+          {showModal && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <button onClick={closeModal} className="close-button">
+                  x
+                </button>
+                <p>{modalContent}</p>
+              </div>
             </div>
-          </div>
-        )}
-      </section>
-    </div>
+          )}
+        </section>
+      </div>
+    </>
   );
 }
 
