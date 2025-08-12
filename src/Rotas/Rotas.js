@@ -16,6 +16,7 @@ import DashboardClientesgerencial from '../Page/DashboardClientesgerencial';
 import DashboardOperacionalGerencial from '../Page/DashboardOperacionalGerencial';
 import DashboardPerformanceComercialB2C from '../Page/DashboardPerformanceComercialB2C';
 import DashboardPerformanceComercialB2B from '../Page/DashboardPerformanceComercialB2B';
+import DashboardGerencialOpecarao from '../Page/DashboardGerencialOperacao';
 
 const Rotas = () => {
   return (
@@ -23,6 +24,7 @@ const Rotas = () => {
       <Routes>
         <Route path='/dashboardperformancecomercialb2c' element={<DashboardPerformanceComercialB2C />} />
         <Route path='/dashboardperformancecomercialb2b' element={<DashboardPerformanceComercialB2B />} />
+        <Route path='/gerencialoperacao' element={<DashboardGerencialOpecarao /> } />
         <Route path='/cancelamentotv' element={<DashboardCancelamentos />} />
         <Route path='/cancelamento-simone' element={<DashboardCancelamentosClone />} />
         <Route path='/comercialtv' element={<DashboardComercial />} />
