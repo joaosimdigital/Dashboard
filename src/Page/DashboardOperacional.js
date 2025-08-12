@@ -46,7 +46,8 @@ export default function DashboardOperacional() {
   { mes: 'abr/25', meta: 830 },
   { mes: 'mai/25', meta: 840 },
   { mes: 'jun/25', meta: 850 },
-   { mes: 'jul/25', meta: 860 }
+   { mes: 'jul/25', meta: 860 },
+     { mes: 'ago/25', meta: 860 }
 ];
 
 
