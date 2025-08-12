@@ -130,7 +130,7 @@ function DashboardChurnGerencial() {
         params.append("tipo_pessoa", tipoPessoaSelecionado);
       }
 
-      const url = `http://localhost:3011/churn-mensal?${params.toString()}`;
+      const url = `http://38.224.145.3:3007/churn-mensal?${params.toString()}`;
 
       const response = await fetch(url);
       const data = await response.json();
@@ -147,7 +147,7 @@ function DashboardChurnGerencial() {
 
   const fetchLimiteMeta = async () => {
     try {
-      let url = `http://localhost:3011/limitemeta?ano=${anoSelecionado}&mes=${mesSelecionado}`;
+      let url = `http://38.224.145.3:3007/limitemeta?ano=${anoSelecionado}&mes=${mesSelecionado}`;
 
       if (cidadeSelecionada)
         url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
@@ -184,7 +184,7 @@ function DashboardChurnGerencial() {
 
   const fetchChurnTipoPessoa = async () => {
     try {
-      let url = `http://localhost:3011/churn-mensal_tipo_pessoa`;
+      let url = `http://38.224.145.3:3007/churn-mensal_tipo_pessoa`;
 
       const params = new URLSearchParams();
 
@@ -250,7 +250,7 @@ function DashboardChurnGerencial() {
         params.append("tipo_pessoa", tipoPessoaSelecionado);
       }
 
-      const url = `http://localhost:3011/churn-mensal-3meses?${params.toString()}`;
+      const url = `http://38.224.145.3:3007/churn-mensal-3meses?${params.toString()}`;
 
       const response = await fetch(url);
       const data = await response.json();
@@ -297,7 +297,7 @@ function DashboardChurnGerencial() {
         params.append("data_fim", dataFinal.toISOString().split("T")[0]);
       }
 
-      const url = `http://localhost:3011/atendimentos-ultimos-6-meses?data_inicio=2025-06-01&data_fim=2025-07-01`;
+      const url = `http://38.224.145.3:3007/atendimentos-ultimos-6-meses?data_inicio=2025-06-01&data_fim=2025-07-01`;
 
       const response = await fetch(url);
       const data = await response.json();
@@ -320,7 +320,7 @@ function DashboardChurnGerencial() {
 
   const fetchChurnPorCidade = async () => {
     try {
-      let url = `http://localhost:3011/churn-cidade`;
+      let url = `http://38.224.145.3:3007/churn-cidade`;
 
       const params = new URLSearchParams();
 
@@ -354,7 +354,7 @@ function DashboardChurnGerencial() {
 
   const fetchChurnPorBairro = async () => {
     try {
-      let url = `http://localhost:3011/churn-bairro`;
+      let url = `http://38.224.145.3:3007/churn-bairro`;
 
       const params = new URLSearchParams();
       if (cidadeSelecionada) params.append("cidade", cidadeSelecionada);
@@ -399,7 +399,7 @@ function DashboardChurnGerencial() {
       if (dataFinal)
         params.append("data_fim", dataFinal.toISOString().split("T")[0]);
 
-      const url = `http://localhost:3011/atendimentos_tipo_downgrade?${params.toString()}`;
+      const url = `http://38.224.145.3:3007/atendimentos_tipo_downgrade?${params.toString()}`;
 
       const response = await fetch(url);
       const data = await response.json();
@@ -451,7 +451,7 @@ function DashboardChurnGerencial() {
       if (dataFinal)
         params.append("data_fim", dataFinal.toISOString().split("T")[0]);
 
-      const url = `http://localhost:3011/motivos_cancelamentos?${params.toString()}`;
+      const url = `http://38.224.145.3:3007/motivos_cancelamentos?${params.toString()}`;
 
       const response = await fetch(url);
       const data = await response.json();
@@ -481,7 +481,7 @@ function DashboardChurnGerencial() {
       if (dataFinal)
         params.append("data_fim", dataFinal.toISOString().split("T")[0]);
 
-      const url = `http://localhost:3011/atendimentos_tipo?${params.toString()}`;
+      const url = `http://38.224.145.3:3007/atendimentos_tipo?${params.toString()}`;
 
       const response = await fetch(url);
       const data = await response.json();
@@ -533,7 +533,7 @@ function DashboardChurnGerencial() {
       if (dataFinal)
         params.append("data_fim", dataFinal.toISOString().split("T")[0]);
 
-      const url = `http://localhost:3011/valor-cancelamento-mensal?${params.toString()}`;
+      const url = `http://38.224.145.3:3007/valor-cancelamento-mensal?${params.toString()}`;
 
       const response = await fetch(url);
       const data = await response.json();
@@ -550,7 +550,7 @@ function DashboardChurnGerencial() {
 
   const fetchValorCancelamentoAnual = async () => {
     try {
-      let url = `http://localhost:3011/valor-cancelamento-anual?ano=${anoSelecionado}`;
+      let url = `http://38.224.145.3:3007/valor-cancelamento-anual?ano=${anoSelecionado}`;
       if (cidadeSelecionada)
         url += `&cidade=${encodeURIComponent(cidadeSelecionada)}`;
       if (bairroSelecionado)
@@ -593,7 +593,7 @@ function DashboardChurnGerencial() {
       if (tipoPessoaSelecionado)
         params.append("tipo_pessoa", tipoPessoaSelecionado);
 
-      const url = `http://localhost:3011/churn-mensal-12meses?${params.toString()}`;
+      const url = `http://38.224.145.3:3007/churn-mensal-12meses?${params.toString()}`;
 
       const response = await fetch(url);
       const data = await response.json();
@@ -657,7 +657,7 @@ function DashboardChurnGerencial() {
       if (tipoPessoaSelecionado)
         params.append("tipo_pessoa", tipoPessoaSelecionado);
 
-      const url = `http://localhost:3011/churn-clientes-por-habilitacao?${params.toString()}`;
+      const url = `http://38.224.145.3:3007/churn-clientes-por-habilitacao?${params.toString()}`;
       const response = await fetch(url);
       const data = await response.json();
 
@@ -720,7 +720,7 @@ function DashboardChurnGerencial() {
     if (dataInicial) params.append("data_inicio", dataInicial.toISOString().split("T")[0]);
     if (dataFinal) params.append("data_fim", dataFinal.toISOString().split("T")[0]);
 
-    const url = `http://localhost:3011/churn-descricao?${params.toString()}`;
+    const url = `http://38.224.145.3:3007/churn-descricao?${params.toString()}`;
     const response = await fetch(url);
     const data = await response.json();
 
@@ -767,7 +767,7 @@ function DashboardChurnGerencial() {
 
   const fetchClientesRepetidos = async () => {
     try {
-      let url = `http://localhost:3011/clientes-repetidos-3meses`;
+      let url = `http://38.224.145.3:3007/clientes-repetidos-3meses`;
 
       // Adiciona tipo de pessoa se estiver selecionado
       if (tipoPessoaSelecionado) {
@@ -789,7 +789,7 @@ function DashboardChurnGerencial() {
 
   const fetchClientesRepetidos6Meses = async () => {
     try {
-      let url = `http://localhost:3011/clientes-repetidos-6meses`;
+      let url = `http://38.224.145.3:3007/clientes-repetidos-6meses`;
 
       // Adiciona tipo de pessoa se estiver selecionado
       if (tipoPessoaSelecionado) {
@@ -814,7 +814,7 @@ function DashboardChurnGerencial() {
 
   const fetchClientesRepetidosAtendimento = async () => {
     try {
-      let url = `http://localhost:3011/clientes-repetidos-atendimentos`;
+      let url = `http://38.224.145.3:3007/clientes-repetidos-atendimentos`;
 
       const params = new URLSearchParams();
       if (dataInicial)
@@ -846,7 +846,7 @@ function DashboardChurnGerencial() {
 
   const fetchPlanosCancelados = async () => {
     try {
-      let url = `http://localhost:3011/churn-mensal`;
+      let url = `http://38.224.145.3:3007/churn-mensal`;
 
       const params = new URLSearchParams();
       if (dataInicial)
@@ -877,7 +877,7 @@ function DashboardChurnGerencial() {
   const fetchStatusMeta = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3011/meta?ano=${anoSelecionado}&mes=${mesSelecionado}`
+        `http://38.224.145.3:3007/meta?ano=${anoSelecionado}&mes=${mesSelecionado}`
       );
       const data = await response.json();
       if (response.ok) {
