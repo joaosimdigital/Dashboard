@@ -32,6 +32,7 @@ function DashboardChurnGerencial() {
   const currentMonth = currentDate.getMonth() + 1;
   const [anoSelecionado, setAnoSelecionado] = useState(currentYear);
   const [mesSelecionado, setMesSelecionado] = useState(currentMonth);
+  const [aplicandoFiltro, setAplicandoFiltro] = useState(false);
   const [churnMensal, setChurnMensal] = useState(null);
   const [projecao, setProjecao] = useState(0);
   const [cancelamentosInstalacao, setCancelamentosInstalacao] = useState([]);
@@ -716,47 +717,21 @@ function DashboardChurnGerencial() {
     if (cidadeSelecionada) params.append("cidade", cidadeSelecionada);
     if (bairroSelecionado) params.append("bairro", bairroSelecionado);
     if (motivoSelecionado) params.append("motivo", motivoSelecionado);
-    if (tipoPessoaSelecionado) params.append("tipo_pessoa", tipoPessoaSelecionado);
-    if (dataInicial) params.append("data_inicio", dataInicial.toISOString().split("T")[0]);
-    if (dataFinal) params.append("data_fim", dataFinal.toISOString().split("T")[0]);
+    if (tipoPessoaSelecionado)
+      params.append("tipo_pessoa", tipoPessoaSelecionado);
+    if (dataInicial)
+      params.append("data_inicio", dataInicial.toISOString().split("T")[0]);
+    if (dataFinal)
+      params.append("data_fim", dataFinal.toISOString().split("T")[0]);
 
     const url = `http://38.224.145.3:3007/churn-descricao?${params.toString()}`;
     const response = await fetch(url);
     const data = await response.json();
 
     if (response.ok) {
-      const motivosExcluidos = [
-        "inviabilidade tecnica",
-        "troca de titularidade",
-        "ativo errado",
-        "mudanca de servico"
-      ];
-
-      const normalizar = (str) => {
-        return str
-          ? str
-              .normalize("NFD")
-              .replace(/[\u0300-\u036f]/g, "")
-              .replace(/[^\w\s]/g, "")
-              .toLowerCase()
-              .trim()
-          : "";
-      };
-
-      const motivoFiltroNorm = normalizar(motivoSelecionado);
-      const deveExcluir = !motivosExcluidos.includes(motivoFiltroNorm);
-
-      let cancelamentos = data.cancelamentos_detalhados || [];
-
-      if (deveExcluir) {
-        cancelamentos = cancelamentos.filter(
-          (item) => !motivosExcluidos.includes(normalizar(item.motivo_cancelamento))
-        );
-      }
-
-      setCancelamentosDetalhados(cancelamentos);
+      setCancelamentosDetalhados(data.cancelamentos_detalhados || []);
       setTotalAtendimentos(data.total_atendimentos || 0);
-      setQtdOrdens(data.qtd_ordens || 0);
+      setQtdOrdens(data.qtd_ordens || 0); // ✅ NOVO
     } else {
       console.error("Erro ao buscar cancelamentos detalhados:", data.error);
     }
@@ -935,26 +910,31 @@ function DashboardChurnGerencial() {
   };
 
   useEffect(() => {
+  if (!aplicandoFiltro) { // só dispara quando não é por filtro
     fetchAll(false);
-    const intervalo = setInterval(() => fetchAll(false), 10000);
+    const intervalo = setInterval(() => fetchAll(false), 50000);
     return () => clearInterval(intervalo);
-  }, [
-    anoSelecionado,
-    mesSelecionado,
-    dataInicial,
-    dataFinal,
-    cidadeSelecionada,
-    bairroSelecionado,
-    motivoSelecionado,
-    tipoPessoaSelecionado,
-  ]);
+  }
+}, [
+  anoSelecionado,
+  mesSelecionado,
+  dataInicial,
+  dataFinal,
+  cidadeSelecionada,
+  bairroSelecionado,
+  motivoSelecionado,
+  tipoPessoaSelecionado,
+  aplicandoFiltro, // opcional para garantir atualização
+]);
 
-  const handleUserInteraction = async (callback) => {
-    setLoading(true);
-    setProgress(0);
-    await callback();
-    await fetchAll(true); // true ativa o loading
-  };
+ const handleUserInteraction = async (callback) => {
+  setLoading(true);
+  setProgress(0);
+  setAplicandoFiltro(true); // indica que o fetch é por filtro
+  await callback();
+  await fetchAll(true);
+  setAplicandoFiltro(false);
+};
 
   useEffect(() => {
     const hoje = new Date();
