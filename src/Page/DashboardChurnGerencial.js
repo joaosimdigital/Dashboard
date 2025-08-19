@@ -32,6 +32,7 @@ function DashboardChurnGerencial() {
   const currentMonth = currentDate.getMonth() + 1;
   const [anoSelecionado, setAnoSelecionado] = useState(currentYear);
   const [mesSelecionado, setMesSelecionado] = useState(currentMonth);
+  const [aplicandoFiltro, setAplicandoFiltro] = useState(false);
   const [churnMensal, setChurnMensal] = useState(null);
   const [projecao, setProjecao] = useState(0);
   const [cancelamentosInstalacao, setCancelamentosInstalacao] = useState([]);
@@ -67,7 +68,9 @@ function DashboardChurnGerencial() {
   const [clientesRepetidosAtendimento, setClientesRepetidosAtendimento] =
     useState([]);
   const [motivoSelecionado, setMotivoSelecionado] = useState(null);
-  const [atendimentosUltimos6Meses, setAtendimentosUltimos6Meses] = useState([]);
+  const [atendimentosUltimos6Meses, setAtendimentosUltimos6Meses] = useState(
+    []
+  );
   const [cidadeSelecionada, setCidadeSelecionada] = useState(null);
   const [ordenarPorCancelamentos, setOrdenarPorCancelamentos] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -87,17 +90,18 @@ function DashboardChurnGerencial() {
   const COLORS = ["#F45742", "#00000"]; // Cores para Batido e Restante
 
   function formatTempoNaBase(dias) {
-  if (dias == null || isNaN(dias)) return 0;
+    if (dias == null || isNaN(dias)) return 0;
 
-  const meses = Math.floor(dias / 30);
-  const diasRestantes = dias % 30;
+    const meses = Math.floor(dias / 30);
+    const diasRestantes = dias % 30;
 
-  const partes = [];
-  if (meses > 0) partes.push(`${meses} mes${meses > 1 ? "es" : ""}`);
-  if (diasRestantes > 0) partes.push(`${diasRestantes} dia${diasRestantes > 1 ? "s" : ""}`);
+    const partes = [];
+    if (meses > 0) partes.push(`${meses} mes${meses > 1 ? "es" : ""}`);
+    if (diasRestantes > 0)
+      partes.push(`${diasRestantes} dia${diasRestantes > 1 ? "s" : ""}`);
 
-  return partes.length > 0 ? partes.join(" e ") : "0 dias";
-}
+    return partes.length > 0 ? partes.join(" e ") : "0 dias";
+  }
 
   const fetchChurnMensal = async () => {
     try {
@@ -282,35 +286,38 @@ function DashboardChurnGerencial() {
     }
   };
 
-const fetchAtendimentosUltimos6Meses = async () => {
-  try {
-    setLoading(true);
-    const params = new URLSearchParams();
+  const fetchAtendimentosUltimos6Meses = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
 
-    if (dataInicial) {
-      params.append("data_inicio", dataInicial.toISOString().split("T")[0]);
+      if (dataInicial) {
+        params.append("data_inicio", dataInicial.toISOString().split("T")[0]);
+      }
+      if (dataFinal) {
+        params.append("data_fim", dataFinal.toISOString().split("T")[0]);
+      }
+
+      const url = `http://38.224.145.3:3007/atendimentos-ultimos-6-meses?data_inicio=2025-06-01&data_fim=2025-07-01`;
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (response.ok) {
+        setAtendimentosUltimos6Meses(data.atendimentos || []);
+        console.log("✅ Atendimentos carregados:", data.atendimentos.length);
+      } else {
+        console.error(
+          "Erro ao buscar atendimentos últimos 6 meses:",
+          data.error
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao buscar atendimentos últimos 6 meses:", error);
+    } finally {
+      setLoading(false);
     }
-    if (dataFinal) {
-      params.append("data_fim", dataFinal.toISOString().split("T")[0]);
-    }
-
-    const url = `http://38.224.145.3:3007/atendimentos-ultimos-6-meses?data_inicio=2025-06-01&data_fim=2025-07-01`;
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (response.ok) {
-      setAtendimentosUltimos6Meses(data.atendimentos || []);
-      console.log("✅ Atendimentos carregados:", data.atendimentos.length);
-    } else {
-      console.error("Erro ao buscar atendimentos últimos 6 meses:", data.error);
-    }
-  } catch (error) {
-    console.error("Erro ao buscar atendimentos últimos 6 meses:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const fetchChurnPorCidade = async () => {
     try {
@@ -733,7 +740,6 @@ const fetchAtendimentosUltimos6Meses = async () => {
   }
 };
 
-
   const fetchClientesRepetidos = async () => {
     try {
       let url = `http://38.224.145.3:3007/clientes-repetidos-3meses`;
@@ -757,27 +763,29 @@ const fetchAtendimentosUltimos6Meses = async () => {
   };
 
   const fetchClientesRepetidos6Meses = async () => {
-  try {
-    let url = `http://38.224.145.3:3007/clientes-repetidos-6meses`;
+    try {
+      let url = `http://38.224.145.3:3007/clientes-repetidos-6meses`;
 
-    // Adiciona tipo de pessoa se estiver selecionado
-    if (tipoPessoaSelecionado) {
-      url += `?tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
+      // Adiciona tipo de pessoa se estiver selecionado
+      if (tipoPessoaSelecionado) {
+        url += `?tipo_pessoa=${encodeURIComponent(tipoPessoaSelecionado)}`;
+      }
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (response.ok && data.clientes_repetidos) {
+        setClientesRepetidos6Meses(data.clientes_repetidos); // ✅ novo state
+      } else {
+        console.error(
+          "Erro na resposta de clientes repetidos (6 meses):",
+          data.error
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao buscar clientes repetidos (6 meses):", error);
     }
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (response.ok && data.clientes_repetidos) {
-      setClientesRepetidos6Meses(data.clientes_repetidos); // ✅ novo state
-    } else {
-      console.error("Erro na resposta de clientes repetidos (6 meses):", data.error);
-    }
-  } catch (error) {
-    console.error("Erro ao buscar clientes repetidos (6 meses):", error);
-  }
-};
-
+  };
 
   const fetchClientesRepetidosAtendimento = async () => {
     try {
@@ -902,26 +910,31 @@ const fetchAtendimentosUltimos6Meses = async () => {
   };
 
   useEffect(() => {
+  if (!aplicandoFiltro) { // só dispara quando não é por filtro
     fetchAll(false);
-    const intervalo = setInterval(() => fetchAll(false), 10000);
+    const intervalo = setInterval(() => fetchAll(false), 50000);
     return () => clearInterval(intervalo);
-  }, [
-    anoSelecionado,
-    mesSelecionado,
-    dataInicial,
-    dataFinal,
-    cidadeSelecionada,
-    bairroSelecionado,
-    motivoSelecionado,
-    tipoPessoaSelecionado,
-  ]);
+  }
+}, [
+  anoSelecionado,
+  mesSelecionado,
+  dataInicial,
+  dataFinal,
+  cidadeSelecionada,
+  bairroSelecionado,
+  motivoSelecionado,
+  tipoPessoaSelecionado,
+  aplicandoFiltro, // opcional para garantir atualização
+]);
 
-  const handleUserInteraction = async (callback) => {
-    setLoading(true);
-    setProgress(0);
-    await callback();
-    await fetchAll(true); // true ativa o loading
-  };
+ const handleUserInteraction = async (callback) => {
+  setLoading(true);
+  setProgress(0);
+  setAplicandoFiltro(true); // indica que o fetch é por filtro
+  await callback();
+  await fetchAll(true);
+  setAplicandoFiltro(false);
+};
 
   useEffect(() => {
     const hoje = new Date();
@@ -1842,23 +1855,23 @@ const fetchAtendimentosUltimos6Meses = async () => {
                 <th className="h1-tabela-bairros-gerencial">Cliente</th>
                 <th className="h1-tabela-bairros-gerencial">Bairro</th>
                 <th className="h1-tabela-bairros-gerencial">Cidade</th>
-                <th className="h1-tabela-bairros-gerencial">Motivo de Cancelamento</th>
+                {/*<th className="h1-tabela-bairros-gerencial">Vendedor</th>{" "}
+                {/* 🆕 */}
+                <th className="h1-tabela-bairros-gerencial">
+                  Motivo de Cancelamento
+                </th>
                 <th className="h1-tabela-bairros-gerencial">Valor</th>
                 <th className="h1-tabela-bairros-gerencial">Tipo</th>
                 <th className="h1-tabela-bairros-gerencial">Tempo na Base</th>
-                <th
-                  className="h1-tabela-bairros-gerencial"
-                  title="6 meses"
-                >
+                <th className="h1-tabela-bairros-gerencial" title="6 meses">
                   Total de Atendimentos
                 </th>
-                <th
-                  className="h1-tabela-bairros-gerencial"
-                  title="6 meses"
-                >
+                <th className="h1-tabela-bairros-gerencial" title="6 meses">
                   Total de Ordens
                 </th>
-                <th className="h1-tabela-bairros-gerencial">Data Cancelamento</th>
+                <th className="h1-tabela-bairros-gerencial">
+                  Data Cancelamento
+                </th>
                 <th className="h1-tabela-bairros-gerencial">Observação</th>
               </tr>
             </thead>
@@ -1870,35 +1883,60 @@ const fetchAtendimentosUltimos6Meses = async () => {
                   const anoHab = dataHab.getFullYear();
 
                   return (
-                    (!motivoSelecionado || item.motivo_cancelamento === motivoSelecionado) &&
-                    (!cidadeSelecionada || item.cidade_nome === cidadeSelecionada) &&
+                    (!motivoSelecionado ||
+                      item.motivo_cancelamento === motivoSelecionado) &&
+                    (!cidadeSelecionada ||
+                      item.cidade_nome === cidadeSelecionada) &&
                     (!bairroSelecionado || item.bairro === bairroSelecionado) &&
-                    (!filtroHabilitacaoMes || mesHab === filtroHabilitacaoMes) &&
+                    (!filtroHabilitacaoMes ||
+                      mesHab === filtroHabilitacaoMes) &&
                     (!filtroHabilitacaoAno || anoHab === filtroHabilitacaoAno)
                   );
                 })
                 .map((item, index) => (
                   <tr key={index} className="link-tabela-bairros">
-                    <td className="h2-tabela-bairros-gerencial">{item.nome_razaosocial}</td>
-                    <td className="h2-tabela-bairros-gerencial">{item.bairro}</td>
-                    <td className="h2-tabela-bairros-gerencial">{item.cidade_nome}</td>
-                    <td className="h2-tabela-bairros-gerencial">{item.motivo_cancelamento}</td>
+                    <td className="h2-tabela-bairros-gerencial">
+                      {item.nome_razaosocial}
+                    </td>
+                    <td className="h2-tabela-bairros-gerencial">
+                      {item.bairro}
+                    </td>
+                    <td className="h2-tabela-bairros-gerencial">
+                      {item.cidade_nome}
+                    </td>
+                    {/*<td className="h2-tabela-bairros-gerencial">
+                      {item.vendedor}
+                    </td>{" "}
+                    {/* 🆕 */}
+                    <td className="h2-tabela-bairros-gerencial">
+                      {item.motivo_cancelamento}
+                    </td>
                     <td className="h2-tabela-bairros-gerencial">
                       {parseFloat(item.valor).toLocaleString("pt-BR", {
                         style: "currency",
                         currency: "BRL",
                       })}
                     </td>
-                    <td className="h2-tabela-bairros-gerencial">{item.tipo_pessoa.toUpperCase()}</td>
                     <td className="h2-tabela-bairros-gerencial">
-  {formatTempoNaBase(item.tempo_na_base)}
-</td>
-                    <td className="h2-tabela-bairros-gerencial">{item.qtd_atendimentos}</td>
-                    <td className="h2-tabela-bairros-gerencial">{item.qtd_ordens}</td>
-                    <td className="h2-tabela-bairros-gerencial">
-                      {new Date(item.data_cancelamento).toLocaleDateString("pt-BR")}
+                      {item.tipo_pessoa.toUpperCase()}
                     </td>
-                    <td className="h2-tabela-bairros-gerencial">{item.observacao}</td>
+                    <td className="h2-tabela-bairros-gerencial">
+                      {formatTempoNaBase(item.tempo_na_base)}
+                    </td>
+                    <td className="h2-tabela-bairros-gerencial">
+                      {item.qtd_atendimentos}
+                    </td>
+                    <td className="h2-tabela-bairros-gerencial">
+                      {item.qtd_ordens}
+                    </td>
+                    <td className="h2-tabela-bairros-gerencial">
+                      {new Date(item.data_cancelamento).toLocaleDateString(
+                        "pt-BR"
+                      )}
+                    </td>
+                    <td className="h2-tabela-bairros-gerencial">
+                      {item.observacao}
+                    </td>
                   </tr>
                 ))}
             </tbody>
@@ -1977,7 +2015,6 @@ const fetchAtendimentosUltimos6Meses = async () => {
             </table>
           </div>
         </div>
-
       </div>
 
       {loading && (
