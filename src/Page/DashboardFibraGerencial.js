@@ -713,15 +713,15 @@ const exportarCSV = () => {
 
               <div className='head-gerencial-body-geral'>
 
-                <div className='div-logo-operacional'>
+                <div className='div-logo-operacional1'>
                            <img  className='logo-head-gerencial-body-operacional' src={logobranca}/>
 
                     </div>
 
-                    <h1  className='h2-head-gerencial-body-operacional'>Dashboard Fibra</h1>
+                    <h1  className='h2-head-gerencial-body-operacional1'>Dashboard Fibra</h1>
 
+                   <h1 style={{color: 'black', width: '30%'}}>.</h1>
                    
-                 
                 </div>
 
                 <div style={{width: '100%', backgroundColor: 'black', height: 40}}>

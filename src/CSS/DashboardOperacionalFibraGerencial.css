@@ -16,13 +16,13 @@
 
 
 
-.h2-head-gerencial-body-operacional{
+.h2-head-gerencial-body-operacional1{
     font-family: Bold;
-    margin-left: 10px;
+   width: 70%;
     color: white;
     font-size: 50px;
-    display: flex;
-    width: 100%;
+   
+    text-align: center;
     align-items: center;
 }
 
@@ -41,8 +41,8 @@
     color: black;
 }
 
-.div-logo-operacional{
-    width: 34%;
+.div-logo-operacional1{
+    width: 30%;
 }
 
 
