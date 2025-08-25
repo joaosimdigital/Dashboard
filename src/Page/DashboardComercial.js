@@ -163,7 +163,7 @@ const COLORS = ['#FF4500', '#D3D3D3'];
 
          const responseaguardando = await fetch('http://38.224.145.3:3002/aguardandoinstalacao');
          const dataaguardando = await responseaguardando.json();
-         setTotalAguardando(dataaguardando.total_cadastros); 
+         setTotalAguardando(dataaguardando.soma_total.total_instalacoes); 
 
          const responsetrimestre = await fetch('http://38.224.145.3:3002/total-clientes-trimestre');
          const datatrimestre = await responsetrimestre.json();
