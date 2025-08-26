@@ -18,6 +18,7 @@ import DashboardPerformanceComercialB2C from '../Page/DashboardPerformanceComerc
 import DashboardPerformanceComercialB2B from '../Page/DashboardPerformanceComercialB2B';
 import DashboardGerencialOpecarao from '../Page/DashboardGerencialOperacao';
 import DashboardFibra from '../Page/DashboardFibraGerencial';
+import LatenciaUrl from '../Page/LatenciaUrl';
 
 const Rotas = () => {
   return (
@@ -38,6 +39,7 @@ const Rotas = () => {
           <Route path='/geral' element={<DashboardClientesgerencial />} />  
           <Route path='/dashboardoperacionalgerencial' element={<DashboardOperacionalGerencial />} />  
             <Route path='/dashboardfibra' element={<DashboardFibra />} />  
+               <Route path='/latenciaurl' element={<LatenciaUrl />} /> 
       </Routes>
     </Router>
   );

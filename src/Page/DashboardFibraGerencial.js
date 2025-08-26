@@ -230,7 +230,7 @@ if (escopo === "d1") {
 
 if (escopo === "d2") {
   const data = new Date();
-  data.setDate(data.getDate() + 2); // amanhã
+  data.setDate(data.getDate() + 2); // D+2
 
   params.append("inicio", data.toISOString().split("T")[0]);
   params.append("fim", data.toISOString().split("T")[0]);
@@ -239,7 +239,7 @@ if (escopo === "d2") {
 
 if (escopo === "d3") {
   const data = new Date();
-  data.setDate(data.getDate() + 3); // amanhã
+  data.setDate(data.getDate() + 3); // D+3
 
   params.append("inicio", data.toISOString().split("T")[0]);
   params.append("fim", data.toISOString().split("T")[0]);
@@ -248,7 +248,7 @@ if (escopo === "d3") {
 
 if (escopo === "d4") {
   const data = new Date();
-  data.setDate(data.getDate() + 4); // amanhã
+  data.setDate(data.getDate() + 4); // D+4
 
   params.append("inicio", data.toISOString().split("T")[0]);
   params.append("fim", data.toISOString().split("T")[0]);
@@ -257,7 +257,7 @@ if (escopo === "d4") {
 
 if (escopo === "d5") {
   const data = new Date();
-  data.setDate(data.getDate() + 5); // amanhã
+  data.setDate(data.getDate() + 5); // D+5
 
   params.append("inicio", data.toISOString().split("T")[0]);
   params.append("fim", data.toISOString().split("T")[0]);
@@ -266,7 +266,7 @@ if (escopo === "d5") {
 
 if (escopo === "d6") {
   const dataInicio = new Date();
-  dataInicio.setDate(dataInicio.getDate() + 6); // data daqui a 6 dias
+  dataInicio.setDate(dataInicio.getDate() + 6); // D+6
 
   const dataFim = new Date("2030-12-31"); // data fim arbitrária no futuro
 
@@ -293,7 +293,6 @@ if (escopo === "d6") {
     setLoadingTabela(false); // <-- Fim do loading
   }
 };
-
 
 
 
@@ -689,6 +688,7 @@ const exportarCSV = () => {
         cliente.macOnu || "-",
         cliente.tipoCdo || "-",
         cliente.status,
+        cliente.tipo_ordem || "-",
         cliente.instalador || "-"
       ];
       return row.map(item => `"${item}"`).join(";");
@@ -1039,32 +1039,32 @@ const exportarCSV = () => {
       <h1 className='h2-card1-gerencial-geral'>{dados.total_geral}</h1>
 
       <div className='div-card1-gerencial-geral1'>
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
+        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('adaptacao', 'd1')}>
           <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados.total_adaptacao_predio_condominio}</h1>
         </div>
 
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
+        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_expansao', 'd1')}>
           <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados.total_fibra_expansao}</h1>
         </div>  
 
-            <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
+            <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_construcao', 'd1')}>
           <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados.total_fibra_construcao_rede_optica}</h1>
         </div>
 
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
+        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca_de_poste', 'd1')}>
           <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados.total_troca_de_poste}</h1>
         </div>  
 
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
+         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_rompimento', 'd1')}>
           <h1 className='h3-card1-gerencial-geral' >ROMPIMENTO</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados.total_fibra_rompimento_rede_optica}</h1>
         </div>
 
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
+         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_manutencao', 'd1')}>
           <h1 className='h3-card1-gerencial-geral' >MANUTENÇÕES</h1>
           <h1 className='h4-card1-gerencial-geral'>{dados.total_fibra_manutencao_rede_optica}</h1>
         </div>
@@ -1073,280 +1073,279 @@ const exportarCSV = () => {
     </div>
 
 
-                   <div className='div-card5-gerencial-geral'>
-      <h1 className='h1-card1-gerencial-geral'>D + 2</h1>
-      <h1 className='h2-card1-gerencial-geral'>{dados2.total_geral}</h1>
+                  <div className='div-card5-gerencial-geral'>
+  <h1 className='h1-card1-gerencial-geral'>D + 2</h1>
+  <h1 className='h2-card1-gerencial-geral'>{dados2.total_geral}</h1>
 
-      <div className='div-card1-gerencial-geral1'>
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados2.total_adaptacao_predio_condominio}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_expansao}</h1>
-        </div>  
-
-            <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_construcao_rede_optica}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados2.total_troca_de_poste}</h1>
-        </div>  
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >ROMPIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_rompimento_rede_optica}</h1>
-        </div>
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >MANUTENÇÕES</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_manutencao_rede_optica}</h1>
-        </div>
-
-      </div>
+  <div className='div-card1-gerencial-geral1'>
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('adaptacao', 'd2')}>
+      <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_adaptacao_predio_condominio}</h1>
     </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_expansao', 'd2')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_expansao}</h1>
+    </div>  
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_construcao', 'd2')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_construcao_rede_optica}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca_de_poste', 'd2')}>
+      <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_troca_de_poste}</h1>
+    </div>  
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_rompimento', 'd2')}>
+      <h1 className='h3-card1-gerencial-geral'>ROMPIMENTO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_rompimento_rede_optica}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_manutencao', 'd2')}>
+      <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_manutencao_rede_optica}</h1>
+    </div>
+  </div>
+</div>
+
 
 
 
  <div className='div-card6-gerencial-geral'>
-      <h1 className='h1-card1-gerencial-geral'>D + 3</h1>
-      <h1 className='h2-card1-gerencial-geral'>{dados3.total_geral}</h1>
+  <h1 className='h1-card1-gerencial-geral'>D + 3</h1>
+  <h1 className='h2-card1-gerencial-geral'>{dados2.total_geral}</h1>
 
-      <div className='div-card1-gerencial-geral1'>
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados3.total_adaptacao_predio_condominio}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados3.total_fibra_expansao}</h1>
-        </div>  
-
-            <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados3.total_fibra_construcao_rede_optica}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados3.total_troca_de_poste}</h1>
-        </div>  
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >ROMPIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados3.total_fibra_rompimento_rede_optica}</h1>
-        </div>
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >MANUTENÇÕES</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados3.total_fibra_manutencao_rede_optica}</h1>
-        </div>
-
-      </div>
+  <div className='div-card1-gerencial-geral1'>
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('adaptacao', 'd3')}>
+      <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_adaptacao_predio_condominio}</h1>
     </div>
 
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_expansao', 'd3')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_expansao}</h1>
+    </div>  
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_construcao', 'd3')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_construcao_rede_optica}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca_de_poste', 'd3')}>
+      <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_troca_de_poste}</h1>
+    </div>  
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_rompimento', 'd3')}>
+      <h1 className='h3-card1-gerencial-geral'>ROMPIMENTO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_rompimento_rede_optica}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_manutencao', 'd3')}>
+      <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_manutencao_rede_optica}</h1>
+    </div>
+  </div>
+</div>
 
                   
+
+
  <div className='div-card7-gerencial-geral'>
-      <h1 className='h1-card1-gerencial-geral'>D + 4</h1>
-      <h1 className='h2-card1-gerencial-geral'>{dados4.total_geral}</h1>
+  <h1 className='h1-card1-gerencial-geral'>D + 4</h1>
+  <h1 className='h2-card1-gerencial-geral'>{dados2.total_geral}</h1>
 
-      <div className='div-card1-gerencial-geral1'>
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados4.total_adaptacao_predio_condominio}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados4.total_fibra_expansao}</h1>
-        </div>  
-
-            <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados4.total_fibra_construcao_rede_optica}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados4.total_troca_de_poste}</h1>
-        </div>  
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >ROMPIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados4.total_fibra_rompimento_rede_optica}</h1>
-        </div>
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >MANUTENÇÕES</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados4.total_fibra_manutencao_rede_optica}</h1>
-        </div>
-
-      </div>
+  <div className='div-card1-gerencial-geral1'>
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('adaptacao', 'd4')}>
+      <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_adaptacao_predio_condominio}</h1>
     </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_expansao', 'd4')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_expansao}</h1>
+    </div>  
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_construcao', 'd4')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_construcao_rede_optica}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca_de_poste', 'd4')}>
+      <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_troca_de_poste}</h1>
+    </div>  
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_rompimento', 'd4')}>
+      <h1 className='h3-card1-gerencial-geral'>ROMPIMENTO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_rompimento_rede_optica}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_manutencao', 'd4')}>
+      <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_manutencao_rede_optica}</h1>
+    </div>
+  </div>
+</div>
+
+
 
 
  <div className='div-card8-gerencial-geral'>
-      <h1 className='h1-card1-gerencial-geral'>D + 5</h1>
-      <h1 className='h2-card1-gerencial-geral'>{dados5.total_geral}</h1>
+  <h1 className='h1-card1-gerencial-geral'>D + 5</h1>
+  <h1 className='h2-card1-gerencial-geral'>{dados2.total_geral}</h1>
 
-      <div className='div-card1-gerencial-geral1'>
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados5.total_adaptacao_predio_condominio}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados5.total_fibra_expansao}</h1>
-        </div>  
-
-            <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados5.total_fibra_construcao_rede_optica}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados5.total_troca_de_poste}</h1>
-        </div>  
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >ROMPIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados5.total_fibra_rompimento_rede_optica}</h1>
-        </div>
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >MANUTENÇÕES</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados5.total_fibra_manutencao_rede_optica}</h1>
-        </div>
-
-      </div>
+  <div className='div-card1-gerencial-geral1'>
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('adaptacao', 'd5')}>
+      <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_adaptacao_predio_condominio}</h1>
     </div>
 
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_expansao', 'd5')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_expansao}</h1>
+    </div>  
 
-
-                                   <div className='div-card5-gerencial-geral'>
-      <h1 className='h1-card1-gerencial-geral'>D + 6</h1>
-      <h1 className='h2-card1-gerencial-geral'>{dados6.total_geral}</h1>
-
-      <div className='div-card1-gerencial-geral1'>
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados6.total_adaptacao_predio_condominio}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados6.total_fibra_expansao}</h1>
-        </div>  
-
-            <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados6.total_fibra_construcao_rede_optica}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados6.total_troca_de_poste}</h1>
-        </div>  
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >ROMPIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados6.total_fibra_rompimento_rede_optica}</h1>
-        </div>
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >MANUTENÇÕES</h1>
-          <h1 className='h4-card1-gerencial-geral'>{dados6.total_fibra_manutencao_rede_optica}</h1>
-        </div>
-
-      </div>
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_construcao', 'd5')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_construcao_rede_optica}</h1>
     </div>
 
-                         <div className='div-card10-gerencial-geral'>
-      <h1 className='h1-card1-gerencial-geral'>SEM AGENDA</h1>
-      <h1 className='h2-card1-gerencial-geral'>{semAgenda.todos}</h1>
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca_de_poste', 'd5')}>
+      <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_troca_de_poste}</h1>
+    </div>  
 
-      <div className='div-card1-gerencial-geral1'>
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{semAgenda.adaptacao_predio_condominio}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{semAgenda.fibra_expansao}</h1>
-        </div>  
-
-            <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{semAgenda.fibra_construcao_rede_optica}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
-          <h1 className='h4-card1-gerencial-geral'>{semAgenda.troca_de_poste}</h1>
-        </div>  
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >ROMPIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{semAgenda.fibra_rompimento_rede_optica}</h1>
-        </div>
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >MANUTENÇÕES</h1>
-          <h1 className='h4-card1-gerencial-geral'>{semAgenda.fibra_manutencao_rede_optica}</h1>
-        </div>
-
-      </div>
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_rompimento', 'd5')}>
+      <h1 className='h3-card1-gerencial-geral'>ROMPIMENTO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_rompimento_rede_optica}</h1>
     </div>
 
-
-
-                        <div className='div-card10-gerencial-geral'>
-      <h1 className='h1-card1-gerencial-geral'>Vencidos</h1>
-      <h1 className='h2-card1-gerencial-geral'>{totais.todos}</h1>
-
-      <div className='div-card1-gerencial-geral1'>
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{totais.adaptacao_predio_condominio}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{totais.fibra_expansao}</h1>
-        </div>  
-
-            <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('instalacao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
-          <h1 className='h4-card1-gerencial-geral'>{totais.fibra_construcao_rede_optica}</h1>
-        </div>
-
-        <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
-          <h1 className='h4-card1-gerencial-geral'>{totais.troca_de_poste}</h1>
-        </div>  
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >ROMPIMENTO</h1>
-          <h1 className='h4-card1-gerencial-geral'>{totais.fibra_rompimento_rede_optica}</h1>
-        </div>
-
-         <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('manutencao', 'd1')}>
-          <h1 className='h3-card1-gerencial-geral' >MANUTENÇÕES</h1>
-          <h1 className='h4-card1-gerencial-geral'>{totais.fibra_manutencao_rede_optica}</h1>
-        </div>
-
-      </div>
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_manutencao', 'd5')}>
+      <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_manutencao_rede_optica}</h1>
     </div>
+  </div>
+</div>
+
+
+
+
+                   <div className='div-card8-gerencial-geral'>
+  <h1 className='h1-card1-gerencial-geral'>D + 6</h1>
+  <h1 className='h2-card1-gerencial-geral'>{dados2.total_geral}</h1>
+
+  <div className='div-card1-gerencial-geral1'>
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('adaptacao', 'd6')}>
+      <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_adaptacao_predio_condominio}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_expansao', 'd6')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_expansao}</h1>
+    </div>  
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_construcao', 'd6')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_construcao_rede_optica}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca_de_poste', 'd6')}>
+      <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_troca_de_poste}</h1>
+    </div>  
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_rompimento', 'd6')}>
+      <h1 className='h3-card1-gerencial-geral'>ROMPIMENTO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_rompimento_rede_optica}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_manutencao', 'd6')}>
+      <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+      <h1 className='h4-card1-gerencial-geral'>{dados2.total_fibra_manutencao_rede_optica}</h1>
+    </div>
+  </div>
+</div>
+
+
+<div className='div-card10-gerencial-geral'>
+  <h1 className='h1-card1-gerencial-geral'>SEM AGENDA</h1>
+  <h1 className='h2-card1-gerencial-geral'>{semAgenda.todos}</h1>
+
+  <div className='div-card1-gerencial-geral1'>
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('adaptacao', 'd7')}>
+      <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{semAgenda.adaptacao_predio_condominio}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_expansao', 'd7')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{semAgenda.fibra_expansao}</h1>
+    </div>  
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_construcao', 'd7')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{semAgenda.fibra_construcao_rede_optica}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca_de_poste', 'd7')}>
+      <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
+      <h1 className='h4-card1-gerencial-geral'>{semAgenda.troca_de_poste}</h1>
+    </div>  
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_rompimento', 'd7')}>
+      <h1 className='h3-card1-gerencial-geral'>ROMPIMENTO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{semAgenda.fibra_rompimento_rede_optica}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_manutencao', 'd7')}>
+      <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+      <h1 className='h4-card1-gerencial-geral'>{semAgenda.fibra_manutencao_rede_optica}</h1>
+    </div>
+  </div>
+</div>
+
+
+<div className='div-card10-gerencial-geral'>
+  <h1 className='h1-card1-gerencial-geral'>VENCIDOS</h1>
+  <h1 className='h2-card1-gerencial-geral'>{totais.todos}</h1>
+
+  <div className='div-card1-gerencial-geral1'>
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('adaptacao', 'inicio2017')}>
+      <h1 className='h3-card1-gerencial-geral'>ADAPTAÇÃO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{totais.adaptacao_predio_condominio}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_expansao', 'inicio2017')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA EXP.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{totais.fibra_expansao}</h1>
+    </div>  
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_construcao', 'inicio2017')}>
+      <h1 className='h3-card1-gerencial-geral'>FIBRA CONSTR.</h1>
+      <h1 className='h4-card1-gerencial-geral'>{totais.fibra_construcao_rede_optica}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('troca_de_poste', 'inicio2017')}>
+      <h1 className='h3-card1-gerencial-geral'>TROCA DE POSTE</h1>
+      <h1 className='h4-card1-gerencial-geral'>{totais.troca_de_poste}</h1>
+    </div>  
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_rompimento', 'inicio2017')}>
+      <h1 className='h3-card1-gerencial-geral'>ROMPIMENTO</h1>
+      <h1 className='h4-card1-gerencial-geral'>{totais.fibra_rompimento_rede_optica}</h1>
+    </div>
+
+    <div className='row-card1-gerencial-geral' onClick={() => buscarOrdens('fibra_manutencao', 'inicio2017')}>
+      <h1 className='h3-card1-gerencial-geral'>MANUTENÇÕES</h1>
+      <h1 className='h4-card1-gerencial-geral'>{totais.fibra_manutencao_rede_optica}</h1>
+    </div>
+  </div>
+</div>
+
 
 
             </div>
