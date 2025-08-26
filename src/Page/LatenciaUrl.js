@@ -57,7 +57,7 @@ MercadoPago: "https://seeklogo.com/images/M/mercado-pago-logo-0FC3E8C5C9-seeklog
 export default function LatenciaUrl() {
   const [rows, setRows] = useState([]);
   const [status, setStatus] = useState("desconectado");
-  const [endpoint, setEndpoint] = useState("ws://172.17.1.2:3003");
+  const [endpoint, setEndpoint] = useState("ws://localhost:3003");
   const wsRef = useRef(null);
   const [logosLoaded, setLogosLoaded] = useState(false);
 
