@@ -4,66 +4,73 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
-const LOGOS = {
-  Google: "https://www.google.com/favicon.ico",
-  Amazon: "https://www.amazon.com/favicon.ico",
-  Americanas: "https://www.americanas.com.br/favicon.ico",
-  Bradesco: "https://banco.bradesco/favicon.ico",
-  BancoC6: "https://c6bank.com.br/favicon.ico",
-  BancoCaixa: "https://www.caixa.gov.br/favicon.ico",
-  BancoCentral: "https://www.bcb.gov.br/favicon.ico",
-  Inter: "https://www.bancointer.com.br/favicon.ico",
-  Itaú: "https://logospng.org/download/itau/logo-itau-1024.png", 
-MercadoPago: "https://seeklogo.com/images/M/mercado-pago-logo-0FC3E8C5C9-seeklogo.com.png",
-  PayPal: "https://www.paypal.com/favicon.ico",
-  Sicoob: "https://www.sicoob.com.br/favicon.ico",
-  Deezer: "https://www.deezer.com/favicon.ico",
-  Discord: "https://discord.com/favicon.ico",
-  Dota2: "https://www.dota2.com/favicon.ico",
-  Shopee: "https://shopee.com.br/favicon.ico",
-  EpicGames: "https://icons8.com.br/icon/83331/epic-games",
-  Facebook: "https://www.facebook.com/favicon.ico",
-  Instagram: "https://www.instagram.com/favicon.ico",
-  Twitter: "https://x.com/favicon.ico",
-  LinkedIn: "https://www.linkedin.com/favicon.ico",
-  MercadoLivre: "https://www.mercadolivre.com.br/favicon.ico",
-  Nubank: "https://nubank.com.br/favicon.ico",
-  OLX: "https://www.olx.com.br/favicon.ico",
-  Outlook: "https://outlook.office.com/favicon.ico",
-  Pinterest: "https://br.pinterest.com/favicon.ico",
-  Playstation: "https://store.playstation.com/favicon.ico",
-  Santander: "https://www.santander.com.br/favicon.ico",
-  Skype: "https://www.skype.com/favicon.ico",
-  Snapchat: "https://www.snapchat.com/favicon.ico",
-  SoundCloud: "https://soundcloud.com/favicon.ico",
-  Spotify: "https://www.spotify.com/favicon.ico",
-  Steam: "https://store.steampowered.com/favicon.ico",
-  Telegram: "https://web.telegram.org/favicon.ico",
-  TikTok: "https://www.tiktok.com/favicon.ico",
-  Tinder: "https://tinder.com/favicon.ico",
-  Tumblr: "https://www.tumblr.com/favicon.ico",
-  Twitch: "https://www.twitch.tv/favicon.ico",
-  UOL: "https://www.uol.com.br/favicon.ico",
-  Valorant: "https://playvalorant.com/favicon.ico",
-  Vimeo: "https://vimeo.com/favicon.ico",
-  Waze: "https://www.waze.com/favicon.ico",
-  WhatsApp: "https://web.whatsapp.com/favicon.ico",
-  Wikipedia: "https://www.wikipedia.org/favicon.ico",
-  Xbox: "https://www.xbox.com/favicon.ico",
-  YouTube: "https://www.youtube.com/favicon.ico",
-  Zoom: "https://zoom.us/favicon.ico"
-};
+
 
 export default function LatenciaUrl() {
   const [rows, setRows] = useState([]);
   const [status, setStatus] = useState("desconectado");
-  const [endpoint, setEndpoint] = useState("ws://0.0.0.0:3003");
+  const [endpoint, setEndpoint] = useState("ws://localhost:3003");
   const wsRef = useRef(null);
   const [logosLoaded, setLogosLoaded] = useState(false);
 
   const latestRowsRef = useRef([]);
   const latestTsRef = useRef(0);
   const committedTsRef = useRef(0);
+
+
+  // helper para favicon estável
+const FAV = (domain) => `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
+
+const LOGOS = {
+  Google: FAV("google.com"),
+  Amazon: FAV("amazon.com"),
+  Americanas: FAV("americanas.com.br"),
+  Bradesco: FAV("bradesco.com.br"),
+  "Banco C6": FAV("c6bank.com.br"),
+  "Banco Caixa": FAV("caixa.gov.br"),
+  "Banco Central": FAV("bcb.gov.br"),
+  Inter: FAV("bancointer.com.br"),
+  Itaú: FAV("itau.com.br"),
+  "Mercado Pago": FAV("mercadopago.com.br"),
+  PayPal: FAV("paypal.com"),
+  Sicoob: FAV("sicoob.com.br"),
+  Deezer: FAV("deezer.com"),
+  Discord: FAV("discord.com"),
+  Dota2: FAV("dota2.com"),
+  Shopee: FAV("shopee.com.br"),
+  "Epic Games": FAV("epicgames.com"),
+  Facebook: FAV("facebook.com"),
+  Instagram: FAV("instagram.com"),     // ← corrigido
+  Twitter: FAV("x.com"),
+  LinkedIn: FAV("linkedin.com"),
+  MercadoLivre: FAV("mercadolivre.com.br"),
+  Nubank: FAV("nubank.com.br"),
+  OLX: FAV("olx.com.br"),
+  Outlook: FAV("outlook.office.com"),
+  Pinterest: FAV("pinterest.com"),
+  Playstation: FAV("playstation.com"),
+  Santander: FAV("santander.com.br"),
+  Skype: FAV("skype.com"),
+  Snapchat: FAV("snapchat.com"),
+  SoundCloud: FAV("soundcloud.com"),
+  Spotify: FAV("spotify.com"),
+  Steam: FAV("steampowered.com"),
+  Telegram: FAV("telegram.org"),
+  TikTok: FAV("tiktok.com"),
+  Tinder: FAV("tinder.com"),
+  Tumblr: FAV("tumblr.com"),
+  Twitch: FAV("twitch.tv"),
+  UOL: FAV("uol.com.br"),
+  Valorant: FAV("playvalorant.com"),
+  Vimeo: FAV("vimeo.com"),
+  Waze: FAV("waze.com"),
+  WhatsApp: FAV("whatsapp.com"),
+  Wikipedia: FAV("wikipedia.org"),
+  Xbox: FAV("xbox.com"),
+  YouTube: FAV("youtube.com"),
+  Zoom: FAV("zoom.us"),
+};
+
 
   // Pré-carregar logos
   useEffect(() => {
@@ -144,12 +151,12 @@ export default function LatenciaUrl() {
   return (
     <foreignObject x={left} y={top} width={Math.max(width - pad * 2, 0)} height={size}>
       <div style={{ display: "flex", alignItems: "center", height: size }}>
-        <img
-          src={logo}
-          alt={item.name}
-          style={{ width: size, height: size, borderRadius: 4 }}
-          onError={(e) => { e.target.style.display = "none"; }} // evita erro se imagem não carregar
-        />
+       <img
+  src={logo}
+  alt={item.name}
+  onError={(e) => { e.currentTarget.src = FAV("example.com"); }}
+  style={{ width: size, height: size, borderRadius: 4 }}
+/>
         {showText && (
           <span style={{ marginLeft: 20, fontSize: 20, color: "#fff", fontWeight: 600 }}>
             {fmt(item.last)}
@@ -227,9 +234,9 @@ function barFill(name) {
 
 
   return (
-    <div style={{ width: "95%", margin: "32px auto", padding: 16, fontFamily: "system-ui, sans-serif" }}>
+    <div style={{ width: "100%", margin: "32px auto", padding: 16, fontFamily: "system-ui, sans-serif", backgroundColor: '#373535', marginTop: 0 }}>
       <h1 style={{ margin: 0, fontSize: 50, fontWeight: 800 }}>Latência</h1>
-      <div style={{ fontSize: 13, color: "#374151", marginBottom: 50 }}>
+      <div style={{ fontSize: 13, color: "white", marginBottom: 50 }}>
         Status WS: <strong>{status}</strong> · Atualiza a cada <strong>5s</strong> após logos carregadas
       </div>
 
@@ -253,10 +260,20 @@ function barFill(name) {
   })}
 </defs>
 
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3"  vertical={false}  horizontal={false}/>
             <XAxis type="number" hide domain={[0, "auto"]} />
-            <YAxis dataKey="name" type="category" width={120} />
-            <Tooltip formatter={(v) => fmt(v)} />
+<YAxis 
+  dataKey="name" 
+  type="category" 
+  width={120} 
+  tick={{ fill: "white", fontSize: 14, fontWeight: 600 }} 
+  axisLine={false} 
+/>
+
+           <Tooltip 
+  formatter={(v) => fmt(v)} 
+  contentStyle={{ backgroundColor: "#222", color: "white", borderRadius: 8 }}
+/>
             <Bar
               dataKey="last"
               barSize={54}
