@@ -1105,51 +1105,66 @@ const exportarCSV = () => {
     <div className="loader"></div>
   ) : (
     <table className="tabela-clientes">
-      <thead>
-        <tr>
-          <th>ID OS</th>
-          <th>ID CLIENTE</th>
-          <th>NOME DO CLIENTE</th>
-          <th>SERVIÇO</th>
-          <th>VALOR PLANO</th>
-          <th>CPF / CNPJ</th>
-          <th>BAIRRO</th>
-          <th>CIDADE</th>
-          <th>DATA CADASTRO</th>
-          <th>DATA PEDIDO PROVISIONADO</th>
-          <th>HORA PEDIDO PROVISIONADO</th>
-          <th>JOTAS</th>
-          <th>MAC/ONU</th>
-          <th>TIPO CDO</th>
-          <th>STATUS</th>
-          <th>TIPO</th>
-          <th>LOCALIZAÇÃO INSTALADOR</th>
-        </tr>
-      </thead>
-      <tbody>
-        {dadosClientesCompleto.map((cliente, index) => (
-          <tr key={index}>
-            <td>{cliente.id_ordem_servico}</td>
-            <td>{cliente.id_cliente_servico}</td>
-            <td>{cliente.cliente_nome}</td>
-            <td>{cliente.descricao_servico}</td>
-            <td>{cliente.valor}</td>
-            <td>{cliente.tipo_pessoa === "pf" ? "CPF" : "CNPJ"}</td>
-            <td>{cliente.bairro_cliente}</td>
-            <td>{cliente.cidade_nome}</td>
-            <td>{new Date(cliente.data_cadastro).toLocaleDateString()}</td>
-            <td>{new Date(cliente.data_inicio_programado).toLocaleDateString()}</td>
-            <td>{new Date(cliente.data_inicio_programado).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
-            <td>{cliente.jotas || "-"}</td>
-            <td>{cliente.macOnu || "-"}</td>
-            <td>{cliente.tipoCdo || "-"}</td>
-            <td>{cliente.status}</td>
-            <td>{cliente.tipo_ordem || "-"}</td>
-            <td>{cliente.instalador || "-"}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+            <thead>
+              <tr>
+                <th>ID OS</th>
+                <th>ID CLIENTE</th>
+                <th>NOME DO CLIENTE</th>
+                <th>SERVIÇO</th>
+                <th>VALOR PLANO</th>
+                <th>CPF / CNPJ</th>
+                <th>BAIRRO</th>
+                <th>CIDADE</th>
+                <th>CEP</th> {/* 👈 NOVA COLUNA */}
+                <th>DATA CADASTRO</th>
+                <th>DATA PEDIDO PROVISIONADO</th>
+                <th>HORA PEDIDO PROVISIONADO</th>
+                <th>JOTAS</th>
+                <th>MAC/ONU</th>
+                <th>TIPO CDO</th>
+                <th>STATUS</th>
+                <th>TIPO</th>
+                <th>LOCALIZAÇÃO INSTALADOR</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dadosClientesCompleto.map((cliente, index) => (
+                <tr key={index}>
+                  <td>{cliente.id_ordem_servico}</td>
+                  <td>{cliente.id_cliente_servico}</td>
+                  <td>{cliente.cliente_nome}</td>
+                  <td>{cliente.descricao_servico}</td>
+                  <td>{cliente.valor}</td>
+                  <td>{cliente.tipo_pessoa === "pf" ? "CPF" : "CNPJ"}</td>
+                  <td>{cliente.bairro_cliente}</td>
+                  <td>{cliente.cidade_nome}</td>
+                  <td>{cliente.cep_cliente || "-"}</td> {/* 👈 NOVO CAMPO */}
+                  <td>
+                    {new Date(cliente.data_cadastro).toLocaleDateString()}
+                  </td>
+                  <td>
+                    {new Date(
+                      cliente.data_inicio_programado
+                    ).toLocaleDateString()}
+                  </td>
+                  <td>
+                    {new Date(
+                      cliente.data_inicio_programado
+                    ).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </td>
+                  <td>{cliente.jotas || "-"}</td>
+                  <td>{cliente.macOnu || "-"}</td>
+                  <td>{cliente.tipoCdo || "-"}</td>
+                  <td>{cliente.status}</td>
+                  <td>{cliente.tipo_ordem || "-"}</td>
+                  <td>{cliente.instalador || "-"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
   )}
 </div>
 
