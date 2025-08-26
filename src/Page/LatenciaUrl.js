@@ -130,28 +130,36 @@ export default function LatenciaUrl() {
     return v == null || Number.isNaN(v) ? "–" : `${v.toFixed(0)} ms`;
   }
 
-  const renderCustomLabel = ({ x, y, width, height, index }) => {
-    const item = sorted[index];
-    if (!item) return null;
-    const logo = LOGOS[item.name];
-    const pad = 4;
-    const size = Math.max(16, Math.min(height - pad * 2, 40));
-    const left = x + pad;
-    const top = y + (height - size) / 2;
-    const showText = width > size + 40;
-    return (
-      <foreignObject x={left} y={top} width={Math.max(width - pad * 2, 0)} height={size}>
-        <div style={{ display: "flex", alignItems: "center", height: size, transition: "opacity 0.6s ease" }}>
-          <img src={logo} alt={item.name} style={{ width: size, height: size, borderRadius: 4, transition: "transform 0.4s ease" }} />
-          {showText && (
-            <span style={{ marginLeft: 20, fontSize: 20, color: "#fff", fontWeight: 600, transition: "opacity 0.6s ease" }}>
-              {fmt(item.last)}
-            </span>
-          )}
-        </div>
-      </foreignObject>
-    );
-  };
+  const renderCustomLabel = ({ x = 0, y = 0, width = 0, height = 0, index }) => {
+  const item = sorted[index];
+  if (!item || !width || !height) return null;  // evita NaN
+  
+  const logo = LOGOS[item.name];
+  const pad = 4;
+  const size = Math.max(16, Math.min(height - pad * 2, 40));
+  const left = x + pad;
+  const top = y + (height - size) / 2;
+  const showText = width > size + 40;
+
+  return (
+    <foreignObject x={left} y={top} width={Math.max(width - pad * 2, 0)} height={size}>
+      <div style={{ display: "flex", alignItems: "center", height: size }}>
+        <img
+          src={logo}
+          alt={item.name}
+          style={{ width: size, height: size, borderRadius: 4 }}
+          onError={(e) => { e.target.style.display = "none"; }} // evita erro se imagem não carregar
+        />
+        {showText && (
+          <span style={{ marginLeft: 20, fontSize: 20, color: "#fff", fontWeight: 600 }}>
+            {fmt(item.last)}
+          </span>
+        )}
+      </div>
+    </foreignObject>
+  );
+};
+
 
   // Converte "Banco C6" -> "banco-c6" (usado como id do gradiente)
 const slug = (name) => name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-");
