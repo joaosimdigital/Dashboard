@@ -173,7 +173,7 @@ async def handler(websocket):
 
 async def main():
     host = "0.0.0.0"
-    port = 3003
+    port = 8000
     print(f"Servidor WebSocket em ws://{host}:{port}  (conecte seu frontend neste endereço)")
     async with websockets.serve(handler, host, port, ping_interval=20, ping_timeout=20):
         await producer()  # loop infinito

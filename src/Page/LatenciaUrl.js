@@ -9,7 +9,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 export default function LatenciaUrl() {
   const [rows, setRows] = useState([]);
   const [status, setStatus] = useState("desconectado");
-  const [endpoint, setEndpoint] = useState("ws://localhost:3003");
+  const [endpoint, setEndpoint] = useState("ws://localhost:8000");
   const wsRef = useRef(null);
   const [logosLoaded, setLogosLoaded] = useState(false);
 
