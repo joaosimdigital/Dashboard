@@ -21,6 +21,8 @@ import person from "../Images/person.png";
 
 export default function DashboardOperacional() {
   const [totalHabilitadosHoje, setTotalHabilitadosHoje] = useState(0);
+  const [totalRetrabalhoManutencao, setTotalRetrabalhoManutencao] = useState(0);
+  const [totalRetrabalhoInstalacao, setTotalRetrabalhoInstalacao] = useState("0%");
   const [totalHabilitadosMesSC, setTotalHabilitadosMesSC] = useState(0);
   const [totalHabilitadosMesRS, setTotalHabilitadosMesRS] = useState(0);
   const [totalExecutadoMesRS, setTotalExecutadoMesRS] = useState(0);
@@ -141,6 +143,21 @@ export default function DashboardOperacional() {
         setTotalHabilitadosMesRS(
           datahabilitadosmesRS.total_clientes_habilitados
         ); // Armazenando o total de cadastros de SC
+
+        const responseRetrabalhoInstalacao = await fetch(
+        "http://38.224.145.3:3003/total-clientes-retrabalho-instalacao-os"
+      );
+      const dataRetrabalhoInstalacao = await responseRetrabalhoInstalacao.json();
+      setTotalRetrabalhoInstalacao(
+        dataRetrabalhoInstalacao.porcentagem_retrabalho
+      );
+
+       const responseRetrabalhoManutencao = await fetch(
+        "http://38.224.145.3:3003/total-clientes-retrabalho-manutencao-os"
+      );
+      const dataRetrabalhoManutencao = await responseRetrabalhoManutencao.json();
+      setTotalRetrabalhoManutencao(dataRetrabalhoManutencao.porcentagem_retrabalho);
+
 
         const responsemesexecutadors = await fetch(
           "http://38.224.145.3:3003/total-clientes-habilitados-executado-rs"
@@ -422,6 +439,25 @@ export default function DashboardOperacional() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
+            <div className="div3-agenda-operacao">
+              <h1 className="titulo-agenda-operacao">OS Dia</h1>
+
+              <div className="agenda-os-dia">
+                <div className="row-div3-agenda-operacao">
+                  <img style={{ width: "30px" }} src={schedule} />
+                  <h1 className="titulo-agenda1-operacao">
+                    {totalOrdemServicoPendente}
+                  </h1>
+                </div>
+
+                <div className="row-div3-agenda-operacao">
+                  <img style={{ width: "30px" }} src={check_box} />
+                  <h1 className="titulo-agenda1-operacao">
+                    {totalOrdemServicoConcluido}
+                  </h1>
+                </div>
+              </div>
+            </div>
             {/* <div className="div-agenda2-operacao">
               <h1 className="titulo-agenda-operacao">Agenda</h1>
               <h1 className="titulo1-agenda-operacao">Prazo de instalação</h1>
@@ -458,20 +494,24 @@ export default function DashboardOperacional() {
             </div>
 
             <div className="div3-agenda-operacao">
-              <h1 className="titulo-agenda-operacao">OS Dia</h1>
+              <h1 className="titulo-agenda-operacao">Indicadores</h1>
 
               <div className="agenda-os-dia">
                 <div className="row-div3-agenda-operacao">
-                  <img style={{ width: "30px" }} src={schedule} />
                   <h1 className="titulo-agenda1-operacao">
-                    {totalOrdemServicoPendente}
+                    Infância
+                  </h1>
+                  <h1 className="titulo-agenda1-operacao">
+                    {totalRetrabalhoInstalacao}
                   </h1>
                 </div>
 
                 <div className="row-div3-agenda-operacao">
-                  <img style={{ width: "30px" }} src={check_box} />
                   <h1 className="titulo-agenda1-operacao">
-                    {totalOrdemServicoConcluido}
+                    Reincidência
+                  </h1>
+                  <h1 className="titulo-agenda1-operacao">
+                    {totalRetrabalhoManutencao}
                   </h1>
                 </div>
               </div>
