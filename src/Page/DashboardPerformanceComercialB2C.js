@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../CSS/DashboardPerformanceComercialB2C.css";
+import "../CSS/Dashboard.css";
 import imgCoin from "../Images/coin.png";
 import imgSales from "../Images/sales.png";
 import imgEyes from "../Images/eyes.png";
@@ -177,6 +178,7 @@ function DashboardPerformanceComercialB2C() {
   }, []);
 
   return (
+    <div class="body-principal-b2c">
     <div className="dashboard-wrapper">
       <img src={imgSmileSim} alt="Smile Top Left" className="smile-top-left" />
       <img
@@ -697,6 +699,7 @@ function DashboardPerformanceComercialB2C() {
           )}
         </main>
       </div>
+    </div>
     </div>
   );
 }
