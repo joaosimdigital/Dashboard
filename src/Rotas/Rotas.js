@@ -24,8 +24,8 @@ const Rotas = () => {
   return (
     <Router>
       <Routes>
-          <Route path='/dashboardperformancecomercialb2c' element={<DashboardPerformanceComercialB2C />} />
-          <Route path='/dashboardperformancecomercialb2b' element={<DashboardPerformanceComercialB2B />} />
+          <Route path='/b2c' element={<DashboardPerformanceComercialB2C />} />
+          <Route path='/b2b' element={<DashboardPerformanceComercialB2B />} />
           <Route path='/gerencialoperacao' element={<DashboardGerencialOpecarao /> } />
           <Route path='/cancelamentotv' element={<DashboardCancelamentos />} />
           <Route path='/cancelamento-simone' element={<DashboardCancelamentosClone />} />
