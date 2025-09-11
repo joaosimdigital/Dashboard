@@ -111,7 +111,7 @@ function DashboardOperacionalGerencial() {
         if (tipoSelecionado) params.append("tipo", tipoSelecionado);
 
         const response = await fetch(
-          `http://localhost:3011/ordens-servico-abertas-completo-mes?${params.toString()}`
+          `http://38.224.145.3:3010/ordens-servico-abertas-completo-mes?${params.toString()}`
         );
 
         if (!response.ok) throw new Error("Erro ao buscar ordens de serviço");
@@ -132,7 +132,7 @@ function DashboardOperacionalGerencial() {
     const fetchSla = async () => {
       try {
         const res = await fetch(
-          "http://localhost:3011/sla-os-categorias-30-dias"
+          "http://38.224.145.3:3010/sla-os-categorias-30-dias"
         );
         const data = await res.json();
 
@@ -155,7 +155,7 @@ function DashboardOperacionalGerencial() {
     const buscarTotais = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3011/ordens-servico-pendente-total-mes"
+          "http://38.224.145.3:3010/ordens-servico-pendente-total-mes"
         );
         const data = await response.json();
 
@@ -282,7 +282,7 @@ function DashboardOperacionalGerencial() {
       params.append("status", "aguardando_agendamento");
     }
 
-    const url = `http://localhost:3011/ordens-servico-categorias-completo-mes?${params.toString()}`;
+    const url = `http://38.224.145.3:3010/ordens-servico-categorias-completo-mes?${params.toString()}`;
     console.log("➡️ Requisição para backend:", url);
 
     try {
@@ -300,7 +300,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosCidades = async () => {
       try {
         const res = await fetch(
-          "http://localhost:3011/ordens-servico-do-mes-por-cidade"
+          "http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade"
         );
         if (!res.ok) throw new Error("Erro ao buscar dados por cidade");
         const data = await res.json();
@@ -337,7 +337,7 @@ function DashboardOperacionalGerencial() {
 
     const ordensservico3 = async () => {
       try {
-        fetch("http://localhost:3011/ordens-servico-aguardando-agendamento")
+        fetch("http://38.224.145.3:3010/ordens-servico-aguardando-agendamento")
           .then((res) => res.json())
           .then((data) => {
             setSemAgenda(data.totais);
@@ -353,7 +353,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosAmanha1 = async () => {
       try {
         const res = await fetch(
-          "http://localhost:3011/ordens-servico-total-amanha1"
+          "http://38.224.145.3:3010/ordens-servico-total-amanha1"
         );
         if (!res.ok)
           throw new Error(
@@ -370,7 +370,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosAmanha2 = async () => {
       try {
         const res = await fetch(
-          "http://localhost:3011/ordens-servico-total-amanha2"
+          "http://38.224.145.3:3010/ordens-servico-total-amanha2"
         );
         if (!res.ok)
           throw new Error(
@@ -388,7 +388,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosAmanha3 = async () => {
       try {
         const res = await fetch(
-          "http://localhost:3011/ordens-servico-total-amanha3"
+          "http://38.224.145.3:3010/ordens-servico-total-amanha3"
         );
         if (!res.ok)
           throw new Error(
@@ -405,7 +405,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosAmanha4 = async () => {
       try {
         const res = await fetch(
-          "http://localhost:3011/ordens-servico-total-amanha4"
+          "http://38.224.145.3:3010/ordens-servico-total-amanha4"
         );
         if (!res.ok)
           throw new Error(
@@ -422,7 +422,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosAmanha5 = async () => {
       try {
         const res = await fetch(
-          "http://localhost:3011/ordens-servico-total-amanha5"
+          "http://38.224.145.3:3010/ordens-servico-total-amanha5"
         );
         if (!res.ok)
           throw new Error(
@@ -439,7 +439,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosAmanha6 = async () => {
       try {
         const res = await fetch(
-          "http://localhost:3011/ordens-servico-total-amanha6"
+          "http://38.224.145.3:3010/ordens-servico-total-amanha6"
         );
         if (!res.ok)
           throw new Error(
@@ -455,7 +455,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchInstalacoes = async () => {
       const res = await fetch(
-        "http://localhost:3011/ordens-servico-instalacoes-do-mes"
+        "http://38.224.145.3:3010/ordens-servico-instalacoes-do-mes"
       );
       if (!res.ok) throw new Error("Erro ao buscar instalações");
       const data = await res.json();
@@ -466,7 +466,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchRecolhimento = async () => {
       const res = await fetch(
-        "http://localhost:3011/ordens-servico-recolhimento-do-mes"
+        "http://38.224.145.3:3010/ordens-servico-recolhimento-do-mes"
       );
       if (!res.ok) throw new Error("Erro ao buscar instalações");
       const data = await res.json();
@@ -477,7 +477,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchRecolhimentoHoje = async () => {
       const res = await fetch(
-        "http://localhost:3011/ordens-servico-recolhimento-hoje"
+        "http://38.224.145.3:3010/ordens-servico-recolhimento-hoje"
       );
       if (!res.ok) throw new Error("Erro ao buscar instalações");
       const data = await res.json();
@@ -488,7 +488,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchManutencoes = async () => {
       const res = await fetch(
-        "http://localhost:3011/ordens-servico-manutencao-do-mes"
+        "http://38.224.145.3:3010/ordens-servico-manutencao-do-mes"
       );
       if (!res.ok) throw new Error("Erro ao buscar manutenções");
       const data = await res.json();
@@ -499,7 +499,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchTrocas = async () => {
       const res = await fetch(
-        "http://localhost:3011/ordens-servico-trocas-do-mes"
+        "http://38.224.145.3:3010/ordens-servico-trocas-do-mes"
       );
       if (!res.ok) throw new Error("Erro ao buscar trocas");
       const data = await res.json();
@@ -510,7 +510,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchOutros = async () => {
       const res = await fetch(
-        "http://localhost:3011/ordens-servico-outros-do-mes"
+        "http://38.224.145.3:3010/ordens-servico-outros-do-mes"
       );
       if (!res.ok) throw new Error("Erro ao buscar outros motivos");
       const data = await res.json();
@@ -519,7 +519,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchResumo = async () => {
       const res = await fetch(
-        "http://localhost:3011/ordens-servico-total-do-mes"
+        "http://38.224.145.3:3010/ordens-servico-total-do-mes"
       );
       if (!res.ok) throw new Error("Erro ao buscar resumo mensal");
       const data = await res.json();
@@ -528,7 +528,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchInstalacoesHoje = async () => {
       const res = await fetch(
-        "http://localhost:3011/ordens-servico-instalacoes-hoje"
+        "http://38.224.145.3:3010/ordens-servico-instalacoes-hoje"
       );
       if (!res.ok) throw new Error("Erro ao buscar instalações de hoje");
       const data = await res.json();
@@ -540,7 +540,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchManutencoesHoje = async () => {
       const res = await fetch(
-        "http://localhost:3011/ordens-servico-manutencao-hoje"
+        "http://38.224.145.3:3010/ordens-servico-manutencao-hoje"
       );
       if (!res.ok) throw new Error("Erro ao buscar manutenções de hoje");
       const data = await res.json();
@@ -551,7 +551,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchTrocasHoje = async () => {
       const res = await fetch(
-        "http://localhost:3011/ordens-servico-trocas-hoje"
+        "http://38.224.145.3:3010/ordens-servico-trocas-hoje"
       );
       if (!res.ok) throw new Error("Erro ao buscar trocas de endereço de hoje");
       const data = await res.json();
@@ -562,7 +562,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchOutrosHoje = async () => {
       const res = await fetch(
-        "http://localhost:3011/ordens-servico-outros-hoje"
+        "http://38.224.145.3:3010/ordens-servico-outros-hoje"
       );
       if (!res.ok)
         throw new Error("Erro ao buscar ordens de outros motivos de hoje");
@@ -572,7 +572,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchResumoHoje = async () => {
       const res = await fetch(
-        "http://localhost:3011/ordens-servico-total-hoje"
+        "http://38.224.145.3:3010/ordens-servico-total-hoje"
       );
       if (!res.ok) throw new Error("Erro ao buscar resumo de hoje");
       const data = await res.json();
@@ -582,7 +582,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosBairros = async () => {
       try {
         const res = await fetch(
-          "http://localhost:3011/ordens-servico-do-mes-por-bairro"
+          "http://38.224.145.3:3010/ordens-servico-do-mes-por-bairro"
         );
         if (!res.ok) throw new Error("Erro ao buscar dados por bairro");
 
