@@ -6,6 +6,8 @@ import logobranca from "../Images/logobrnaca.png";
 function DashboardOperacionalGerencial() {
   const [totalManutencaoMes, setTotalManutencaoMes] = useState(0);
   const [totalInstalacaoMes, setTotalInstalacaoMes] = useState(0);
+  const [dadosOrdensAbertas, setDadosOrdensAbertas] = useState([]);
+  const [loadingOrdensAbertas, setLoadingOrdensAbertas] = useState(false);
   const [totalRecolhimentoMes, setTotalRecolhimentoMes] = useState(0);
   const [totalTrocaEndMes, setTotalTrocaEndMes] = useState(0);
   const [totalOutrosMes, setTotalOutrosMes] = useState(0);
@@ -15,6 +17,7 @@ function DashboardOperacionalGerencial() {
   const [totalManutencaoHoje, setTotalManutencaoHoje] = useState(0);
   const [totalTrocaEndHoje, setTotalTrocaEndHoje] = useState(0);
   const [totalOutrosHoje, setTotalOutrosHoje] = useState(0);
+  const [tipoSelecionado, setTipoSelecionado] = useState("");
   const [totalResumoHoje, setTotalResumoHoje] = useState(0);
   const [dadosTabelaCidade, setDadosTabelaCidade] = useState([]);
   const [dadosbairros, setDadosBairros] = useState([]);
@@ -33,6 +36,24 @@ function DashboardOperacionalGerencial() {
     coluna: null,
     direcao: "asc",
   });
+
+  const ITENS_POR_PAGINA = 30;
+
+  const [paginaAtual, setPaginaAtual] = useState(1);
+
+  // Cálculo de itens a mostrar na página atual
+  const indexUltimo = paginaAtual * ITENS_POR_PAGINA;
+  const indexPrimeiro = indexUltimo - ITENS_POR_PAGINA;
+  const itensPagina = dadosOrdensAbertas
+    .filter((cliente) => cliente.data_cadastro && !cliente.data_finalizado)
+    .slice(indexPrimeiro, indexUltimo);
+
+  const totalPaginas = Math.ceil(dadosOrdensAbertas.length / ITENS_POR_PAGINA);
+
+  const irParaPagina = (num) => {
+    if (num < 1 || num > totalPaginas) return;
+    setPaginaAtual(num);
+  };
 
   const ordenarTabela = (dados, coluna, direcaoAtual = "asc") => {
     const novaDirecao =
@@ -82,10 +103,36 @@ function DashboardOperacionalGerencial() {
   const [ordemCrescente, setOrdemCrescente] = useState(true);
 
   useEffect(() => {
+    const buscarOrdensServicoAbertasCompleto = async () => {
+      try {
+        setLoadingOrdensAbertas(true);
+
+        const params = new URLSearchParams();
+        if (tipoSelecionado) params.append("tipo", tipoSelecionado);
+
+        const response = await fetch(
+          `http://localhost:3011/ordens-servico-abertas-completo-mes?${params.toString()}`
+        );
+
+        if (!response.ok) throw new Error("Erro ao buscar ordens de serviço");
+
+        const data = await response.json();
+        setDadosOrdensAbertas(data.ordens_servico || []);
+      } catch (error) {
+        console.error("Erro na requisição:", error);
+      } finally {
+        setLoadingOrdensAbertas(false);
+      }
+    };
+
+    buscarOrdensServicoAbertasCompleto(); // chama a função
+  }, [tipoSelecionado]); // roda de novo quando o filtro mudar
+
+  useEffect(() => {
     const fetchSla = async () => {
       try {
         const res = await fetch(
-          "http://38.224.145.3:3010/sla-os-categorias-30-dias"
+          "http://localhost:3011/sla-os-categorias-30-dias"
         );
         const data = await res.json();
 
@@ -108,7 +155,7 @@ function DashboardOperacionalGerencial() {
     const buscarTotais = async () => {
       try {
         const response = await fetch(
-          "http://38.224.145.3:3010/ordens-servico-pendente-total-mes"
+          "http://localhost:3011/ordens-servico-pendente-total-mes"
         );
         const data = await response.json();
 
@@ -235,7 +282,7 @@ function DashboardOperacionalGerencial() {
       params.append("status", "aguardando_agendamento");
     }
 
-    const url = `http://38.224.145.3:3010/ordens-servico-categorias-completo-mes?${params.toString()}`;
+    const url = `http://localhost:3011/ordens-servico-categorias-completo-mes?${params.toString()}`;
     console.log("➡️ Requisição para backend:", url);
 
     try {
@@ -253,7 +300,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosCidades = async () => {
       try {
         const res = await fetch(
-          "http://38.224.145.3:3010/ordens-servico-do-mes-por-cidade"
+          "http://localhost:3011/ordens-servico-do-mes-por-cidade"
         );
         if (!res.ok) throw new Error("Erro ao buscar dados por cidade");
         const data = await res.json();
@@ -290,7 +337,7 @@ function DashboardOperacionalGerencial() {
 
     const ordensservico3 = async () => {
       try {
-        fetch("http://38.224.145.3:3010/ordens-servico-aguardando-agendamento")
+        fetch("http://localhost:3011/ordens-servico-aguardando-agendamento")
           .then((res) => res.json())
           .then((data) => {
             setSemAgenda(data.totais);
@@ -306,7 +353,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosAmanha1 = async () => {
       try {
         const res = await fetch(
-          "http://38.224.145.3:3010/ordens-servico-total-amanha1"
+          "http://localhost:3011/ordens-servico-total-amanha1"
         );
         if (!res.ok)
           throw new Error(
@@ -323,7 +370,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosAmanha2 = async () => {
       try {
         const res = await fetch(
-          "http://38.224.145.3:3010/ordens-servico-total-amanha2"
+          "http://localhost:3011/ordens-servico-total-amanha2"
         );
         if (!res.ok)
           throw new Error(
@@ -341,7 +388,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosAmanha3 = async () => {
       try {
         const res = await fetch(
-          "http://38.224.145.3:3010/ordens-servico-total-amanha3"
+          "http://localhost:3011/ordens-servico-total-amanha3"
         );
         if (!res.ok)
           throw new Error(
@@ -358,7 +405,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosAmanha4 = async () => {
       try {
         const res = await fetch(
-          "http://38.224.145.3:3010/ordens-servico-total-amanha4"
+          "http://localhost:3011/ordens-servico-total-amanha4"
         );
         if (!res.ok)
           throw new Error(
@@ -375,7 +422,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosAmanha5 = async () => {
       try {
         const res = await fetch(
-          "http://38.224.145.3:3010/ordens-servico-total-amanha5"
+          "http://localhost:3011/ordens-servico-total-amanha5"
         );
         if (!res.ok)
           throw new Error(
@@ -392,7 +439,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosAmanha6 = async () => {
       try {
         const res = await fetch(
-          "http://38.224.145.3:3010/ordens-servico-total-amanha6"
+          "http://localhost:3011/ordens-servico-total-amanha6"
         );
         if (!res.ok)
           throw new Error(
@@ -408,7 +455,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchInstalacoes = async () => {
       const res = await fetch(
-        "http://38.224.145.3:3010/ordens-servico-instalacoes-do-mes"
+        "http://localhost:3011/ordens-servico-instalacoes-do-mes"
       );
       if (!res.ok) throw new Error("Erro ao buscar instalações");
       const data = await res.json();
@@ -419,7 +466,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchRecolhimento = async () => {
       const res = await fetch(
-        "http://38.224.145.3:3010/ordens-servico-recolhimento-do-mes"
+        "http://localhost:3011/ordens-servico-recolhimento-do-mes"
       );
       if (!res.ok) throw new Error("Erro ao buscar instalações");
       const data = await res.json();
@@ -430,7 +477,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchRecolhimentoHoje = async () => {
       const res = await fetch(
-        "http://38.224.145.3:3010/ordens-servico-recolhimento-hoje"
+        "http://localhost:3011/ordens-servico-recolhimento-hoje"
       );
       if (!res.ok) throw new Error("Erro ao buscar instalações");
       const data = await res.json();
@@ -441,7 +488,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchManutencoes = async () => {
       const res = await fetch(
-        "http://38.224.145.3:3010/ordens-servico-manutencao-do-mes"
+        "http://localhost:3011/ordens-servico-manutencao-do-mes"
       );
       if (!res.ok) throw new Error("Erro ao buscar manutenções");
       const data = await res.json();
@@ -452,7 +499,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchTrocas = async () => {
       const res = await fetch(
-        "http://38.224.145.3:3010/ordens-servico-trocas-do-mes"
+        "http://localhost:3011/ordens-servico-trocas-do-mes"
       );
       if (!res.ok) throw new Error("Erro ao buscar trocas");
       const data = await res.json();
@@ -463,7 +510,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchOutros = async () => {
       const res = await fetch(
-        "http://38.224.145.3:3010/ordens-servico-outros-do-mes"
+        "http://localhost:3011/ordens-servico-outros-do-mes"
       );
       if (!res.ok) throw new Error("Erro ao buscar outros motivos");
       const data = await res.json();
@@ -472,7 +519,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchResumo = async () => {
       const res = await fetch(
-        "http://38.224.145.3:3010/ordens-servico-total-do-mes"
+        "http://localhost:3011/ordens-servico-total-do-mes"
       );
       if (!res.ok) throw new Error("Erro ao buscar resumo mensal");
       const data = await res.json();
@@ -481,7 +528,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchInstalacoesHoje = async () => {
       const res = await fetch(
-        "http://38.224.145.3:3010/ordens-servico-instalacoes-hoje"
+        "http://localhost:3011/ordens-servico-instalacoes-hoje"
       );
       if (!res.ok) throw new Error("Erro ao buscar instalações de hoje");
       const data = await res.json();
@@ -493,7 +540,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchManutencoesHoje = async () => {
       const res = await fetch(
-        "http://38.224.145.3:3010/ordens-servico-manutencao-hoje"
+        "http://localhost:3011/ordens-servico-manutencao-hoje"
       );
       if (!res.ok) throw new Error("Erro ao buscar manutenções de hoje");
       const data = await res.json();
@@ -504,7 +551,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchTrocasHoje = async () => {
       const res = await fetch(
-        "http://38.224.145.3:3010/ordens-servico-trocas-hoje"
+        "http://localhost:3011/ordens-servico-trocas-hoje"
       );
       if (!res.ok) throw new Error("Erro ao buscar trocas de endereço de hoje");
       const data = await res.json();
@@ -515,7 +562,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchOutrosHoje = async () => {
       const res = await fetch(
-        "http://38.224.145.3:3010/ordens-servico-outros-hoje"
+        "http://localhost:3011/ordens-servico-outros-hoje"
       );
       if (!res.ok)
         throw new Error("Erro ao buscar ordens de outros motivos de hoje");
@@ -525,7 +572,7 @@ function DashboardOperacionalGerencial() {
 
     const fetchResumoHoje = async () => {
       const res = await fetch(
-        "http://38.224.145.3:3010/ordens-servico-total-hoje"
+        "http://localhost:3011/ordens-servico-total-hoje"
       );
       if (!res.ok) throw new Error("Erro ao buscar resumo de hoje");
       const data = await res.json();
@@ -535,7 +582,7 @@ function DashboardOperacionalGerencial() {
     const fetchDadosBairros = async () => {
       try {
         const res = await fetch(
-          "http://38.224.145.3:3010/ordens-servico-do-mes-por-bairro"
+          "http://localhost:3011/ordens-servico-do-mes-por-bairro"
         );
         if (!res.ok) throw new Error("Erro ao buscar dados por bairro");
 
@@ -661,6 +708,10 @@ function DashboardOperacionalGerencial() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleFiltro = (value) => {
+    setTipoSelecionado(value);
   };
 
   return (
@@ -1546,6 +1597,104 @@ function DashboardOperacionalGerencial() {
           </table>
         )}
       </div>
+
+      <div className="div-tabela-scroll">
+        {loadingTabela ? (
+          <div className="loader"></div>
+        ) : (
+          <table className="tabela-clientes">
+            <thead>
+              <tr>
+                <th>ID OS</th>
+                <th>NOME DO CLIENTE</th>
+                <th>CIDADE</th>
+                <th>
+                  <select
+                    value={tipoSelecionado}
+                    onChange={(e) => handleFiltro(e.target.value)}
+                    style={{
+                      padding: "4px",
+                      borderRadius: "4px",
+                      border: "1px solid #ccc",
+                      background: "#fff",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <option value="">TIPO DE O.S</option>
+                    <option value="instalacao">Instalação</option>
+                    <option value="manutencao">Manutenção</option>
+                    <option value="troca">Troca</option>
+                    <option value="recolhimento">Recolhimento</option>
+                    <option value="outro">Outros</option>
+                  </select>
+                  <div style={{ marginBottom: "10px" }}>
+                    <button
+                      onClick={() => handleFiltro("")}
+                      style={{
+                        padding: "6px 12px",
+                        background: "#cd7f32",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        marginLeft: "10px",
+                        marginTop: "2px",
+                      }}
+                    >
+                      Limpar filtro
+                    </button>
+                  </div>
+                </th>
+                <th>VALOR DO PLANO</th>
+                <th>AGING (dias)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {itensPagina.map((cliente, index) => {
+                const valorFormatado = new Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                }).format(Number(cliente.valor) || 0);
+
+                return (
+                  <tr key={index}>
+                    <td>{cliente.id_ordem_servico}</td>
+                    <td>{cliente.cliente_nome}</td>
+                    <td>{cliente.cidade_nome}</td>
+                    <td>{cliente.tipo_ordem}</td>
+                    <td>{valorFormatado}</td>
+                    <td>{cliente.dias_aberto ?? "-"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Paginação */}
+      {totalPaginas > 1 && (
+        <div style={{ marginTop: "10px", textAlign: "center" }}>
+          <button onClick={() => irParaPagina(paginaAtual - 1)} disabled={paginaAtual === 1}>
+            {"<"} Anterior
+          </button>
+          {Array.from({ length: totalPaginas }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => irParaPagina(i + 1)}
+              style={{
+                fontWeight: paginaAtual === i + 1 ? "bold" : "normal",
+                margin: "0 2px",
+              }}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button onClick={() => irParaPagina(paginaAtual + 1)} disabled={paginaAtual === totalPaginas}>
+            Próximo {">"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
