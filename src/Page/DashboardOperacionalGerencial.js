@@ -6,6 +6,8 @@ import logobranca from "../Images/logobrnaca.png";
 function DashboardOperacionalGerencial() {
   const [totalManutencaoMes, setTotalManutencaoMes] = useState(0);
   const [totalInstalacaoMes, setTotalInstalacaoMes] = useState(0);
+  const [dadosOrdensAbertas, setDadosOrdensAbertas] = useState([]);
+  const [loadingOrdensAbertas, setLoadingOrdensAbertas] = useState(false);
   const [totalRecolhimentoMes, setTotalRecolhimentoMes] = useState(0);
   const [totalTrocaEndMes, setTotalTrocaEndMes] = useState(0);
   const [totalOutrosMes, setTotalOutrosMes] = useState(0);
@@ -15,6 +17,7 @@ function DashboardOperacionalGerencial() {
   const [totalManutencaoHoje, setTotalManutencaoHoje] = useState(0);
   const [totalTrocaEndHoje, setTotalTrocaEndHoje] = useState(0);
   const [totalOutrosHoje, setTotalOutrosHoje] = useState(0);
+  const [tipoSelecionado, setTipoSelecionado] = useState("");
   const [totalResumoHoje, setTotalResumoHoje] = useState(0);
   const [dadosTabelaCidade, setDadosTabelaCidade] = useState([]);
   const [dadosbairros, setDadosBairros] = useState([]);
@@ -33,6 +36,24 @@ function DashboardOperacionalGerencial() {
     coluna: null,
     direcao: "asc",
   });
+
+  const ITENS_POR_PAGINA = 30;
+
+  const [paginaAtual, setPaginaAtual] = useState(1);
+
+  // Cálculo de itens a mostrar na página atual
+  const indexUltimo = paginaAtual * ITENS_POR_PAGINA;
+  const indexPrimeiro = indexUltimo - ITENS_POR_PAGINA;
+  const itensPagina = dadosOrdensAbertas
+    .filter((cliente) => cliente.data_cadastro && !cliente.data_finalizado)
+    .slice(indexPrimeiro, indexUltimo);
+
+  const totalPaginas = Math.ceil(dadosOrdensAbertas.length / ITENS_POR_PAGINA);
+
+  const irParaPagina = (num) => {
+    if (num < 1 || num > totalPaginas) return;
+    setPaginaAtual(num);
+  };
 
   const ordenarTabela = (dados, coluna, direcaoAtual = "asc") => {
     const novaDirecao =
@@ -80,6 +101,32 @@ function DashboardOperacionalGerencial() {
 
   const [dadosOriginais, setDadosOriginais] = useState([]);
   const [ordemCrescente, setOrdemCrescente] = useState(true);
+
+  useEffect(() => {
+    const buscarOrdensServicoAbertasCompleto = async () => {
+      try {
+        setLoadingOrdensAbertas(true);
+
+        const params = new URLSearchParams();
+        if (tipoSelecionado) params.append("tipo", tipoSelecionado);
+
+        const response = await fetch(
+          `http://38.224.145.3:3010/ordens-servico-abertas-completo-mes?${params.toString()}`
+        );
+
+        if (!response.ok) throw new Error("Erro ao buscar ordens de serviço");
+
+        const data = await response.json();
+        setDadosOrdensAbertas(data.ordens_servico || []);
+      } catch (error) {
+        console.error("Erro na requisição:", error);
+      } finally {
+        setLoadingOrdensAbertas(false);
+      }
+    };
+
+    buscarOrdensServicoAbertasCompleto(); // chama a função
+  }, [tipoSelecionado]); // roda de novo quando o filtro mudar
 
   useEffect(() => {
     const fetchSla = async () => {
@@ -661,6 +708,10 @@ function DashboardOperacionalGerencial() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleFiltro = (value) => {
+    setTipoSelecionado(value);
   };
 
   return (
@@ -1546,6 +1597,104 @@ function DashboardOperacionalGerencial() {
           </table>
         )}
       </div>
+
+      <div className="div-tabela-scroll">
+        {loadingTabela ? (
+          <div className="loader"></div>
+        ) : (
+          <table className="tabela-clientes">
+            <thead>
+              <tr>
+                <th>ID OS</th>
+                <th>NOME DO CLIENTE</th>
+                <th>CIDADE</th>
+                <th>
+                  <select
+                    value={tipoSelecionado}
+                    onChange={(e) => handleFiltro(e.target.value)}
+                    style={{
+                      padding: "4px",
+                      borderRadius: "4px",
+                      border: "1px solid #ccc",
+                      background: "#fff",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <option value="">TIPO DE O.S</option>
+                    <option value="instalacao">Instalação</option>
+                    <option value="manutencao">Manutenção</option>
+                    <option value="troca">Troca</option>
+                    <option value="recolhimento">Recolhimento</option>
+                    <option value="outro">Outros</option>
+                  </select>
+                  <div style={{ marginBottom: "10px" }}>
+                    <button
+                      onClick={() => handleFiltro("")}
+                      style={{
+                        padding: "6px 12px",
+                        background: "#cd7f32",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        marginLeft: "10px",
+                        marginTop: "2px",
+                      }}
+                    >
+                      Limpar filtro
+                    </button>
+                  </div>
+                </th>
+                <th>VALOR DO PLANO</th>
+                <th>AGING (dias)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {itensPagina.map((cliente, index) => {
+                const valorFormatado = new Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                }).format(Number(cliente.valor) || 0);
+
+                return (
+                  <tr key={index}>
+                    <td>{cliente.id_ordem_servico}</td>
+                    <td>{cliente.cliente_nome}</td>
+                    <td>{cliente.cidade_nome}</td>
+                    <td>{cliente.tipo_ordem}</td>
+                    <td>{valorFormatado}</td>
+                    <td>{cliente.dias_aberto ?? "-"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Paginação */}
+      {totalPaginas > 1 && (
+        <div style={{ marginTop: "10px", textAlign: "center" }}>
+          <button onClick={() => irParaPagina(paginaAtual - 1)} disabled={paginaAtual === 1}>
+            {"<"} Anterior
+          </button>
+          {Array.from({ length: totalPaginas }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => irParaPagina(i + 1)}
+              style={{
+                fontWeight: paginaAtual === i + 1 ? "bold" : "normal",
+                margin: "0 2px",
+              }}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button onClick={() => irParaPagina(paginaAtual + 1)} disabled={paginaAtual === totalPaginas}>
+            Próximo {">"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
