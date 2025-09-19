@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import imgLogo from "../Images/logo-sim.png";
 import "../CSS/Calculator.css";
 
 function Calculator() {
@@ -11,10 +12,15 @@ function Calculator() {
     valorMensalReferencia: 0,
     paybackReferencia: 0,
 
+    // Novo campo controlado pelo checkbox
+    habilitarValorExtra: false,
+    valorExtra: 0,
+
     // ================= CUSTO ÚNICO =================
     custoSimDigital: 0,
     instalacaoTerceiro: 0,
     instalacaoCliente: 0,
+    redundanciaBackup: "nao",
 
     // ================= CUSTO RECORRENTE =================
     valorMensalTerceiro: 0,
@@ -37,8 +43,13 @@ function Calculator() {
       pisCofins: 0.0365,
       fust: 0.015,
     },
-  });
 
+    Custos: {
+      megaCompartilhado: 0,
+      megaDedicado: 0,
+      megaL2L: 0,
+    },
+  });
   const [resultados, setResultados] = useState(null);
 
   // Função para formatar em moeda BR
@@ -53,11 +64,7 @@ function Calculator() {
   // Handler que aceita números e aplica máscara de Real
   const handleCurrencyChange = (e) => {
     const { name, value } = e.target;
-
-    // remove tudo que não é número
     const numericValue = value.replace(/\D/g, "");
-
-    // divide por 100 para ter casas decimais (R$ 1234 => 12,34)
     const floatValue = numericValue ? parseFloat(numericValue) / 100 : 0;
 
     setInputs((prev) => ({
@@ -86,11 +93,12 @@ function Calculator() {
     setResultados(data);
   };
 
-  return (
+  // componente interno que desenha a calculadora (Payback)
+  const CalculatorBox = () => (
     <div className="calculator-container">
       {/* ================= REFERÊNCIA ================= */}
+      <h3 className="title-cinza">REFERÊNCIA</h3>
       <div className="section">
-        <h3>REFERÊNCIA</h3>
         <div className="row">
           <span>TIPO DE SERVIÇOS</span>
           <input
@@ -108,25 +116,52 @@ function Calculator() {
             onChange={handleChange}
           />
         </div>
+        {/* PRIMEIRO DROPDOWN */}
         <div className="row">
           <span>PERÍODO CONTRATUAL</span>
-          <input
-            type="number"
+          <select
             name="periodoContratual"
             value={inputs.periodoContratual}
-            onChange={handleChange}
-          />
+            onChange={(e) =>
+              setInputs((prev) => ({
+                ...prev,
+                periodoContratual: Number(e.target.value),
+                periodoContratualDesejado: Number(e.target.value), // sincroniza os dois
+              }))
+            }
+          >
+            <option value={12}>12</option>
+            <option value={24}>24</option>
+            <option value={36}>36</option>
+            <option value={48}>48</option>
+          </select>
         </div>
+
         <div className="row">
-          <span>QTDE DE CIRCUITOS</span>
-          <input
-            type="number"
-            name="qtdCircuitos"
-            value={inputs.qtdCircuitos}
-            onChange={handleChange}
-          />
+          <span>REDUNDÂNCIA/BACKUP</span>
+          <label>
+            <input
+              type="radio"
+              name="redundanciaBackup"
+              value="sim"
+              checked={inputs.redundanciaBackup === "sim"}
+              onChange={handleChange}
+            />
+            Sim
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="redundanciaBackup"
+              value="nao"
+              checked={inputs.redundanciaBackup === "nao"}
+              onChange={handleChange}
+            />
+            Não
+          </label>
         </div>
-        <div className="row highlight">
+
+        <div className="row highlight-bruto">
           <span>VALOR MENSAL REFERÊNCIA BRUTO</span>
           <input
             name="valorMensalReferencia"
@@ -134,7 +169,7 @@ function Calculator() {
             onChange={handleCurrencyChange}
           />
         </div>
-        <div className="row">
+        <div className="row highlight-bruto">
           <span>PAYBACK REFERÊNCIA</span>
           <input
             type="number"
@@ -146,12 +181,10 @@ function Calculator() {
       </div>
 
       {/* ================= PAYBACK ================= */}
+      <h3 className="title-cinza">PAYBACK</h3>
       <div className="section">
-        <h3>PAYBACK</h3>
-
-        {/* ---- CUSTO ÚNICO ---- */}
         <h4>Custo Único</h4>
-        <div className="row">
+        <div className="row custo-sim">
           <span>Custo SIM Digital</span>
           <input
             name="custoSimDigital"
@@ -159,7 +192,7 @@ function Calculator() {
             onChange={handleCurrencyChange}
           />
         </div>
-        <div className="row">
+        <div className="row custo-sim">
           <span>Instalação Terceiro</span>
           <input
             name="instalacaoTerceiro"
@@ -167,7 +200,7 @@ function Calculator() {
             onChange={handleCurrencyChange}
           />
         </div>
-        <div className="row">
+        <div className="row custo-sim">
           <span>Instalação a cobrar do CLIENTE</span>
           <input
             name="instalacaoCliente"
@@ -176,9 +209,8 @@ function Calculator() {
           />
         </div>
 
-        {/* ---- CUSTO RECORRENTE ---- */}
         <h4>Custo Recorrente</h4>
-        <div className="row">
+        <div className="row custo-sim">
           <span>Valor Mensal Terceiro</span>
           <input
             name="valorMensalTerceiro"
@@ -186,7 +218,7 @@ function Calculator() {
             onChange={handleCurrencyChange}
           />
         </div>
-        <div className="row">
+        <div className="row custo-sim">
           <span>Outros Custos Mensais</span>
           <input
             name="outrosCustosMensais"
@@ -195,20 +227,30 @@ function Calculator() {
           />
         </div>
 
-        {/* ---- GERAL ---- */}
         <h4>Geral</h4>
-        <div className="row">
+        <div className="row custo-sim">
           <span>Período Contratual Desejado</span>
-          <input
-            type="number"
+          <select
             name="periodoContratualDesejado"
             value={inputs.periodoContratualDesejado}
-            onChange={handleChange}
-          />
+            onChange={(e) =>
+              setInputs((prev) => ({
+                ...prev,
+                periodoContratual: Number(e.target.value),
+                periodoContratualDesejado: Number(e.target.value), // mantém sincronizado
+              }))
+            }
+          >
+            <option value={12}>12</option>
+            <option value={24}>24</option>
+            <option value={36}>36</option>
+            <option value={48}>48</option>
+          </select>
         </div>
-        <div className="row">
+        <div className="row custo-sim">
           <span>Faturamento Contratual Desejado</span>
           <input
+            className="dolar-custo"
             name="faturamentoContratualDesejado"
             value={formatCurrency(inputs.faturamentoContratualDesejado)}
             onChange={handleCurrencyChange}
@@ -223,7 +265,6 @@ function Calculator() {
           />
         </div>
 
-        {/* ---- COMPOSIÇÃO NP ---- */}
         <h4>COMPOSIÇÃO NF</h4>
         <div className="row">
           <span>Valor Líquido Mensal</span>
@@ -259,37 +300,260 @@ function Calculator() {
         </div>
       </div>
 
-      {/* ================= BOTÃO ================= */}
-      <button className="btn-calc" onClick={calcular}>
-        Calcular
-      </button>
+      <div className="btn-div">
+        <button className="btn-calc" onClick={calcular}>
+          Calcular
+        </button>
+      </div>
 
-      {/* ================= RESULTADOS ================= */}
       {resultados && (
         <div className="results">
           <h3>APROVAÇÃO</h3>
-          <div className="row">
+          <div className="row contrato-abaixo">
             <span>Faturamento Contratual Calculado</span>
             <b>R$ {resultados.faturamentoContratual.toFixed(2)}</b>
           </div>
-          <div className="row">
+          <div className="row contrato-acima">
             <span>Payback (Meses)</span>
             <b>{resultados.paybackMeses.toFixed(2)}</b>
           </div>
-          <div className="row">
+          <div className="row contrato-abaixo">
             <span>Valor Bruto Mensal</span>
             <b>R$ {inputs.valorBrutoMensal.toFixed(2)}</b>
           </div>
-          <div className="row">
+          <div className="row contrato-abaixo">
             <span>Valor Mensal NF</span>
             <b>R$ {resultados.valorMensalNF.toFixed(2)}</b>
           </div>
-          <div className="row">
+          <div className="row contrato-acima">
             <span>ROI Simplificado</span>
             <b>{resultados.roiSimplificado.toFixed(2)}%</b>
           </div>
         </div>
       )}
+    </div>
+  );
+
+  // componente interno que desenha a calculadora (Faturamento)
+  const CalculatorBoxFaturamento = () => (
+    <div className="calculator-container">
+      {/* ================= REFERÊNCIA ================= */}
+      <h3 className="title-cinza">FATURAMENTO</h3>
+      <div className="section">
+        <div className="row">
+          <span>MODALIDADE</span>
+          <input
+            name="tipoServico"
+            value={inputs.tipoServico}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="row">
+          <span>ICMS</span>
+          <input
+            type="number"
+            name="velocidade"
+            value={inputs.velocidade}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="row">
+          <span>PIS + COFINS</span>
+          <input
+            type="number"
+            name="periodoContratual"
+            value={inputs.periodoContratual}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="row">
+          <span>FUST + FUNTELL</span>
+          <input
+            type="number"
+            name="qtdCircuitos"
+            value={inputs.qtdCircuitos}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="row highlight-bruto-blue">
+          <span>TOTAL</span>
+          <input
+            name="valorMensalReferencia"
+            value={formatCurrency(inputs.valorMensalReferencia)}
+            onChange={handleCurrencyChange}
+          />
+        </div>
+        <div className="row highlight-bruto-blue">
+          <span>INSTALAÇÃO</span>
+          <input
+            type="number"
+            name="paybackReferencia"
+            value={inputs.paybackReferencia}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+
+      {/* ================= PAYBACK ================= */}
+      <h3 className="title-cinza">FATURAMENTO</h3>
+      <div className="section">
+        <h4>Custo Único</h4>
+        <div className="row custo-sim-orange">
+          <span>Custo SIM Digital</span>
+          <input
+            name="custoSimDigital"
+            value={formatCurrency(inputs.custoSimDigital)}
+            onChange={handleCurrencyChange}
+          />
+        </div>
+        <div className="row custo-sim-orange">
+          <span>Instalação Terceiro</span>
+          <input
+            name="instalacaoTerceiro"
+            value={formatCurrency(inputs.instalacaoTerceiro)}
+            onChange={handleCurrencyChange}
+          />
+        </div>
+        <div className="row custo-sim-orange">
+          <span>Instalação a cobrar do CLIENTE</span>
+          <input
+            name="instalacaoCliente"
+            value={formatCurrency(inputs.instalacaoCliente)}
+            onChange={handleCurrencyChange}
+          />
+        </div>
+
+        <h4>Custo Recorrente</h4>
+        <div className="row custo-sim-orange">
+          <span>Valor Mensal Terceiro</span>
+          <input
+            name="valorMensalTerceiro"
+            value={formatCurrency(inputs.valorMensalTerceiro)}
+            onChange={handleCurrencyChange}
+          />
+        </div>
+        <div className="row custo-sim-orange">
+          <span>Outros Custos Mensais</span>
+          <input
+            name="outrosCustosMensais"
+            value={formatCurrency(inputs.outrosCustosMensais)}
+            onChange={handleCurrencyChange}
+          />
+        </div>
+
+        <h4>Geral</h4>
+        <div className="row custo-sim-orange">
+          <span>Período Contratual</span>
+          <input
+            type="number"
+            name="periodoContratualDesejado"
+            value={inputs.periodoContratualDesejado}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="row custo-sim-orange">
+          <span>Payback (meses)</span>
+          <input
+            className="dolar-custo"
+            name="faturamentoContratualDesejado"
+            value={formatCurrency(inputs.faturamentoContratualDesejado)}
+            onChange={handleCurrencyChange}
+          />
+        </div>
+        <div className="row">
+          <span>Valor Bruto Mensal</span>
+          <input
+            name="valorBrutoMensal"
+            value={formatCurrency(inputs.valorBrutoMensal)}
+            onChange={handleCurrencyChange}
+          />
+        </div>
+
+        <h4>COMPOSIÇÃO NF</h4>
+        <div className="row">
+          <span>Valor Líquido Mensal</span>
+          <input
+            name="valorLiquidoMensal"
+            value={formatCurrency(inputs.valorLiquidoMensal)}
+            onChange={handleCurrencyChange}
+          />
+        </div>
+        <div className="row">
+          <span>Valor Mensal dos Impostos</span>
+          <input
+            name="valorMensalImpostos"
+            value={formatCurrency(inputs.valorMensalImpostos)}
+            onChange={handleCurrencyChange}
+          />
+        </div>
+        <div className="row">
+          <span>Valor Custos Terceiros + IMP</span>
+          <input
+            name="valorCustosTerceirosImp"
+            value={formatCurrency(inputs.valorCustosTerceirosImp)}
+            onChange={handleCurrencyChange}
+          />
+        </div>
+        <div className="row">
+          <span>Valor Mensal NF</span>
+          <input
+            name="valorMensalNF"
+            value={formatCurrency(inputs.valorMensalNF)}
+            onChange={handleCurrencyChange}
+          />
+        </div>
+      </div>
+
+      <div className="btn-div">
+        <button className="btn-calc" onClick={calcular}>
+          Calcular
+        </button>
+      </div>
+
+      {resultados && (
+        <div className="results">
+          <h3>APROVAÇÃO</h3>
+          <div className="row contrato-abaixo">
+            <span>Faturamento Contratual Calculado</span>
+            <b>R$ {resultados.faturamentoContratual.toFixed(2)}</b>
+          </div>
+          <div className="row contrato-acima">
+            <span>Payback (Meses)</span>
+            <b>{resultados.paybackMeses.toFixed(2)}</b>
+          </div>
+          <div className="row contrato-abaixo">
+            <span>Valor Bruto Mensal</span>
+            <b>R$ {inputs.valorBrutoMensal.toFixed(2)}</b>
+          </div>
+          <div className="row contrato-abaixo">
+            <span>Valor Mensal NF</span>
+            <b>R$ {resultados.valorMensalNF.toFixed(2)}</b>
+          </div>
+          <div className="row contrato-acima">
+            <span>ROI Simplificado</span>
+            <b>{resultados.roiSimplificado.toFixed(2)}%</b>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div>
+      {/* Header único */}
+      <div className="calculator-header">
+        <img src={imgLogo} alt="Logo Empresa" className="calculator-logo" />
+        <div className="calculator-header-right">
+          <h1 className="calculator-title">Planilha de Cálculo de Venda</h1>
+        </div>
+      </div>
+
+      {/* As duas planilhas lado a lado */}
+      <div className="calculators-wrapper">
+        <CalculatorBox />
+        <CalculatorBoxFaturamento />
+      </div>
     </div>
   );
 }
