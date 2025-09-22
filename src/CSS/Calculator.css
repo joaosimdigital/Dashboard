@@ -76,8 +76,6 @@
 }
 
 
-
-
 .calculator-container {
   max-width: 1000px;
   margin: 20px auto;
@@ -129,6 +127,10 @@
 
 .row:last-child {
   border-bottom: none;
+}
+
+.row-letter-black {
+  color: #121212;
 }
 
 .row span {

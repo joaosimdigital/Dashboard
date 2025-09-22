@@ -1,3 +1,4 @@
+// Calculator.jsx
 import React, { useState } from "react";
 import imgLogo from "../Images/logo-sim.png";
 import "../CSS/Calculator.css";
@@ -7,12 +8,11 @@ function Calculator() {
     // ================= REFERÊNCIA =================
     tipoServico: "IP Mitigado",
     velocidade: 0,
-    periodoContratual: 0,
+    periodoContratual: 12,
     qtdCircuitos: 0,
     valorMensalReferencia: 0,
     paybackReferencia: 0,
 
-    // Novo campo controlado pelo checkbox
     habilitarValorExtra: false,
     valorExtra: 0,
 
@@ -20,14 +20,14 @@ function Calculator() {
     custoSimDigital: 0,
     instalacaoTerceiro: 0,
     instalacaoCliente: 0,
-    redundanciaBackup: "nao",
+    redundanciaBackup: "",
 
     // ================= CUSTO RECORRENTE =================
     valorMensalTerceiro: 0,
     outrosCustosMensais: 0,
 
     // ================= GERAL =================
-    periodoContratualDesejado: 0,
+    periodoContratualDesejado: 12,
     faturamentoContratualDesejado: 0,
     valorBrutoMensal: 0,
 
@@ -38,9 +38,11 @@ function Calculator() {
     valorMensalNF: 0,
 
     // ================= IMPOSTOS =================
+    // Observação: estes números podem ser passados como 0.17 (decimal) ou 17 (porcentagem).
     impostos: {
-      icms: 0.3,
-      pisCofins: 0.0365,
+      icms: 17,
+      cofins: 3,
+      pis: 0.65,
       fust: 0.015,
     },
 
@@ -50,53 +52,129 @@ function Calculator() {
       megaL2L: 0,
     },
   });
-  const [resultados, setResultados] = useState(null);
 
-  // Função para formatar em moeda BR
+  const [inputsFaturamento, setInputsFaturamento] = useState({
+    modalidade: "",
+    icms: 17,
+    cofins: 3,
+    pis: 0.65,
+    fustFuntell: 0,
+    total: 0,
+    instalacao: 0,
+    // campos usados no JSX — garantir que existam
+    custoSimDigitalFat: 0,
+    instalacaoTerceiroFat: 0,
+    instalacaoClienteFat: 0,
+    valorMensalTerceiroFat: 0,
+    outrosCustosMensaisFat: 0,
+    periodoContratual: 12,
+    paybackMeses: 0,
+    valorBrutoMensal: 0,
+    valorLiquidoMensal: 0,
+    valorMensalImpostos: 0,
+    valorCustosTerceirosImp: 0,
+    valorMensalNF: 0,
+  });
+
+  const [resultados, setResultados] = useState(null);
+  const [resultadosFaturamento, setResultadosFaturamento] = useState(null);
+
+  // Função para formatar em moeda BR (apenas para exibição — não no value do input)
   const formatCurrency = (value) => {
-    if (!value && value !== 0) return "";
-    return value.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
+    if (value === null || value === undefined) return "";
+    const n = Number(value);
+    if (isNaN(n)) return "";
+    return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   };
 
-  // Handler que aceita números e aplica máscara de Real
+  // ===== Handlers PAYBACK =====
+  // Currency inputs: aguardamos texto, transformamos em número para state
   const handleCurrencyChange = (e) => {
     const { name, value } = e.target;
-    const numericValue = value.replace(/\D/g, "");
-    const floatValue = numericValue ? parseFloat(numericValue) / 100 : 0;
+    // aceita strings com números; remove tudo que não é dígito e interpreta como centavos
+    const numeric = value.replace(/\D/g, "");
+    const floatValue = numeric ? Number(numeric) / 100 : 0;
+    setInputs((prev) => ({ ...prev, [name]: floatValue }));
+  };
 
+  // generic change para inputs não-moeda
+  const handleChange = (e) => {
+    const { name, value, type } = e.target;
     setInputs((prev) => ({
       ...prev,
-      [name]: floatValue,
+      [name]: type === "number" ? Number(value) : value,
     }));
   };
 
-  // Handler padrão para inputs que não são moeda
-  const handleChange = (e) => {
-    setInputs({
-      ...inputs,
-      [e.target.name]: isNaN(e.target.value)
-        ? e.target.value
-        : Number(e.target.value),
-    });
+  // ===== Handlers FATURAMENTO =====
+  const handleCurrencyChangeFaturamento = (e) => {
+    const { name, value } = e.target;
+    const numeric = value.replace(/\D/g, "");
+    const floatValue = numeric ? Number(numeric) / 100 : 0;
+    setInputsFaturamento((prev) => ({ ...prev, [name]: floatValue }));
   };
 
+  const handleChangeFaturamento = (e) => {
+    const { name, value, type } = e.target;
+    setInputsFaturamento((prev) => ({
+      ...prev,
+      [name]: type === "number" ? Number(value) : value,
+    }));
+  };
+
+  // ===== chamadas API =====
   const calcular = async () => {
-    const res = await fetch("http://localhost:3001/calcular", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(inputs),
-    });
-    const data = await res.json();
-    setResultados(data);
+    try {
+      const res = await fetch("http://localhost:3001/calcular", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...inputs,
+          impostos: inputs.impostos, // garante envio
+        }),
+      });
+      const data = await res.json();
+      setResultados(data);
+
+      // opcional: preencher alguns campos do inputs com os resultados (sincronizar UI)
+      setInputs((prev) => ({
+        ...prev,
+        valorLiquidoMensal: data.valorLiquidoMensal ?? prev.valorLiquidoMensal,
+        valorMensalImpostos:
+          data.valorMensalImpostos ?? prev.valorMensalImpostos,
+        valorMensalNF: data.valorMensalNF ?? prev.valorMensalNF,
+      }));
+    } catch (err) {
+      console.error("erro ao calcular:", err);
+    }
   };
 
-  // componente interno que desenha a calculadora (Payback)
+  const calcularFaturamento = async () => {
+    try {
+      const res = await fetch("http://localhost:3001/calcular-faturamento", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(inputsFaturamento),
+      });
+      const data = await res.json();
+      setResultadosFaturamento(data);
+
+      // opcional: sincroniza alguns inputsFaturamento com o que veio do backend
+      setInputsFaturamento((prev) => ({
+        ...prev,
+        valorLiquidoMensal: data.valorLiquidoMensal ?? prev.valorLiquidoMensal,
+        valorMensalImpostos:
+          data.valorMensalImpostos ?? prev.valorMensalImpostos,
+        valorMensalNF: data.valorMensalNF ?? prev.valorMensalNF,
+      }));
+    } catch (err) {
+      console.error("erro ao calcular faturamento:", err);
+    }
+  };
+
+  // ========== Componentes (mantive estrutura similar ao que você tinha) ==========
   const CalculatorBox = () => (
     <div className="calculator-container">
-      {/* ================= REFERÊNCIA ================= */}
       <h3 className="title-cinza">REFERÊNCIA</h3>
       <div className="section">
         <div className="row">
@@ -107,6 +185,7 @@ function Calculator() {
             onChange={handleChange}
           />
         </div>
+
         <div className="row">
           <span>VELOCIDADE MB</span>
           <input
@@ -116,7 +195,7 @@ function Calculator() {
             onChange={handleChange}
           />
         </div>
-        {/* PRIMEIRO DROPDOWN */}
+
         <div className="row">
           <span>PERÍODO CONTRATUAL</span>
           <select
@@ -126,7 +205,7 @@ function Calculator() {
               setInputs((prev) => ({
                 ...prev,
                 periodoContratual: Number(e.target.value),
-                periodoContratualDesejado: Number(e.target.value), // sincroniza os dois
+                periodoContratualDesejado: Number(e.target.value),
               }))
             }
           >
@@ -163,12 +242,16 @@ function Calculator() {
 
         <div className="row highlight-bruto">
           <span>VALOR MENSAL REFERÊNCIA BRUTO</span>
+          {/* input numérico sem formatCurrency no value (evita travamento) */}
           <input
+            type="text"
             name="valorMensalReferencia"
-            value={formatCurrency(inputs.valorMensalReferencia)}
+            value={inputs.valorMensalReferencia || ""}
             onChange={handleCurrencyChange}
+            placeholder="0,00"
           />
         </div>
+
         <div className="row highlight-bruto">
           <span>PAYBACK REFERÊNCIA</span>
           <input
@@ -180,32 +263,39 @@ function Calculator() {
         </div>
       </div>
 
-      {/* ================= PAYBACK ================= */}
       <h3 className="title-cinza">PAYBACK</h3>
       <div className="section">
         <h4>Custo Único</h4>
         <div className="row custo-sim">
           <span>Custo SIM Digital</span>
           <input
+            type="text"
             name="custoSimDigital"
-            value={formatCurrency(inputs.custoSimDigital)}
+            value={inputs.custoSimDigital || ""}
             onChange={handleCurrencyChange}
+            placeholder="0,00"
           />
         </div>
+
         <div className="row custo-sim">
           <span>Instalação Terceiro</span>
           <input
+            type="text"
             name="instalacaoTerceiro"
-            value={formatCurrency(inputs.instalacaoTerceiro)}
+            value={inputs.instalacaoTerceiro || ""}
             onChange={handleCurrencyChange}
+            placeholder="0,00"
           />
         </div>
+
         <div className="row custo-sim">
           <span>Instalação a cobrar do CLIENTE</span>
           <input
+            type="text"
             name="instalacaoCliente"
-            value={formatCurrency(inputs.instalacaoCliente)}
+            value={inputs.instalacaoCliente || ""}
             onChange={handleCurrencyChange}
+            placeholder="0,00"
           />
         </div>
 
@@ -213,17 +303,22 @@ function Calculator() {
         <div className="row custo-sim">
           <span>Valor Mensal Terceiro</span>
           <input
+            type="text"
             name="valorMensalTerceiro"
-            value={formatCurrency(inputs.valorMensalTerceiro)}
+            value={inputs.valorMensalTerceiro || ""}
             onChange={handleCurrencyChange}
+            placeholder="0,00"
           />
         </div>
+
         <div className="row custo-sim">
           <span>Outros Custos Mensais</span>
           <input
+            type="text"
             name="outrosCustosMensais"
-            value={formatCurrency(inputs.outrosCustosMensais)}
+            value={inputs.outrosCustosMensais || ""}
             onChange={handleCurrencyChange}
+            placeholder="0,00"
           />
         </div>
 
@@ -236,8 +331,8 @@ function Calculator() {
             onChange={(e) =>
               setInputs((prev) => ({
                 ...prev,
+                periodoContratualDesejado: Number(e.target.value),
                 periodoContratual: Number(e.target.value),
-                periodoContratualDesejado: Number(e.target.value), // mantém sincronizado
               }))
             }
           >
@@ -247,21 +342,27 @@ function Calculator() {
             <option value={48}>48</option>
           </select>
         </div>
+
         <div className="row custo-sim">
           <span>Faturamento Contratual Desejado</span>
           <input
+            type="text"
             className="dolar-custo"
             name="faturamentoContratualDesejado"
-            value={formatCurrency(inputs.faturamentoContratualDesejado)}
+            value={inputs.faturamentoContratualDesejado || ""}
             onChange={handleCurrencyChange}
+            placeholder="0,00"
           />
         </div>
+
         <div className="row">
           <span>Valor Bruto Mensal</span>
           <input
+            type="text"
             name="valorBrutoMensal"
-            value={formatCurrency(inputs.valorBrutoMensal)}
+            value={inputs.valorBrutoMensal || ""}
             onChange={handleCurrencyChange}
+            placeholder="0,00"
           />
         </div>
 
@@ -269,33 +370,44 @@ function Calculator() {
         <div className="row">
           <span>Valor Líquido Mensal</span>
           <input
+            type="text"
             name="valorLiquidoMensal"
-            value={formatCurrency(inputs.valorLiquidoMensal)}
+            value={inputs.valorLiquidoMensal || ""}
             onChange={handleCurrencyChange}
+            placeholder="0,00"
           />
         </div>
+
         <div className="row">
           <span>Valor Mensal dos Impostos</span>
           <input
+            type="text"
             name="valorMensalImpostos"
-            value={formatCurrency(inputs.valorMensalImpostos)}
+            value={inputs.valorMensalImpostos || ""}
             onChange={handleCurrencyChange}
+            placeholder="0,00"
           />
         </div>
+
         <div className="row">
           <span>Valor Custos Terceiros + IMP</span>
           <input
+            type="text"
             name="valorCustosTerceirosImp"
-            value={formatCurrency(inputs.valorCustosTerceirosImp)}
+            value={inputs.valorCustosTerceirosImp || ""}
             onChange={handleCurrencyChange}
+            placeholder="0,00"
           />
         </div>
+
         <div className="row">
           <span>Valor Mensal NF</span>
           <input
+            type="text"
             name="valorMensalNF"
-            value={formatCurrency(inputs.valorMensalNF)}
+            value={inputs.valorMensalNF || ""}
             onChange={handleCurrencyChange}
+            placeholder="0,00"
           />
         </div>
       </div>
@@ -311,116 +423,123 @@ function Calculator() {
           <h3>APROVAÇÃO</h3>
           <div className="row contrato-abaixo">
             <span>Faturamento Contratual Calculado</span>
-            <b>R$ {resultados.faturamentoContratual.toFixed(2)}</b>
+            <b>{formatCurrency(resultados.faturamentoContratual)}</b>
           </div>
           <div className="row contrato-acima">
             <span>Payback (Meses)</span>
-            <b>{resultados.paybackMeses.toFixed(2)}</b>
+            <b>{Number(resultados.paybackMeses).toFixed(2)}</b>
           </div>
           <div className="row contrato-abaixo">
             <span>Valor Bruto Mensal</span>
-            <b>R$ {inputs.valorBrutoMensal.toFixed(2)}</b>
+            <b>{formatCurrency(inputs.valorBrutoMensal)}</b>
           </div>
           <div className="row contrato-abaixo">
             <span>Valor Mensal NF</span>
-            <b>R$ {resultados.valorMensalNF.toFixed(2)}</b>
+            <b>{formatCurrency(resultados.valorMensalNF)}</b>
           </div>
           <div className="row contrato-acima">
             <span>ROI Simplificado</span>
-            <b>{resultados.roiSimplificado.toFixed(2)}%</b>
+            <b>{Number(resultados.roiSimplificado).toFixed(2)}%</b>
           </div>
         </div>
       )}
     </div>
   );
 
-  // componente interno que desenha a calculadora (Faturamento)
+  // ========== Faturamento ==========
   const CalculatorBoxFaturamento = () => (
     <div className="calculator-container">
-      {/* ================= REFERÊNCIA ================= */}
       <h3 className="title-cinza">FATURAMENTO</h3>
       <div className="section">
         <div className="row">
           <span>MODALIDADE</span>
           <input
-            name="tipoServico"
-            value={inputs.tipoServico}
-            onChange={handleChange}
+            name="modalidade"
+            value={inputsFaturamento.modalidade}
+            onChange={handleChangeFaturamento}
           />
         </div>
         <div className="row">
           <span>ICMS</span>
           <input
             type="number"
-            name="velocidade"
-            value={inputs.velocidade}
-            onChange={handleChange}
+            name="icms"
+            value={inputsFaturamento.icms}
+            onChange={handleChangeFaturamento}
           />
         </div>
         <div className="row">
           <span>PIS + COFINS</span>
           <input
             type="number"
-            name="periodoContratual"
-            value={inputs.periodoContratual}
-            onChange={handleChange}
+            name="cofins"
+            value={inputsFaturamento.cofins}
+            onChange={handleChangeFaturamento}
           />
         </div>
         <div className="row">
           <span>FUST + FUNTELL</span>
           <input
             type="number"
-            name="qtdCircuitos"
-            value={inputs.qtdCircuitos}
-            onChange={handleChange}
+            name="fustFuntell"
+            value={inputsFaturamento.fustFuntell}
+            onChange={handleChangeFaturamento}
           />
         </div>
 
         <div className="row highlight-bruto-blue">
           <span>TOTAL</span>
           <input
-            name="valorMensalReferencia"
-            value={formatCurrency(inputs.valorMensalReferencia)}
-            onChange={handleCurrencyChange}
+            type="text"
+            name="total"
+            value={inputsFaturamento.total || ""}
+            onChange={handleCurrencyChangeFaturamento}
+            placeholder="0,00"
           />
         </div>
         <div className="row highlight-bruto-blue">
           <span>INSTALAÇÃO</span>
           <input
-            type="number"
-            name="paybackReferencia"
-            value={inputs.paybackReferencia}
-            onChange={handleChange}
+            type="text"
+            name="instalacao"
+            value={inputsFaturamento.instalacao || ""}
+            onChange={handleCurrencyChangeFaturamento}
+            placeholder="0,00"
           />
         </div>
       </div>
 
-      {/* ================= PAYBACK ================= */}
-      <h3 className="title-cinza">FATURAMENTO</h3>
+      <h3 className="title-cinza">FATURAMENTO DETALHADO</h3>
       <div className="section">
         <h4>Custo Único</h4>
         <div className="row custo-sim-orange">
           <span>Custo SIM Digital</span>
           <input
-            name="custoSimDigital"
-            value={formatCurrency(inputs.custoSimDigital)}
-            onChange={handleCurrencyChange}
+            type="text"
+            name="custoSimDigitalFat"
+            value={inputsFaturamento.custoSimDigitalFat || ""}
+            onChange={handleCurrencyChangeFaturamento}
+            placeholder="0,00"
           />
         </div>
         <div className="row custo-sim-orange">
           <span>Instalação Terceiro</span>
           <input
-            name="instalacaoTerceiro"
-            value={formatCurrency(inputs.instalacaoTerceiro)}
-            onChange={handleCurrencyChange}
+            type="text"
+            name="instalacaoTerceiroFat"
+            value={inputsFaturamento.instalacaoTerceiroFat || ""}
+            onChange={handleCurrencyChangeFaturamento}
+            placeholder="0,00"
           />
         </div>
         <div className="row custo-sim-orange">
           <span>Instalação a cobrar do CLIENTE</span>
           <input
-            name="instalacaoCliente"
-            value={formatCurrency(inputs.instalacaoCliente)}
-            onChange={handleCurrencyChange}
+            type="text"
+            name="instalacaoClienteFat"
+            value={inputsFaturamento.instalacaoClienteFat || ""}
+            onChange={handleCurrencyChangeFaturamento}
+            placeholder="0,00"
           />
         </div>
 
@@ -428,17 +547,21 @@ function Calculator() {
         <div className="row custo-sim-orange">
           <span>Valor Mensal Terceiro</span>
           <input
-            name="valorMensalTerceiro"
-            value={formatCurrency(inputs.valorMensalTerceiro)}
-            onChange={handleCurrencyChange}
+            type="text"
+            name="valorMensalTerceiroFat"
+            value={inputsFaturamento.valorMensalTerceiroFat || ""}
+            onChange={handleCurrencyChangeFaturamento}
+            placeholder="0,00"
           />
         </div>
         <div className="row custo-sim-orange">
           <span>Outros Custos Mensais</span>
           <input
-            name="outrosCustosMensais"
-            value={formatCurrency(inputs.outrosCustosMensais)}
-            onChange={handleCurrencyChange}
+            type="text"
+            name="outrosCustosMensaisFat"
+            value={inputsFaturamento.outrosCustosMensaisFat || ""}
+            onChange={handleCurrencyChangeFaturamento}
+            placeholder="0,00"
           />
         </div>
 
@@ -447,26 +570,29 @@ function Calculator() {
           <span>Período Contratual</span>
           <input
             type="number"
-            name="periodoContratualDesejado"
-            value={inputs.periodoContratualDesejado}
-            onChange={handleChange}
+            name="periodoContratual"
+            value={inputsFaturamento.periodoContratual}
+            onChange={handleChangeFaturamento}
           />
         </div>
         <div className="row custo-sim-orange">
           <span>Payback (meses)</span>
           <input
             className="dolar-custo"
-            name="faturamentoContratualDesejado"
-            value={formatCurrency(inputs.faturamentoContratualDesejado)}
-            onChange={handleCurrencyChange}
+            type="number"
+            name="paybackMeses"
+            value={inputsFaturamento.paybackMeses}
+            onChange={handleChangeFaturamento}
           />
         </div>
         <div className="row">
           <span>Valor Bruto Mensal</span>
           <input
+            type="text"
             name="valorBrutoMensal"
-            value={formatCurrency(inputs.valorBrutoMensal)}
-            onChange={handleCurrencyChange}
+            value={inputsFaturamento.valorBrutoMensal || ""}
+            onChange={handleCurrencyChangeFaturamento}
+            placeholder="0,00"
           />
         </div>
 
@@ -474,65 +600,78 @@ function Calculator() {
         <div className="row">
           <span>Valor Líquido Mensal</span>
           <input
+            type="text"
             name="valorLiquidoMensal"
-            value={formatCurrency(inputs.valorLiquidoMensal)}
-            onChange={handleCurrencyChange}
+            value={inputsFaturamento.valorLiquidoMensal || ""}
+            onChange={handleCurrencyChangeFaturamento}
+            placeholder="0,00"
           />
         </div>
         <div className="row">
           <span>Valor Mensal dos Impostos</span>
           <input
+            type="text"
             name="valorMensalImpostos"
-            value={formatCurrency(inputs.valorMensalImpostos)}
-            onChange={handleCurrencyChange}
+            value={inputsFaturamento.valorMensalImpostos || ""}
+            onChange={handleCurrencyChangeFaturamento}
+            placeholder="0,00"
           />
         </div>
         <div className="row">
           <span>Valor Custos Terceiros + IMP</span>
           <input
+            type="text"
             name="valorCustosTerceirosImp"
-            value={formatCurrency(inputs.valorCustosTerceirosImp)}
-            onChange={handleCurrencyChange}
+            value={inputsFaturamento.valorCustosTerceirosImp || ""}
+            onChange={handleCurrencyChangeFaturamento}
+            placeholder="0,00"
           />
         </div>
         <div className="row">
           <span>Valor Mensal NF</span>
           <input
+            type="text"
             name="valorMensalNF"
-            value={formatCurrency(inputs.valorMensalNF)}
-            onChange={handleCurrencyChange}
+            value={inputsFaturamento.valorMensalNF || ""}
+            onChange={handleCurrencyChangeFaturamento}
+            placeholder="0,00"
           />
         </div>
       </div>
 
       <div className="btn-div">
-        <button className="btn-calc" onClick={calcular}>
+        <button className="btn-calc" onClick={calcularFaturamento}>
           Calcular
         </button>
       </div>
 
-      {resultados && (
+      {resultadosFaturamento && (
         <div className="results">
           <h3>APROVAÇÃO</h3>
           <div className="row contrato-abaixo">
             <span>Faturamento Contratual Calculado</span>
-            <b>R$ {resultados.faturamentoContratual.toFixed(2)}</b>
+            <b>{formatCurrency(resultadosFaturamento.faturamentoContratual)}</b>
           </div>
           <div className="row contrato-acima">
             <span>Payback (Meses)</span>
-            <b>{resultados.paybackMeses.toFixed(2)}</b>
+            <b>{Number(resultadosFaturamento.paybackMeses).toFixed(2)}</b>
           </div>
           <div className="row contrato-abaixo">
             <span>Valor Bruto Mensal</span>
-            <b>R$ {inputs.valorBrutoMensal.toFixed(2)}</b>
+            <b>
+              {formatCurrency(
+                resultadosFaturamento.valorBrutoMensal ??
+                  inputsFaturamento.valorBrutoMensal
+              )}
+            </b>
           </div>
           <div className="row contrato-abaixo">
             <span>Valor Mensal NF</span>
-            <b>R$ {resultados.valorMensalNF.toFixed(2)}</b>
+            <b>{formatCurrency(resultadosFaturamento.valorMensalNF)}</b>
           </div>
           <div className="row contrato-acima">
             <span>ROI Simplificado</span>
-            <b>{resultados.roiSimplificado.toFixed(2)}%</b>
+            <b>{Number(resultadosFaturamento.roiSimplificado).toFixed(2)}%</b>
           </div>
         </div>
       )}
@@ -541,7 +680,6 @@ function Calculator() {
 
   return (
     <div>
-      {/* Header único */}
       <div className="calculator-header">
         <img src={imgLogo} alt="Logo Empresa" className="calculator-logo" />
         <div className="calculator-header-right">
@@ -549,10 +687,9 @@ function Calculator() {
         </div>
       </div>
 
-      {/* As duas planilhas lado a lado */}
       <div className="calculators-wrapper">
-        <CalculatorBox />
-        <CalculatorBoxFaturamento />
+        {CalculatorBox()}
+        {CalculatorBoxFaturamento()}
       </div>
     </div>
   );
