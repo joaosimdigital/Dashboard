@@ -1,12 +1,14 @@
 // Calculator.jsx
 import React, { useState } from "react";
 import imgLogo from "../Images/logo-sim.png";
+import imgAsk from "../Images/ask.png";
 import "../CSS/Calculator.css";
 
 function Calculator() {
+  const [mostrarTabela, setMostrarTabela] = useState(false);
   const [inputs, setInputs] = useState({
     // ================= REFERÊNCIA =================
-    tipoServico: "IP Mitigado",
+    tipoServico: "",
     velocidade: 0,
     periodoContratual: 12,
     qtdCircuitos: 0,
@@ -21,6 +23,9 @@ function Calculator() {
     instalacaoTerceiro: 0,
     instalacaoCliente: 0,
     redundanciaBackup: "",
+    equipamento: "",
+    sva: "",
+    suporteCliente: "",
 
     // ================= CUSTO RECORRENTE =================
     valorMensalTerceiro: 0,
@@ -64,12 +69,16 @@ function Calculator() {
     // campos usados no JSX — garantir que existam
     custoSimDigitalFat: 0,
     instalacaoTerceiroFat: 0,
+    equipamentoFat: "",
+    svaFat: "",
+    suporteClienteFat: "",
     instalacaoClienteFat: 0,
     valorMensalTerceiroFat: 0,
     outrosCustosMensaisFat: 0,
     periodoContratual: 12,
     paybackMeses: 0,
     valorBrutoMensal: 0,
+    suporteCliente: "",
     valorLiquidoMensal: 0,
     valorMensalImpostos: 0,
     valorCustosTerceirosImp: 0,
@@ -78,6 +87,13 @@ function Calculator() {
 
   const [resultados, setResultados] = useState(null);
   const [resultadosFaturamento, setResultadosFaturamento] = useState(null);
+
+  const impostosTable = [
+    { nome: "PIS", valor: "0,65%" },
+    { nome: "COFINS", valor: "3,00%" },
+    { nome: "ISS", valor: "2,00%" },
+    { nome: "ICMS", valor: "17,00%" },
+  ];
 
   // Função para formatar em moeda BR (apenas para exibição — não no value do input)
   const formatCurrency = (value) => {
@@ -240,6 +256,78 @@ function Calculator() {
           </label>
         </div>
 
+        <div className="row">
+          <span>EQUIPAMENTO</span>
+          <label>
+            <input
+              type="radio"
+              name="equipamento"
+              value="sim"
+              checked={inputs.equipamento === "sim"}
+              onChange={handleChange}
+            />
+            Sim
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="equipamento"
+              value="nao"
+              checked={inputs.equipamento === "nao"}
+              onChange={handleChange}
+            />
+            Não
+          </label>
+        </div>
+
+        <div className="row">
+          <span>SUPORTE AO CLIENTE</span>
+          <label>
+            <input
+              type="radio"
+              name="suporteCliente"
+              value="sim"
+              checked={inputs.suporteCliente === "sim"}
+              onChange={handleChange}
+            />
+            Sim
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="suporteCliente"
+              value="nao"
+              checked={inputs.suporteCliente === "nao"}
+              onChange={handleChange}
+            />
+            Não
+          </label>
+        </div>
+
+        <div className="row">
+          <span>SVA</span>
+          <label>
+            <input
+              type="radio"
+              name="sva"
+              value="sim"
+              checked={inputs.sva === "sim"}
+              onChange={handleChange}
+            />
+            Sim
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="sva"
+              value="nao"
+              checked={inputs.sva === "nao"}
+              onChange={handleChange}
+            />
+            Não
+          </label>
+        </div>
+
         <div className="row highlight-bruto">
           <span>VALOR MENSAL REFERÊNCIA BRUTO</span>
           {/* input numérico sem formatCurrency no value (evita travamento) */}
@@ -254,12 +342,16 @@ function Calculator() {
 
         <div className="row highlight-bruto">
           <span>PAYBACK REFERÊNCIA</span>
-          <input
-            type="number"
+          <select
             name="paybackReferencia"
             value={inputs.paybackReferencia}
             onChange={handleChange}
-          />
+          >
+            <option value="12">12</option>
+            <option value="24">24</option>
+            <option value="36">36</option>
+            <option value="48">48</option>
+          </select>
         </div>
       </div>
 
@@ -421,23 +513,64 @@ function Calculator() {
       {resultados && (
         <div className="results">
           <h3>APROVAÇÃO</h3>
-          <div className="row contrato-abaixo">
+
+          <div
+            className={`row ${
+              resultados.faturamentoContratual > 500
+                ? "contrato-acima"
+                : "contrato-abaixo"
+            }`}
+          >
             <span>Faturamento Contratual Calculado</span>
             <b>{formatCurrency(resultados.faturamentoContratual)}</b>
           </div>
-          <div className="row contrato-acima">
+
+          <div
+            className={`row ${
+              resultados.paybackMeses > 500
+                ? "contrato-acima"
+                : "contrato-abaixo"
+            }`}
+          >
             <span>Payback (Meses)</span>
             <b>{Number(resultados.paybackMeses).toFixed(2)}</b>
           </div>
-          <div className="row contrato-abaixo">
+
+          <div
+            className={`row ${
+              (resultados.valorBrutoMensal ??
+                inputsFaturamento.valorBrutoMensal) > 500
+                ? "contrato-acima"
+                : "contrato-abaixo"
+            }`}
+          >
             <span>Valor Bruto Mensal</span>
-            <b>{formatCurrency(inputs.valorBrutoMensal)}</b>
+            <b>
+              {formatCurrency(
+                resultados.valorBrutoMensal ??
+                  inputsFaturamento.valorBrutoMensal
+              )}
+            </b>
           </div>
-          <div className="row contrato-abaixo">
+
+          <div
+            className={`row ${
+              resultados.valorMensalNF > 500
+                ? "contrato-acima"
+                : "contrato-abaixo"
+            }`}
+          >
             <span>Valor Mensal NF</span>
             <b>{formatCurrency(resultados.valorMensalNF)}</b>
           </div>
-          <div className="row contrato-acima">
+
+          <div
+            className={`row ${
+              resultados.roiSimplificado > 500
+                ? "contrato-acima"
+                : "contrato-abaixo"
+            }`}
+          >
             <span>ROI Simplificado</span>
             <b>{Number(resultados.roiSimplificado).toFixed(2)}%</b>
           </div>
@@ -462,6 +595,7 @@ function Calculator() {
         <div className="row">
           <span>ICMS</span>
           <input
+            disabled
             type="number"
             name="icms"
             value={inputsFaturamento.icms}
@@ -471,6 +605,7 @@ function Calculator() {
         <div className="row">
           <span>PIS + COFINS</span>
           <input
+            disabled
             type="number"
             name="cofins"
             value={inputsFaturamento.cofins}
@@ -485,6 +620,78 @@ function Calculator() {
             value={inputsFaturamento.fustFuntell}
             onChange={handleChangeFaturamento}
           />
+        </div>
+
+        <div className="row">
+          <span>EQUIPAMENTO</span>
+          <label>
+            <input
+              type="radio"
+              name="equipamentoFat"
+              value="sim"
+              checked={inputs.equipamentoFat === "sim"}
+              onChange={handleChange}
+            />
+            Sim
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="equipamentoFat"
+              value="nao"
+              checked={inputs.equipamentoFat === "nao"}
+              onChange={handleChange}
+            />
+            Não
+          </label>
+        </div>
+
+        <div className="row">
+          <span>SUPORTE AO CLIENTE</span>
+          <label>
+            <input
+              type="radio"
+              name="suporteClienteFat"
+              value="sim"
+              checked={inputs.suporteClienteFat === "sim"}
+              onChange={handleChange}
+            />
+            Sim
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="suporteClienteFat"
+              value="nao"
+              checked={inputs.suporteClienteFat === "nao"}
+              onChange={handleChange}
+            />
+            Não
+          </label>
+        </div>
+
+        <div className="row">
+          <span>SVA</span>
+          <label>
+            <input
+              type="radio"
+              name="svaFat"
+              value="sim"
+              checked={inputs.svaFat === "sim"}
+              onChange={handleChange}
+            />
+            Sim
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="svaFat"
+              value="nao"
+              checked={inputs.svaFat === "nao"}
+              onChange={handleChange}
+            />
+            Não
+          </label>
         </div>
 
         <div className="row highlight-bruto-blue">
@@ -509,7 +716,7 @@ function Calculator() {
         </div>
       </div>
 
-      <h3 className="title-cinza">FATURAMENTO DETALHADO</h3>
+      <h3 className="title-cinza">FATURAMENTO</h3>
       <div className="section">
         <h4>Custo Único</h4>
         <div className="row custo-sim-orange">
@@ -578,11 +785,11 @@ function Calculator() {
         <div className="row custo-sim-orange">
           <span>Payback (meses)</span>
           <input
-            className="dolar-custo"
-            type="number"
+            type="text"
             name="paybackMeses"
-            value={inputsFaturamento.paybackMeses}
-            onChange={handleChangeFaturamento}
+            value={inputsFaturamento.paybackMeses || ""}
+            onChange={handleCurrencyChangeFaturamento}
+            placeholder="0,00"
           />
         </div>
         <div className="row">
@@ -648,15 +855,37 @@ function Calculator() {
       {resultadosFaturamento && (
         <div className="results">
           <h3>APROVAÇÃO</h3>
-          <div className="row contrato-abaixo">
+
+          <div
+            className={`row ${
+              resultadosFaturamento.faturamentoContratual > 500
+                ? "contrato-acima"
+                : "contrato-abaixo"
+            }`}
+          >
             <span>Faturamento Contratual Calculado</span>
             <b>{formatCurrency(resultadosFaturamento.faturamentoContratual)}</b>
           </div>
-          <div className="row contrato-acima">
+
+          <div
+            className={`row ${
+              resultadosFaturamento.paybackMeses > 500
+                ? "contrato-acima"
+                : "contrato-abaixo"
+            }`}
+          >
             <span>Payback (Meses)</span>
             <b>{Number(resultadosFaturamento.paybackMeses).toFixed(2)}</b>
           </div>
-          <div className="row contrato-abaixo">
+
+          <div
+            className={`row ${
+              (resultadosFaturamento.valorBrutoMensal ??
+                inputsFaturamento.valorBrutoMensal) > 500
+                ? "contrato-acima"
+                : "contrato-abaixo"
+            }`}
+          >
             <span>Valor Bruto Mensal</span>
             <b>
               {formatCurrency(
@@ -665,11 +894,25 @@ function Calculator() {
               )}
             </b>
           </div>
-          <div className="row contrato-abaixo">
+
+          <div
+            className={`row ${
+              resultadosFaturamento.valorMensalNF > 500
+                ? "contrato-acima"
+                : "contrato-abaixo"
+            }`}
+          >
             <span>Valor Mensal NF</span>
             <b>{formatCurrency(resultadosFaturamento.valorMensalNF)}</b>
           </div>
-          <div className="row contrato-acima">
+
+          <div
+            className={`row ${
+              resultadosFaturamento.roiSimplificado > 500
+                ? "contrato-acima"
+                : "contrato-abaixo"
+            }`}
+          >
             <span>ROI Simplificado</span>
             <b>{Number(resultadosFaturamento.roiSimplificado).toFixed(2)}%</b>
           </div>
@@ -682,9 +925,41 @@ function Calculator() {
     <div>
       <div className="calculator-header">
         <img src={imgLogo} alt="Logo Empresa" className="calculator-logo" />
+
         <div className="calculator-header-right">
           <h1 className="calculator-title">Planilha de Cálculo de Venda</h1>
+          <div
+            className="tabela-impostos-link"
+            onClick={() => setMostrarTabela(!mostrarTabela)}
+            style={{
+              cursor: "pointer",
+              marginTop: "5px",
+              color: "#000000ff",
+              fontWeight: "bold",
+            }}
+          >
+            Tabela de Impostos
+            <img src={imgAsk} alt="ask" className="ask" />
+          </div>
+          
+          {mostrarTabela && (
+        <div className="tabela-impostos">
+          <table className="impostos">
+            
+            <tbody>
+              {impostosTable.map((imp, index) => (
+                <tr key={index}>
+                  <td>{imp.nome}</td>
+                  <td>{imp.valor}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+      )}
+
+        </div>
+        
       </div>
 
       <div className="calculators-wrapper">
