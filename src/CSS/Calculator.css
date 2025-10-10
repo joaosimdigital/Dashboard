@@ -229,6 +229,16 @@
   font-weight: bold;
 }
 
+.check-boxes-equipamento {
+  display: flex !important;
+  justify-content: center !important;
+
+}
+
+.select-equipamento {
+  margin-left: 15px;
+}
+
 .row.custo-sim {
   background: #FFF7DE;
   font-weight: bold;

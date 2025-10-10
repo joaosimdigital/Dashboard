@@ -48,7 +48,7 @@ function Calculator() {
       icms: 17,
       cofins: 3,
       pis: 0.65,
-      fust: 0.015,
+      fust: 1.5,
     },
 
     Custos: {
@@ -63,12 +63,13 @@ function Calculator() {
     icms: 17,
     cofins: 3,
     pis: 0.65,
-    fustFuntell: 0,
+    fustFuntell: 1.5,
     total: 0,
     instalacao: 0,
     // campos usados no JSX — garantir que existam
     custoSimDigitalFat: 0,
     instalacaoTerceiroFat: 0,
+    periodoContratualFat: 0,
     equipamentoFat: "",
     svaFat: "",
     suporteClienteFat: "",
@@ -97,21 +98,39 @@ function Calculator() {
 
   // Função para formatar em moeda BR (apenas para exibição — não no value do input)
   const formatCurrency = (value) => {
-    if (value === null || value === undefined) return "";
+    if (value === null || value === undefined || value === "") return "R$ 0,00";
     const n = Number(value);
-    if (isNaN(n)) return "";
+    if (isNaN(n)) return "R$ 0,00";
     return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   };
+
+  const formatCurrencyInput = (rawValue) => {
+  // remove tudo que não for número
+  const onlyDigits = rawValue.replace(/\D/g, "");
+
+  if (!onlyDigits) return "";
+
+  // transforma em número (centavos)
+  const numberValue = parseFloat(onlyDigits) / 100;
+
+  // retorna formatado (sem símbolo de R$ para evitar travamento)
+  return numberValue.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
 
   // ===== Handlers PAYBACK =====
   // Currency inputs: aguardamos texto, transformamos em número para state
   const handleCurrencyChange = (e) => {
-    const { name, value } = e.target;
-    // aceita strings com números; remove tudo que não é dígito e interpreta como centavos
-    const numeric = value.replace(/\D/g, "");
-    const floatValue = numeric ? Number(numeric) / 100 : 0;
-    setInputs((prev) => ({ ...prev, [name]: floatValue }));
-  };
+  const { name, value } = e.target;
+
+  const formatted = formatCurrencyInput(value);
+  setInputs((prev) => ({
+    ...prev,
+    [name]: formatted,
+  }));
+};
 
   // generic change para inputs não-moeda
   const handleChange = (e) => {
@@ -124,11 +143,14 @@ function Calculator() {
 
   // ===== Handlers FATURAMENTO =====
   const handleCurrencyChangeFaturamento = (e) => {
-    const { name, value } = e.target;
-    const numeric = value.replace(/\D/g, "");
-    const floatValue = numeric ? Number(numeric) / 100 : 0;
-    setInputsFaturamento((prev) => ({ ...prev, [name]: floatValue }));
-  };
+  const { name, value } = e.target;
+
+  const formatted = formatCurrencyInput(value);
+  setInputsFaturamento((prev) => ({
+    ...prev,
+    [name]: formatted,
+  }));
+};
 
   const handleChangeFaturamento = (e) => {
     const { name, value, type } = e.target;
@@ -195,11 +217,15 @@ function Calculator() {
       <div className="section">
         <div className="row">
           <span>TIPO DE SERVIÇOS</span>
-          <input
+          <select
             name="tipoServico"
             value={inputs.tipoServico}
             onChange={handleChange}
-          />
+          >
+            <option value="Mega Compartilhado">Mega Compartilhado</option>
+            <option value="Mega Dedicado">Mega Dedicado</option>
+            <option value="Mega L2L">Mega L2L</option>
+          </select>
         </div>
 
         <div className="row">
@@ -232,7 +258,7 @@ function Calculator() {
           </select>
         </div>
 
-        <div className="row">
+        <div className="row check-boxes">
           <span>REDUNDÂNCIA/BACKUP</span>
           <label>
             <input
@@ -256,8 +282,9 @@ function Calculator() {
           </label>
         </div>
 
-        <div className="row">
+        <div className="row check-boxes-equipamento">
           <span>EQUIPAMENTO</span>
+
           <label>
             <input
               type="radio"
@@ -268,6 +295,7 @@ function Calculator() {
             />
             Sim
           </label>
+
           <label>
             <input
               type="radio"
@@ -278,6 +306,22 @@ function Calculator() {
             />
             Não
           </label>
+
+          {/* Exibe o select apenas se "Sim" estiver selecionado */}
+          {inputs.equipamento === "sim" && (
+            <select
+              className="select-equipamento"
+              name="tipoEquipamento"
+              value={inputs.tipoEquipamento || ""}
+              onChange={handleChange}
+              style={{ padding: "5px" }}
+            >
+              <option value="">Selecione o equipamento</option>
+              <option value="equipamento1">Equipamento 1</option>
+              <option value="equipamento2">Equipamento 2</option>
+              <option value="equipamento3">Equipamento 3</option>
+            </select>
+          )}
         </div>
 
         <div className="row">
@@ -439,7 +483,6 @@ function Calculator() {
           <span>Faturamento Contratual Desejado</span>
           <input
             type="text"
-            className="dolar-custo"
             name="faturamentoContratualDesejado"
             value={inputs.faturamentoContratualDesejado || ""}
             onChange={handleCurrencyChange}
@@ -587,8 +630,9 @@ function Calculator() {
         <div className="row">
           <span>MODALIDADE</span>
           <input
+            disabled
             name="modalidade"
-            value={inputsFaturamento.modalidade}
+            value={"R$"}
             onChange={handleChangeFaturamento}
           />
         </div>
@@ -615,7 +659,8 @@ function Calculator() {
         <div className="row">
           <span>FUST + FUNTELL</span>
           <input
-            type="number"
+            disabled
+            type="text"
             name="fustFuntell"
             value={inputsFaturamento.fustFuntell}
             onChange={handleChangeFaturamento}
@@ -624,6 +669,7 @@ function Calculator() {
 
         <div className="row">
           <span>EQUIPAMENTO</span>
+
           <label>
             <input
               type="radio"
@@ -634,6 +680,7 @@ function Calculator() {
             />
             Sim
           </label>
+
           <label>
             <input
               type="radio"
@@ -644,6 +691,21 @@ function Calculator() {
             />
             Não
           </label>
+
+          {/* Exibe o select somente quando SIM for selecionado */}
+          {inputs.equipamentoFat === "sim" && (
+            <select
+              name="tipoEquipamento"
+              value={inputs.tipoEquipamento || ""}
+              onChange={handleChange}
+              style={{ marginTop: "8px" }}
+            >
+              <option value="">Selecione o equipamento</option>
+              <option value="equipamento1">Equipamento 1</option>
+              <option value="equipamento2">Equipamento 2</option>
+              <option value="equipamento3">Equipamento 3</option>
+            </select>
+          )}
         </div>
 
         <div className="row">
@@ -700,7 +762,7 @@ function Calculator() {
             type="text"
             name="total"
             value={inputsFaturamento.total || ""}
-            onChange={handleCurrencyChangeFaturamento}
+            onChange={handleChangeFaturamento}
             placeholder="0,00"
           />
         </div>
@@ -710,7 +772,7 @@ function Calculator() {
             type="text"
             name="instalacao"
             value={inputsFaturamento.instalacao || ""}
-            onChange={handleCurrencyChangeFaturamento}
+            onChange={handleChangeFaturamento}
             placeholder="0,00"
           />
         </div>
@@ -775,12 +837,16 @@ function Calculator() {
         <h4>Geral</h4>
         <div className="row custo-sim-orange">
           <span>Período Contratual</span>
-          <input
-            type="number"
-            name="periodoContratual"
-            value={inputsFaturamento.periodoContratual}
+          <select
+            name="periodoContratualFat"
+            value={inputs.periodoContratualFat}
             onChange={handleChangeFaturamento}
-          />
+          >
+            <option value={12}>12</option>
+            <option value={24}>24</option>
+            <option value={36}>36</option>
+            <option value={48}>48</option>
+          </select>
         </div>
         <div className="row custo-sim-orange">
           <span>Payback (meses)</span>
@@ -941,25 +1007,22 @@ function Calculator() {
             Tabela de Impostos
             <img src={imgAsk} alt="ask" className="ask" />
           </div>
-          
-          {mostrarTabela && (
-        <div className="tabela-impostos">
-          <table className="impostos">
-            
-            <tbody>
-              {impostosTable.map((imp, index) => (
-                <tr key={index}>
-                  <td>{imp.nome}</td>
-                  <td>{imp.valor}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
 
+          {mostrarTabela && (
+            <div className="tabela-impostos">
+              <table className="impostos">
+                <tbody>
+                  {impostosTable.map((imp, index) => (
+                    <tr key={index}>
+                      <td>{imp.nome}</td>
+                      <td>{imp.valor}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-        
       </div>
 
       <div className="calculators-wrapper">
