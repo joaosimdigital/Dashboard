@@ -161,54 +161,132 @@ function Calculator() {
   };
 
   // ===== chamadas API =====
-  const calcular = async () => {
-    try {
-      const res = await fetch("http://localhost:3001/calcular", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...inputs,
-          impostos: inputs.impostos, // garante envio
-        }),
-      });
-      const data = await res.json();
-      setResultados(data);
+const calcular = async () => {
+  try {
+    const body = {
+      ...inputs,
+      // converte para número os campos de moeda antes de enviar
+      valorMensalReferencia: parseFloat(
+        String(inputs.valorMensalReferencia).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      custoSimDigital: parseFloat(
+        String(inputs.custoSimDigital).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      instalacaoTerceiro: parseFloat(
+        String(inputs.instalacaoTerceiro).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      instalacaoCliente: parseFloat(
+        String(inputs.instalacaoCliente).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      valorMensalTerceiro: parseFloat(
+        String(inputs.valorMensalTerceiro).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      outrosCustosMensais: parseFloat(
+        String(inputs.outrosCustosMensais).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      faturamentoContratualDesejado: parseFloat(
+        String(inputs.faturamentoContratualDesejado).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      valorBrutoMensal: parseFloat(
+        String(inputs.valorBrutoMensal).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      valorLiquidoMensal: parseFloat(
+        String(inputs.valorLiquidoMensal).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      valorMensalImpostos: parseFloat(
+        String(inputs.valorMensalImpostos).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      valorCustosTerceirosImp: parseFloat(
+        String(inputs.valorCustosTerceirosImp).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      valorMensalNF: parseFloat(
+        String(inputs.valorMensalNF).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+    };
 
-      // opcional: preencher alguns campos do inputs com os resultados (sincronizar UI)
-      setInputs((prev) => ({
-        ...prev,
-        valorLiquidoMensal: data.valorLiquidoMensal ?? prev.valorLiquidoMensal,
-        valorMensalImpostos:
-          data.valorMensalImpostos ?? prev.valorMensalImpostos,
-        valorMensalNF: data.valorMensalNF ?? prev.valorMensalNF,
-      }));
-    } catch (err) {
-      console.error("erro ao calcular:", err);
-    }
-  };
+    const res = await fetch("http://localhost:3001/calcular", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const data = await res.json();
+    setResultados(data);
+
+    setInputs((prev) => ({
+      ...prev,
+      valorLiquidoMensal: data.valorLiquidoMensal ?? prev.valorLiquidoMensal,
+      valorMensalImpostos: data.valorMensalImpostos ?? prev.valorMensalImpostos,
+      valorMensalNF: data.valorMensalNF ?? prev.valorMensalNF,
+    }));
+  } catch (err) {
+    console.error("erro ao calcular:", err);
+  }
+};
+
 
   const calcularFaturamento = async () => {
-    try {
-      const res = await fetch("http://localhost:3001/calcular-faturamento", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(inputsFaturamento),
-      });
-      const data = await res.json();
-      setResultadosFaturamento(data);
+  try {
+    const body = {
+      ...inputsFaturamento,
+      total: parseFloat(
+        String(inputsFaturamento.total).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      instalacao: parseFloat(
+        String(inputsFaturamento.instalacao).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      custoSimDigitalFat: parseFloat(
+        String(inputsFaturamento.custoSimDigitalFat).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      instalacaoTerceiroFat: parseFloat(
+        String(inputsFaturamento.instalacaoTerceiroFat).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      instalacaoClienteFat: parseFloat(
+        String(inputsFaturamento.instalacaoClienteFat).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      valorMensalTerceiroFat: parseFloat(
+        String(inputsFaturamento.valorMensalTerceiroFat).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      outrosCustosMensaisFat: parseFloat(
+        String(inputsFaturamento.outrosCustosMensaisFat).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      valorBrutoMensal: parseFloat(
+        String(inputsFaturamento.valorBrutoMensal).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      valorLiquidoMensal: parseFloat(
+        String(inputsFaturamento.valorLiquidoMensal).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      valorMensalImpostos: parseFloat(
+        String(inputsFaturamento.valorMensalImpostos).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      valorCustosTerceirosImp: parseFloat(
+        String(inputsFaturamento.valorCustosTerceirosImp).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+      valorMensalNF: parseFloat(
+        String(inputsFaturamento.valorMensalNF).replace(/\./g, "").replace(",", ".")
+      ) || 0,
+    };
 
-      // opcional: sincroniza alguns inputsFaturamento com o que veio do backend
-      setInputsFaturamento((prev) => ({
-        ...prev,
-        valorLiquidoMensal: data.valorLiquidoMensal ?? prev.valorLiquidoMensal,
-        valorMensalImpostos:
-          data.valorMensalImpostos ?? prev.valorMensalImpostos,
-        valorMensalNF: data.valorMensalNF ?? prev.valorMensalNF,
-      }));
-    } catch (err) {
-      console.error("erro ao calcular faturamento:", err);
-    }
-  };
+    const res = await fetch("http://localhost:3001/calcular-faturamento", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const data = await res.json();
+    setResultadosFaturamento(data);
+
+    setInputsFaturamento((prev) => ({
+      ...prev,
+      valorLiquidoMensal: data.valorLiquidoMensal ?? prev.valorLiquidoMensal,
+      valorMensalImpostos: data.valorMensalImpostos ?? prev.valorMensalImpostos,
+      valorMensalNF: data.valorMensalNF ?? prev.valorMensalNF,
+    }));
+  } catch (err) {
+    console.error("erro ao calcular faturamento:", err);
+  }
+};
+
 
   // ========== Componentes (mantive estrutura similar ao que você tinha) ==========
   const CalculatorBox = () => (
