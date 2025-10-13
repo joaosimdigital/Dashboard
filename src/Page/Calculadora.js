@@ -105,32 +105,32 @@ function Calculator() {
   };
 
   const formatCurrencyInput = (rawValue) => {
-  // remove tudo que não for número
-  const onlyDigits = rawValue.replace(/\D/g, "");
+    // remove tudo que não for número
+    const onlyDigits = rawValue.replace(/\D/g, "");
 
-  if (!onlyDigits) return "";
+    if (!onlyDigits) return "";
 
-  // transforma em número (centavos)
-  const numberValue = parseFloat(onlyDigits) / 100;
+    // transforma em número (centavos)
+    const numberValue = parseFloat(onlyDigits) / 100;
 
-  // retorna formatado (sem símbolo de R$ para evitar travamento)
-  return numberValue.toLocaleString("pt-BR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-};
+    // retorna formatado (sem símbolo de R$ para evitar travamento)
+    return numberValue.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
 
   // ===== Handlers PAYBACK =====
   // Currency inputs: aguardamos texto, transformamos em número para state
   const handleCurrencyChange = (e) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
 
-  const formatted = formatCurrencyInput(value);
-  setInputs((prev) => ({
-    ...prev,
-    [name]: formatted,
-  }));
-};
+    const formatted = formatCurrencyInput(value);
+    setInputs((prev) => ({
+      ...prev,
+      [name]: formatted,
+    }));
+  };
 
   // generic change para inputs não-moeda
   const handleChange = (e) => {
@@ -143,14 +143,14 @@ function Calculator() {
 
   // ===== Handlers FATURAMENTO =====
   const handleCurrencyChangeFaturamento = (e) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
 
-  const formatted = formatCurrencyInput(value);
-  setInputsFaturamento((prev) => ({
-    ...prev,
-    [name]: formatted,
-  }));
-};
+    const formatted = formatCurrencyInput(value);
+    setInputsFaturamento((prev) => ({
+      ...prev,
+      [name]: formatted,
+    }));
+  };
 
   const handleChangeFaturamento = (e) => {
     const { name, value, type } = e.target;
@@ -161,132 +161,196 @@ function Calculator() {
   };
 
   // ===== chamadas API =====
-const calcular = async () => {
-  try {
-    const body = {
-      ...inputs,
-      // converte para número os campos de moeda antes de enviar
-      valorMensalReferencia: parseFloat(
-        String(inputs.valorMensalReferencia).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      custoSimDigital: parseFloat(
-        String(inputs.custoSimDigital).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      instalacaoTerceiro: parseFloat(
-        String(inputs.instalacaoTerceiro).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      instalacaoCliente: parseFloat(
-        String(inputs.instalacaoCliente).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      valorMensalTerceiro: parseFloat(
-        String(inputs.valorMensalTerceiro).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      outrosCustosMensais: parseFloat(
-        String(inputs.outrosCustosMensais).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      faturamentoContratualDesejado: parseFloat(
-        String(inputs.faturamentoContratualDesejado).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      valorBrutoMensal: parseFloat(
-        String(inputs.valorBrutoMensal).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      valorLiquidoMensal: parseFloat(
-        String(inputs.valorLiquidoMensal).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      valorMensalImpostos: parseFloat(
-        String(inputs.valorMensalImpostos).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      valorCustosTerceirosImp: parseFloat(
-        String(inputs.valorCustosTerceirosImp).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      valorMensalNF: parseFloat(
-        String(inputs.valorMensalNF).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-    };
+  const calcular = async () => {
+    try {
+      const body = {
+        ...inputs,
+        // converte para número os campos de moeda antes de enviar
+        valorMensalReferencia:
+          parseFloat(
+            String(inputs.valorMensalReferencia)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        custoSimDigital:
+          parseFloat(
+            String(inputs.custoSimDigital).replace(/\./g, "").replace(",", ".")
+          ) || 0,
+        instalacaoTerceiro:
+          parseFloat(
+            String(inputs.instalacaoTerceiro)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        instalacaoCliente:
+          parseFloat(
+            String(inputs.instalacaoCliente)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        valorMensalTerceiro:
+          parseFloat(
+            String(inputs.valorMensalTerceiro)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        outrosCustosMensais:
+          parseFloat(
+            String(inputs.outrosCustosMensais)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        faturamentoContratualDesejado:
+          parseFloat(
+            String(inputs.faturamentoContratualDesejado)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        valorBrutoMensal:
+          parseFloat(
+            String(inputs.valorBrutoMensal).replace(/\./g, "").replace(",", ".")
+          ) || 0,
+        valorLiquidoMensal:
+          parseFloat(
+            String(inputs.valorLiquidoMensal)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        valorMensalImpostos:
+          parseFloat(
+            String(inputs.valorMensalImpostos)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        valorCustosTerceirosImp:
+          parseFloat(
+            String(inputs.valorCustosTerceirosImp)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        valorMensalNF:
+          parseFloat(
+            String(inputs.valorMensalNF).replace(/\./g, "").replace(",", ".")
+          ) || 0,
+      };
 
-    const res = await fetch("http://38.224.145.3:3004/calcular", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+      const res = await fetch("http://38.224.145.3:3004/calcular", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
 
-    const data = await res.json();
-    setResultados(data);
+      const data = await res.json();
+      setResultados(data);
 
-    setInputs((prev) => ({
-      ...prev,
-      valorLiquidoMensal: data.valorLiquidoMensal ?? prev.valorLiquidoMensal,
-      valorMensalImpostos: data.valorMensalImpostos ?? prev.valorMensalImpostos,
-      valorMensalNF: data.valorMensalNF ?? prev.valorMensalNF,
-    }));
-  } catch (err) {
-    console.error("erro ao calcular:", err);
-  }
-};
-
+      setInputs((prev) => ({
+        ...prev,
+        valorLiquidoMensal: data.valorLiquidoMensal ?? prev.valorLiquidoMensal,
+        valorMensalImpostos:
+          data.valorMensalImpostos ?? prev.valorMensalImpostos,
+        valorMensalNF: data.valorMensalNF ?? prev.valorMensalNF,
+      }));
+    } catch (err) {
+      console.error("erro ao calcular:", err);
+    }
+  };
 
   const calcularFaturamento = async () => {
-  try {
-    const body = {
-      ...inputsFaturamento,
-      total: parseFloat(
-        String(inputsFaturamento.total).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      instalacao: parseFloat(
-        String(inputsFaturamento.instalacao).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      custoSimDigitalFat: parseFloat(
-        String(inputsFaturamento.custoSimDigitalFat).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      instalacaoTerceiroFat: parseFloat(
-        String(inputsFaturamento.instalacaoTerceiroFat).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      instalacaoClienteFat: parseFloat(
-        String(inputsFaturamento.instalacaoClienteFat).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      valorMensalTerceiroFat: parseFloat(
-        String(inputsFaturamento.valorMensalTerceiroFat).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      outrosCustosMensaisFat: parseFloat(
-        String(inputsFaturamento.outrosCustosMensaisFat).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      valorBrutoMensal: parseFloat(
-        String(inputsFaturamento.valorBrutoMensal).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      valorLiquidoMensal: parseFloat(
-        String(inputsFaturamento.valorLiquidoMensal).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      valorMensalImpostos: parseFloat(
-        String(inputsFaturamento.valorMensalImpostos).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      valorCustosTerceirosImp: parseFloat(
-        String(inputsFaturamento.valorCustosTerceirosImp).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-      valorMensalNF: parseFloat(
-        String(inputsFaturamento.valorMensalNF).replace(/\./g, "").replace(",", ".")
-      ) || 0,
-    };
+    try {
+      const body = {
+        ...inputsFaturamento,
+        total:
+          parseFloat(
+            String(inputsFaturamento.total).replace(/\./g, "").replace(",", ".")
+          ) || 0,
+        instalacao:
+          parseFloat(
+            String(inputsFaturamento.instalacao)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        custoSimDigitalFat:
+          parseFloat(
+            String(inputsFaturamento.custoSimDigitalFat)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        instalacaoTerceiroFat:
+          parseFloat(
+            String(inputsFaturamento.instalacaoTerceiroFat)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        instalacaoClienteFat:
+          parseFloat(
+            String(inputsFaturamento.instalacaoClienteFat)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        valorMensalTerceiroFat:
+          parseFloat(
+            String(inputsFaturamento.valorMensalTerceiroFat)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        outrosCustosMensaisFat:
+          parseFloat(
+            String(inputsFaturamento.outrosCustosMensaisFat)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        valorBrutoMensal:
+          parseFloat(
+            String(inputsFaturamento.valorBrutoMensal)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        valorLiquidoMensal:
+          parseFloat(
+            String(inputsFaturamento.valorLiquidoMensal)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        valorMensalImpostos:
+          parseFloat(
+            String(inputsFaturamento.valorMensalImpostos)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        valorCustosTerceirosImp:
+          parseFloat(
+            String(inputsFaturamento.valorCustosTerceirosImp)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+        valorMensalNF:
+          parseFloat(
+            String(inputsFaturamento.valorMensalNF)
+              .replace(/\./g, "")
+              .replace(",", ".")
+          ) || 0,
+      };
 
-    const res = await fetch("http://38.224.145.3:3004/calcular-faturamento", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+      const res = await fetch("http://38.224.145.3:3004/calcular-faturamento", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
 
-    const data = await res.json();
-    setResultadosFaturamento(data);
+      const data = await res.json();
+      setResultadosFaturamento(data);
 
-    setInputsFaturamento((prev) => ({
-      ...prev,
-      valorLiquidoMensal: data.valorLiquidoMensal ?? prev.valorLiquidoMensal,
-      valorMensalImpostos: data.valorMensalImpostos ?? prev.valorMensalImpostos,
-      valorMensalNF: data.valorMensalNF ?? prev.valorMensalNF,
-    }));
-  } catch (err) {
-    console.error("erro ao calcular faturamento:", err);
-  }
-};
-
+      setInputsFaturamento((prev) => ({
+        ...prev,
+        valorLiquidoMensal: data.valorLiquidoMensal ?? prev.valorLiquidoMensal,
+        valorMensalImpostos:
+          data.valorMensalImpostos ?? prev.valorMensalImpostos,
+        valorMensalNF: data.valorMensalNF ?? prev.valorMensalNF,
+      }));
+    } catch (err) {
+      console.error("erro ao calcular faturamento:", err);
+    }
+  };
 
   // ========== Componentes (mantive estrutura similar ao que você tinha) ==========
   const CalculatorBox = () => (
@@ -1002,7 +1066,7 @@ const calcular = async () => {
 
           <div
             className={`row ${
-              resultadosFaturamento.faturamentoContratual > 500
+              resultadosFaturamento.faturamentoContratual > custoTotal * 1.25
                 ? "contrato-acima"
                 : "contrato-abaixo"
             }`}
@@ -1013,7 +1077,7 @@ const calcular = async () => {
 
           <div
             className={`row ${
-              resultadosFaturamento.paybackMeses > 500
+              resultadosFaturamento.paybackMeses > custoTotal * 1.25
                 ? "contrato-acima"
                 : "contrato-abaixo"
             }`}
@@ -1025,7 +1089,8 @@ const calcular = async () => {
           <div
             className={`row ${
               (resultadosFaturamento.valorBrutoMensal ??
-                inputsFaturamento.valorBrutoMensal) > 500
+                inputsFaturamento.valorBrutoMensal) >
+              custoTotal * 1.25
                 ? "contrato-acima"
                 : "contrato-abaixo"
             }`}
@@ -1041,7 +1106,7 @@ const calcular = async () => {
 
           <div
             className={`row ${
-              resultadosFaturamento.valorMensalNF > 500
+              resultadosFaturamento.valorMensalNF > custoTotal * 1.25
                 ? "contrato-acima"
                 : "contrato-abaixo"
             }`}
@@ -1052,7 +1117,7 @@ const calcular = async () => {
 
           <div
             className={`row ${
-              resultadosFaturamento.roiSimplificado > 500
+              resultadosFaturamento.roiSimplificado > custoTotal * 1.25
                 ? "contrato-acima"
                 : "contrato-abaixo"
             }`}
