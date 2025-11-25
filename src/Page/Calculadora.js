@@ -204,7 +204,7 @@ const calcular = async () => {
       ) || 0,
     };
 
-    const res = await fetch("http://localhost:3001/calcular", {
+    const res = await fetch("http://38.224.145.3:3004/calcular", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -267,7 +267,7 @@ const calcular = async () => {
       ) || 0,
     };
 
-    const res = await fetch("http://localhost:3001/calcular-faturamento", {
+    const res = await fetch("http://38.224.145.3:3004/calcular-faturamento", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
