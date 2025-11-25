@@ -93,7 +93,7 @@ console.log(status);
 
     const fetchChurnUltimosMeses = async () => {
         try {
-            const response = await fetch('http://192.168.199.200:3001/churn-ultimos-meses');
+            const response = await fetch('http://38.224.145.3:3001/churn-ultimos-meses');
             
             if (!response.ok) {
                 throw new Error('Erro ao buscar os dados de churn dos últimos meses');
@@ -122,7 +122,7 @@ console.log(status);
       // Função para buscar os dados da API
       const fetchCancelamentoPorcentagem = async () => {
           try {
-              const response = await fetch('http://192.168.199.200:3001/cancelamento_porcentagem');
+              const response = await fetch('http://38.224.145.3:3001/cancelamento_porcentagem');
               
               if (!response.ok) {
                   throw new Error('Erro ao buscar dados');
@@ -143,7 +143,7 @@ console.log(status);
       // Função para buscar o total de cancelados do mês
       const fetchCanceladosMes = async () => {
         try {
-          const response = await fetch('http://192.168.199.200:3001/total-clientes-cancelados-mes');
+          const response = await fetch('http://38.224.145.3:3001/total-clientes-cancelados-mes'); 
           const data = await response.json();
           setTotalCanceladosMes(data.total_cancelados_este_mes);
         } catch (error) {
@@ -154,7 +154,7 @@ console.log(status);
 
       const fetchCanceladosHoje = async () => {
         try {
-          const response = await fetch('http://192.168.199.200:3001/total-clientes-cancelados-hoje');
+          const response = await fetch('http://38.224.145.3:3001/total-clientes-cancelados-hoje');
           const data = await response.json();
           setTotalCanceladosHoje(data.total_cancelados_hoje);
         } catch (error) {
@@ -167,7 +167,7 @@ console.log(status);
       // Função para buscar o total de clientes ativos
       const fetchClientesAtivos = async () => {
         try {
-          const response = await fetch('http://192.168.199.200:3001/total-clientes-ativos');
+          const response = await fetch('http://38.224.145.3:3001/total-clientes-ativos');
           const data = await response.json();
           setTotalClientesAtivos(data.total_clientes_ativos);
         } catch (error) {
@@ -177,11 +177,11 @@ console.log(status);
 
       const fetchChurnData = async () => {
         try {
-          const responseMensal = await fetch('http://192.168.199.200:3001/churn-mensal');
+          const responseMensal = await fetch('http://38.224.145.3:3001/churn-mensal');
           const dataMensal = await responseMensal.json();
           setChurnMensal(dataMensal.churn_mensal);
     
-          const responseDiario = await fetch('http://192.168.199.200:3001/churn-diario');
+          const responseDiario = await fetch('http://38.224.145.3:3001/churn-diario');
           const dataDiario = await responseDiario.json();
          
           setChurnDiario(dataDiario.churn_diario);
@@ -217,7 +217,7 @@ console.log(status);
 
     const fetchCancelamentosPorCidade = async () => {
         try {
-            const response = await fetch('http://192.168.199.200:3001/churn-cidade');
+            const response = await fetch('http://38.224.145.3:3001/churn-cidade');
             if (!response.ok) {
                 throw new Error('Erro ao buscar cancelamentos por cidade');
             }

@@ -18,6 +18,7 @@ import DashboardPerformanceComercialB2C from '../Page/DashboardPerformanceComerc
 import DashboardPerformanceComercialB2B from '../Page/DashboardPerformanceComercialB2B';
 import DashboardGerencialOpecarao from '../Page/DashboardGerencialOperacao';
 import DashboardFibra from '../Page/DashboardFibraGerencial';
+import Migracao from '../Page/Migracao';
 import Calculadora from '../Page/Calculadora';
 import LatenciaUrl from '../Page/LatenciaUrl';
 
@@ -31,6 +32,7 @@ const Rotas = () => {
           <Route path='/cancelamentotv' element={<DashboardCancelamentos />} />
           <Route path='/cancelamento-simone' element={<DashboardCancelamentosClone />} />
           <Route path='/comercialtv' element={<DashboardComercial />} />
+          <Route path='/migracao' element={<Migracao />} />
           <Route path='/operacionaltv' element={<DashboardOperacional />} />
           <Route path='/clientestv' element={<DashboardClientesTV />} />
           <Route path='/clientestv1' element={<DashboardClientes />} />

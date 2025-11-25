@@ -204,7 +204,7 @@ const calcular = async () => {
       ) || 0,
     };
 
-    const res = await fetch("http://38.224.145.3:3004/calcular", {
+    const res = await fetch("http://localhost:3001/calcular", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -267,7 +267,7 @@ const calcular = async () => {
       ) || 0,
     };
 
-    const res = await fetch("http://38.224.145.3:3004/calcular-faturamento", {
+    const res = await fetch("http://localhost:3001/calcular-faturamento", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -336,7 +336,7 @@ const calcular = async () => {
           </select>
         </div>
 
-        <div className="row check-boxes">
+        {/* <div className="row check-boxes">
           <span>REDUNDÂNCIA/BACKUP</span>
           <label>
             <input
@@ -358,9 +358,9 @@ const calcular = async () => {
             />
             Não
           </label>
-        </div>
+        </div> */}
 
-        <div className="row check-boxes-equipamento">
+        {/* <div className="row check-boxes-equipamento">
           <span>EQUIPAMENTO</span>
 
           <label>
@@ -385,7 +385,6 @@ const calcular = async () => {
             Não
           </label>
 
-          {/* Exibe o select apenas se "Sim" estiver selecionado */}
           {inputs.equipamento === "sim" && (
             <select
               className="select-equipamento"
@@ -400,9 +399,9 @@ const calcular = async () => {
               <option value="equipamento3">Equipamento 3</option>
             </select>
           )}
-        </div>
+        </div> */}
 
-        <div className="row">
+        {/* <div className="row">
           <span>SUPORTE AO CLIENTE</span>
           <label>
             <input
@@ -424,7 +423,7 @@ const calcular = async () => {
             />
             Não
           </label>
-        </div>
+        </div> */}
 
         <div className="row">
           <span>SVA</span>
@@ -703,7 +702,7 @@ const calcular = async () => {
   // ========== Faturamento ==========
   const CalculatorBoxFaturamento = () => (
     <div className="calculator-container">
-      <h3 className="title-cinza">FATURAMENTO</h3>
+      <h3 className="title-cinza">IMPOSTOS</h3>
       <div className="section">
         <div className="row">
           <span>MODALIDADE</span>
@@ -745,7 +744,7 @@ const calcular = async () => {
           />
         </div>
 
-        <div className="row">
+        {/* <div className="row">
           <span>EQUIPAMENTO</span>
 
           <label>
@@ -770,7 +769,6 @@ const calcular = async () => {
             Não
           </label>
 
-          {/* Exibe o select somente quando SIM for selecionado */}
           {inputs.equipamentoFat === "sim" && (
             <select
               name="tipoEquipamento"
@@ -784,9 +782,9 @@ const calcular = async () => {
               <option value="equipamento3">Equipamento 3</option>
             </select>
           )}
-        </div>
+        </div> */}
 
-        <div className="row">
+        {/* <div className="row">
           <span>SUPORTE AO CLIENTE</span>
           <label>
             <input
@@ -808,7 +806,7 @@ const calcular = async () => {
             />
             Não
           </label>
-        </div>
+        </div> */}
 
         <div className="row">
           <span>SVA</span>
@@ -856,7 +854,7 @@ const calcular = async () => {
         </div>
       </div>
 
-      <h3 className="title-cinza">FATURAMENTO</h3>
+      <h3 className="title-cinza">IMPOSTOS</h3>
       <div className="section">
         <h4>Custo Único</h4>
         <div className="row custo-sim-orange">
