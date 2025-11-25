@@ -20,7 +20,6 @@ import DashboardGerencialOpecarao from '../Page/DashboardGerencialOperacao';
 import DashboardFibra from '../Page/DashboardFibraGerencial';
 import Migracao from '../Page/Migracao';
 import Calculadora from '../Page/Calculadora';
-import LatenciaUrl from '../Page/LatenciaUrl';
 
 const Rotas = () => {
   return (
@@ -43,7 +42,6 @@ const Rotas = () => {
           <Route path='/calculadora' element={<Calculadora />} />
           <Route path='/dashboardoperacionalgerencial' element={<DashboardOperacionalGerencial />} />  
             <Route path='/dashboardfibra' element={<DashboardFibra />} />  
-               <Route path='/latenciaurl' element={<LatenciaUrl />} /> 
       </Routes>
     </Router>
   );
